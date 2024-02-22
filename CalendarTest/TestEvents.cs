@@ -8,9 +8,9 @@ namespace CalendarCodeTests
 {
     public class TestEvents
     {
-        int numberOfEventsInFile = TestConstants.numberOfEventsInFile;
-        String testInputFile = TestConstants.testEventsInputFile;
-        int maxIDInEventFile = TestConstants.maxIDInEventFile;
+        int numberOfEventsInFile = TestConstants2.numberOfEventsInFile;
+        String testInputFile = TestConstants2.testEventsInputFile;
+        int maxIDInEventFile = TestConstants2.maxIDInEventFile;
         Event firstEventInFile = new Event(1, new DateTime(2021, 1, 10), 3, 40, "App Dev Homework");
 
 
@@ -53,7 +53,7 @@ namespace CalendarCodeTests
         public void EventsMethod_ReadFromFile_ValidateCorrectDataWasRead()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
 
             // Act
@@ -80,7 +80,7 @@ namespace CalendarCodeTests
         public void EventsMethod_List_ReturnsListOfEvents()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
 
@@ -98,7 +98,7 @@ namespace CalendarCodeTests
         public void EventsMethod_List_ModifyListDoesNotModifyEventsInstance()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
             List<Event> list = Events.List();
@@ -117,7 +117,7 @@ namespace CalendarCodeTests
         public void EventsMethod_Add()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
             int category = 57;
@@ -141,7 +141,7 @@ namespace CalendarCodeTests
         public void EventsMethod_Delete()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
             int IdToDelete = 3;
@@ -163,7 +163,7 @@ namespace CalendarCodeTests
         public void EventsMethod_Delete_InvalidIDDoesntCrash()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
             int IdToDelete = 1006;
@@ -190,10 +190,10 @@ namespace CalendarCodeTests
         public void EventMethod_WriteToFile()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
-            string fileName = TestConstants.EventOutputTestFile;
+            string fileName = TestConstants2.EventOutputTestFile;
             String outputFile = dir + "\\" + fileName;
             File.Delete(outputFile);
 
@@ -202,13 +202,13 @@ namespace CalendarCodeTests
 
             // Assert
             Assert.True(File.Exists(outputFile), "output file created");
-            Assert.True(TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile), "Input /output files are the same");
+            Assert.True(TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile), "Input /output files are the same");
             String fileDir = Path.GetFullPath(Path.Combine(Events.DirName, ".\\"));
             Assert.Equal(dir, fileDir);
             Assert.Equal(fileName, Events.FileName);
 
             // Cleanup
-            if (TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile))
+            if (TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile))
             {
                 File.Delete(outputFile);
             }
@@ -221,10 +221,10 @@ namespace CalendarCodeTests
         public void EventMethod_WriteToFile_VerifyNewEventWrittenCorrectly()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
-            string fileName = TestConstants.EventOutputTestFile;
+            string fileName = TestConstants2.EventOutputTestFile;
             String outputFile = dir + "\\" + fileName;
             File.Delete(outputFile);
 
@@ -252,10 +252,10 @@ namespace CalendarCodeTests
         public void EventMethod_WriteToFile_WriteToLastFileWrittenToByDefault()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Events Events = new Events();
             Events.ReadFromFile(dir + "\\" + testInputFile);
-            string fileName = TestConstants.EventOutputTestFile;
+            string fileName = TestConstants2.EventOutputTestFile;
             String outputFile = dir + "\\" + fileName;
             File.Delete(outputFile);
             Events.SaveToFile(outputFile); // output file is now last file that was written to.
@@ -271,7 +271,7 @@ namespace CalendarCodeTests
             Assert.Equal(fileName, Events.FileName);
 
             // Cleanup
-            if (TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile))
+            if (TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile))
             {
                 File.Delete(outputFile);
             }

@@ -8,12 +8,12 @@ namespace CalendarCodeTests
 {
     public class TestCategories
     {
-        public int numberOfCategoriesInFile = TestConstants.numberOfCategoriesInFile;
-        public String testInputFile = TestConstants.testCategoriesInputFile;
-        public int maxIDInCategoryInFile = TestConstants.maxIDInCategoryInFile;
-        Category firstCategoryInFile = TestConstants.firstCategoryInFile;
-        int IDWithAllDayEventType = TestConstants.CategoryIDWithAllDayEventType;
-        int IDWithAvailabilityType = TestConstants.CategoryIDWithAvailabilityType;
+        public int numberOfCategoriesInFile = TestConstants2.numberOfCategoriesInFile;
+        public String testInputFile = TestConstants2.testCategoriesInputFile;
+        public int maxIDInCategoryInFile = TestConstants2.maxIDInCategoryInFile;
+        Category firstCategoryInFile = TestConstants2.firstCategoryInFile;
+        int IDWithAllDayEventType = TestConstants2.CategoryIDWithAllDayEventType;
+        int IDWithAvailabilityType = TestConstants2.CategoryIDWithAvailabilityType;
 
         // ========================================================================
 
@@ -68,7 +68,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_ReadFromFile_ValidateCorrectDataWasRead()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
 
             // Act
@@ -96,7 +96,7 @@ namespace CalendarCodeTests
             // checking here to see if it is read correctly in an effort to debug
 
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
             List<Category> list = categories.List();
@@ -115,7 +115,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_List_ReturnsListOfCategories()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
 
@@ -133,7 +133,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_List_ModifyListDoesNotModifyCategoriesInstance()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
             List<Category> list = categories.List();
@@ -152,7 +152,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_Add()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
             string descr = "New Category";
@@ -176,7 +176,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_Delete()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
             int IdToDelete = 3;
@@ -198,7 +198,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_Delete_InvalidIDDoesntCrash()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             int IdToDelete = 9999;
             int sizeOfList = categories.List().Count;
@@ -230,10 +230,10 @@ namespace CalendarCodeTests
             //  ... fix above test, and then this one should pass as well.
 
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
-            string fileName = TestConstants.CategoriesOutputTestFile;
+            string fileName = TestConstants2.CategoriesOutputTestFile;
             String outputFile = dir + "\\" + fileName;
             File.Delete(outputFile);
 
@@ -242,13 +242,13 @@ namespace CalendarCodeTests
 
             // Assert
             Assert.True(File.Exists(outputFile), "output file created");
-            Assert.True(TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile), "Input /output files are the same");
+            Assert.True(TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile), "Input /output files are the same");
             String fileDir = Path.GetFullPath(Path.Combine(categories.DirName, ".\\"));
             Assert.Equal(dir, fileDir);
             Assert.Equal(fileName, categories.FileName);
 
             // Cleanup
-            if (TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile)) {
+            if (TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile)) {
                 File.Delete(outputFile);
             }
 
@@ -260,10 +260,10 @@ namespace CalendarCodeTests
         public void CategoriesMethod_WriteToFile_WriteToLastFileWrittenToByDefault()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
-            string fileName = TestConstants.CategoriesOutputTestFile;
+            string fileName = TestConstants2.CategoriesOutputTestFile;
             String outputFile = dir + "\\" + fileName;
             File.Delete(outputFile);
             categories.SaveToFile(outputFile); // output file is now last file that was written to.
@@ -279,7 +279,7 @@ namespace CalendarCodeTests
             Assert.Equal(fileName, categories.FileName);
 
             // Cleanup
-            if (TestConstants.FileEquals(dir + "\\" + testInputFile, outputFile))
+            if (TestConstants2.FileEquals(dir + "\\" + testInputFile, outputFile))
             {
                 File.Delete(outputFile);
             }
@@ -293,7 +293,7 @@ namespace CalendarCodeTests
         public void CategoriesMethod_GetCategoryFromId()
         {
             // Arrange
-            String dir = TestConstants.GetSolutionDir();
+            String dir = TestConstants2.GetSolutionDir();
             Categories categories = new Categories();
             categories.ReadFromFile(dir + "\\" + testInputFile);
             int catID = 7;

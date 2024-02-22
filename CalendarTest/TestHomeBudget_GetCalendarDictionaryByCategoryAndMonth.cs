@@ -9,7 +9,7 @@ namespace CalendarCodeTests
 {
     public class TestHomeCalendar_GetCalendarDictionaryByCategoryAndMonth
     {
-        string testInputFile = TestConstants.testCalendarFile;
+        string testInputFile = TestConstants2.testCalendarFile;
 
 
 
@@ -21,10 +21,10 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyNumberOfRecords()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            int maxRecords = TestConstants.CalendarItemsByCategoryAndMonth_MaxRecords;
-            Dictionary<string, object> firstRecord = TestConstants.getCalendarItemsByCategoryAndMonthFirstRecord();
+            int maxRecords = TestConstants2.CalendarItemsByCategoryAndMonth_MaxRecords;
+            Dictionary<string, object> firstRecord = TestConstants2.getCalendarItemsByCategoryAndMonthFirstRecord();
 
             // Act
             List<Dictionary<string, object>> CalendarItemsByCategoryAndMonth = homeCalendar.GetCalendarDictionaryByCategoryAndMonth(null, null, false, 9);
@@ -40,9 +40,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyFirstRecord()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            Dictionary<string,object> firstRecord = TestConstants.getCalendarItemsByCategoryAndMonthFirstRecord();
+            Dictionary<string,object> firstRecord = TestConstants2.getCalendarItemsByCategoryAndMonthFirstRecord();
 
             // Act
             List<Dictionary<string,object>> CalendarItemsByCategoryAndMonth = homeCalendar.GetCalendarDictionaryByCategoryAndMonth(null, null, false, 9);
@@ -59,9 +59,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarDictionaryByCategoryAndMonth_NoStartEnd_NoFilter_VerifyTotalsRecord()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            Dictionary<string, object> totalsRecord = TestConstants.getCalendarItemsByCategoryAndMonthTotalsRecord();
+            Dictionary<string, object> totalsRecord = TestConstants2.getCalendarItemsByCategoryAndMonthTotalsRecord();
 
             // Act
             List<Dictionary<string, object>> CalendarItemsByCategoryAndMonth = homeCalendar.GetCalendarDictionaryByCategoryAndMonth(null, null, false, 9);
@@ -79,9 +79,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarDictionaryByCategoryAndMonth_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Dictionary<string, object>> expectedResults =TestConstants.getCalendarItemsByCategoryAndMonthCat2();
+            List<Dictionary<string, object>> expectedResults =TestConstants2.getCalendarItemsByCategoryAndMonthCat2();
 
             // Act
             List<Dictionary<string, object>> gotResults = homeCalendar.GetCalendarDictionaryByCategoryAndMonth(null, null, true, 2);
@@ -102,9 +102,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarDictionaryByCategoryAndMonth_2020()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Dictionary<string, object>> expectedResults = TestConstants.getCalendarItemsByCategoryAndMonth2020();
+            List<Dictionary<string, object>> expectedResults = TestConstants2.getCalendarItemsByCategoryAndMonth2020();
 
             // Act
             List<Dictionary<string, object>> gotResults = homeCalendar.GetCalendarDictionaryByCategoryAndMonth(new DateTime(2020,1,1), new DateTime(2020,12,31), false, 10);
