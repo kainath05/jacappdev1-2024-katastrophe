@@ -17,7 +17,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_TablesCreated_newDBDoesNotExist()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> tables = new List<String>() { "categoryTypes", "events", "categories" };
             Database.CloseDatabaseAndReleaseFile();
@@ -50,13 +50,13 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_newDBDoesExist_shouldHaveNoData()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> tables = new List<String>() { "categoryTypes", "events", "categories" };
 
             // open, add some stuff to the database directly, then
             // close it.
-            Database.newDatabase(TestConstants.GetSolutionDir() + "\\" + filename);
+            Database.newDatabase(TestConstants2.GetSolutionDir() + "\\" + filename);
             var cmd = new SQLiteCommand(Database.dbConnection);
 
             cmd.CommandText = "INSERT INTO categoryTypes(Description) VALUES('Whatever')";
@@ -65,7 +65,7 @@ namespace CalendarCodeTests
 
 
             // Act
-            Database.newDatabase(TestConstants.GetSolutionDir() + "\\" + filename);
+            Database.newDatabase(TestConstants2.GetSolutionDir() + "\\" + filename);
 
             // Assert
             cmd = new SQLiteCommand("Select * from categoryTypes", Database.dbConnection);
@@ -87,7 +87,7 @@ namespace CalendarCodeTests
             //     turn on foreign key constraints :)
 
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
 
             // Act
@@ -103,7 +103,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_ColumnsInTableEvents()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> columns = new List<string>() { "Id", "CategoryId", "DurationInMinutes", "StartDateTime", "Details" };
 
@@ -131,7 +131,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_ColumnsInTableCategory()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> columns = new List<string>() { "Id", "Description", "TypeId" };
 
@@ -159,7 +159,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_ColumnsInTableCategoryTypes()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> columns = new List<string>() { "Id", "Description" };
 
@@ -187,7 +187,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_RequiredForeignKeysCategories()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             Dictionary<String, String> FKtable = new Dictionary<String, String>()
             {
@@ -221,7 +221,7 @@ namespace CalendarCodeTests
         public void SQLite_TestNewDatabase_RequiredForeignKeysEvents()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             Dictionary<String, String> FKtable = new Dictionary<String, String>()
             {
@@ -255,7 +255,7 @@ namespace CalendarCodeTests
         public void SQLite_TestExistingDatabase_shouldHaveData()
         {
             // Arrange
-            string path = TestConstants.GetSolutionDir();
+            string path = TestConstants2.GetSolutionDir();
             string filename = "newdb.db";
             List<String> tables = new List<String>() { "categoryTypes", "events", "categories" };
 

@@ -8,7 +8,7 @@ namespace CalendarCodeTests
 {
     public class TestHomeCalendar_GetCalendarItems
     {
-        string testInputFile = TestConstants.testCalendarFile;
+        string testInputFile = TestConstants2.testCalendarFile;
         
 
         // ========================================================================
@@ -19,7 +19,7 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_NoFilter()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
             List<Event> listEvents = homeCalendar.events.List();
             List<Category> listCategories = homeCalendar.categories.List();
@@ -44,7 +44,7 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_NoFilter_VerifyBusyTimeProperty()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
 
             // Act
@@ -66,10 +66,10 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
             int filterCategory = 2;
-            List<Event> listEvents = TestConstants.filteredbyCat2();
+            List<Event> listEvents = TestConstants2.filteredbyCat2();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
@@ -94,9 +94,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_2018_filterDate()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants.filteredbyYear2018();
+            List<Event> listEvents = TestConstants2.filteredbyYear2018();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
@@ -121,9 +121,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_verifyBusyTime()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants.filteredbyCat2();
+            List<Event> listEvents = TestConstants2.filteredbyCat2();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
@@ -132,7 +132,7 @@ namespace CalendarCodeTests
             
 
             // Assert
-            Assert.Equal(TestConstants.filteredbyCat2Total, total);
+            Assert.Equal(TestConstants2.filteredbyCat2Total, total);
         }
 
         // ========================================================================
@@ -141,9 +141,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_2018_filterDateAndCat10()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants.filteredbyYear2018AndCategory3();
+            List<Event> listEvents = TestConstants2.filteredbyYear2018AndCategory3();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act

@@ -8,7 +8,7 @@ namespace CalendarCodeTests
 {
     public class TestHomeCalendar_GetCalendarItemsByCategory
     {
-        string testInputFile = TestConstants.testCalendarFile;
+        string testInputFile = TestConstants2.testCalendarFile;
 
         // ========================================================================
         // Get Events By Month Method tests
@@ -18,10 +18,10 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItemsByCategory_NoStartEnd_NoFilter()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            int maxRecords = TestConstants.CalendarItemsByCategory_MaxRecords;
-            CalendarItemsByCategory firstRecord = TestConstants.CalendarItemsByCategory_FirstRecord;
+            int maxRecords = TestConstants2.CalendarItemsByCategory_MaxRecords;
+            CalendarItemsByCategory firstRecord = TestConstants2.CalendarItemsByCategory_FirstRecord;
 
             // Act
             List<CalendarItemsByCategory> CalendarItemsByCategory = homeCalendar.GetCalendarItemsByCategory(null, null, false, 9);
@@ -51,10 +51,10 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItemsByCategory_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            int maxRecords14 = TestConstants.CalendarItemsByCategory11;
-            int maxRecords20 = TestConstants.CalendarItemsByCategory20;
+            int maxRecords14 = TestConstants2.CalendarItemsByCategory11;
+            int maxRecords20 = TestConstants2.CalendarItemsByCategory20;
 
             // Act
             List<CalendarItemsByMonth> CalendarItemsByCategory = homeCalendar.GetCalendarItemsByMonth(null, null, true, 11);
@@ -76,9 +76,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItemsByCategory_2018_filterDateAndCat2()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<CalendarItemsByCategory> validCalendarItemsByCategory = TestConstants.getCalendarItemsByCategory2018_Cat2();
+            List<CalendarItemsByCategory> validCalendarItemsByCategory = TestConstants2.getCalendarItemsByCategory2018_Cat2();
             CalendarItemsByCategory firstRecord = validCalendarItemsByCategory[0];
 
             // Act
@@ -110,9 +110,9 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItemsByCategory_2018_filterDate()
         {
             // Arrange
-            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
             HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<CalendarItemsByCategory> validCalendarItemsByCategory = TestConstants.getCalendarItemsByCategory2018();
+            List<CalendarItemsByCategory> validCalendarItemsByCategory = TestConstants2.getCalendarItemsByCategory2018();
             CalendarItemsByCategory firstRecord = validCalendarItemsByCategory[0];
 
 
