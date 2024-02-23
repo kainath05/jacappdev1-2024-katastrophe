@@ -32,7 +32,7 @@ namespace Calendar
         /// <value>
         /// Unique number
         /// </value>
-        public int Id { get; set; }
+        public int Id { get; }
 
         /// <summary>
         /// Provides a short description of the category
@@ -40,7 +40,7 @@ namespace Calendar
         /// <value>
         /// A short summary of something
         /// </value>
-        public String Description { get; set; }
+        public String Description { get; }
 
         /// <summary>
         /// Represents the specific category type
@@ -48,7 +48,7 @@ namespace Calendar
         /// <value>
         /// The type of category
         /// </value>
-        public CategoryType Type { get; set; }
+        public CategoryType Type { get; } //We would make it typeid instead of this?
 
         /// <summary>
         /// Represents the valid category types: Event, AllDayEvent, Holiday

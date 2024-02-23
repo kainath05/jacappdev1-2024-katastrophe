@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Xml;
+using System.Data.SQLite;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -22,6 +23,8 @@ namespace Calendar
     /// </summary>
     public class Categories
     {
+        private string connectionString = @"URI=file:test?";
+
         private static String DefaultFileName = "calendarCategories.txt";
         private List<Category> _Categories = new List<Category>();
         private string? _FileName;
@@ -71,12 +74,42 @@ namespace Calendar
         /// <exception cref="Exception">Thrown if the specific id is not found associated to a category</exception>
         public Category GetCategoryFromId(int i)
         {
-            Category? c = _Categories.Find(x => x.Id == i);
-            if (c == null)
+            //Category? c = _Categories.Find(x => x.Id == i);
+            //if (c == null)
+            //{
+            //    throw new Exception("Cannot find category with id " + i.ToString());
+            //}
+            //return c
+            Category category = null; // Initialize outside the using block
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
-                throw new Exception("Cannot find category with id " + i.ToString());
+                connection.Open();
+                string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", i);
+
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read()) 
+                        {
+                            int id = Convert.ToInt32(reader["Id"]);
+                            string description = Convert.ToString(reader["Description"]);
+                            int typeId = Convert.ToInt32(reader["TypeId"]);
+                            Category.CategoryType type = (Category.CategoryType)typeId; //IDK
+                            category = new Category(id, description, type);
+                        }
+                    }
+                }
             }
-            return c;
+
+            if (category == null)
+            {
+                throw new Exception();
+            }
+
+            return category;
         }
 
         // ====================================================================
@@ -200,7 +233,18 @@ namespace Calendar
         /// <param name="category">The category to add</param>
         private void Add(Category category)
         {
-            _Categories.Add(category);
+            //_Categories.Add(category);
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Description", category.Description);
+                    command.Parameters.AddWithValue("@TypeId", (int)category.Type); //would this work?
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         /// <summary>
@@ -210,13 +254,24 @@ namespace Calendar
         /// <param name="type">The type of the category</param>
         public void Add(String desc, Category.CategoryType type)
         {
-            int new_num = 1;
-            if (_Categories.Count > 0)
+            //int new_num = 1;
+            //if (_Categories.Count > 0)
+            //{
+            //    new_num = (from c in _Categories select c.Id).Max();
+            //    new_num++;
+            //}
+            //_Categories.Add(new Category(new_num, desc, type));
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
-                new_num = (from c in _Categories select c.Id).Max();
-                new_num++;
+                connection.Open();
+                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Description", desc);
+                    command.Parameters.AddWithValue("@TypeId", type); //would this work?
+                    command.ExecuteNonQuery();
+                }
             }
-            _Categories.Add(new Category(new_num, desc, type));
         }
 
         // ====================================================================
@@ -229,14 +284,24 @@ namespace Calendar
         /// <param name="Id">The id of the category to be delete</param>
         public void Delete(int Id)
         {
-            try
-            {
+            //try
+            //{
 
-            int i = _Categories.FindIndex(x => x.Id == Id);
-            _Categories.RemoveAt(i);
-            }catch (Exception ex)
+            //int i = _Categories.FindIndex(x => x.Id == Id);
+            //_Categories.RemoveAt(i);
+            //}catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
-                Console.WriteLine(ex.Message);
+                connection.Open();
+                string query = "DELETE FROM categories WHERE Id = @Id";
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
