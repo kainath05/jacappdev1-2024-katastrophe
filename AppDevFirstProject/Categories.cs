@@ -23,12 +23,11 @@ namespace Calendar
     /// </summary>
     public class Categories
     {
-        private string connectionString = @"URI=file:test?";
-
         private static String DefaultFileName = "calendarCategories.txt";
         private List<Category> _Categories = new List<Category>();
         private string? _FileName;
         private string? _DirName;
+
 
         // ====================================================================
         // Properties
@@ -66,8 +65,6 @@ namespace Calendar
             {
                 using SQLiteConnection connection = new SQLiteConnection(conn);
                 connection.Open();
-
-
             }
         }
 
@@ -83,17 +80,10 @@ namespace Calendar
         /// <exception cref="Exception">Thrown if the specific id is not found associated to a category</exception>
         public Category GetCategoryFromId(int i)
         {
-            //Category? c = _Categories.Find(x => x.Id == i);
-            //if (c == null)
-            //{
-            //    throw new Exception("Cannot find category with id " + i.ToString());
-            //}
-            //return c
-            Category category = null; // Initialize outside the using block
+            Category category = null;
 
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (SQLiteConnection connection = Database.dbConnection)
             {
-                connection.Open();
                 string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
@@ -243,7 +233,7 @@ namespace Calendar
         private void Add(Category category)
         {
             //_Categories.Add(category);
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (SQLiteConnection connection = Database.dbConnection)
             {
                 connection.Open();
                 string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
@@ -270,7 +260,7 @@ namespace Calendar
             //    new_num++;
             //}
             //_Categories.Add(new Category(new_num, desc, type));
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (SQLiteConnection connection = Database.dbConnection)
             {
                 connection.Open();
                 string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
@@ -302,9 +292,8 @@ namespace Calendar
             //{
             //    Console.WriteLine(ex.Message);
             //}
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (SQLiteConnection connection = Database.dbConnection)
             {
-                connection.Open();
                 string query = "DELETE FROM categories WHERE Id = @Id";
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
@@ -316,9 +305,8 @@ namespace Calendar
 
         public void UpdateProperties(int Id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (SQLiteConnection connection = Database.dbConnection)
             {
-                connection.Open();
                 string selectTypeQuery = "SELECT Type FROM Category where Id = @id";
                 using (SQLiteCommand command = new SQLiteCommand(selectTypeQuery, connection))
                 {
