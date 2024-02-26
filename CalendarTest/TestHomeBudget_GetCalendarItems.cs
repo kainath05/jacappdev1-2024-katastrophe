@@ -6,9 +6,10 @@ using Calendar;
 
 namespace CalendarCodeTests
 {
+    [Collection("Sequential")]
     public class TestHomeCalendar_GetCalendarItems
     {
-        string testInputFile = TestConstants2.testCalendarFile;
+        string testInputFile = TestConstants.testEventsInputFile;
         
 
         // ========================================================================
@@ -19,13 +20,17 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_NoFilter()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB,inFile,false);
             List<Event> listEvents = homeCalendar.events.List();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
-            List<CalendarItem> CalendarItems =  homeCalendar.GetCalendarItems(null,null,false,9);
+            List<CalendarItem> CalendarItems = homeCalendar.GetCalendarItems(null, null, false, 9);
 
             // Assert
             Assert.Equal(listEvents.Count, CalendarItems.Count);
@@ -38,14 +43,18 @@ namespace CalendarCodeTests
                 Assert.Equal(CalendarItem.DurationInMinutes, Event.DurationInMinutes);
                 Assert.Equal(CalendarItem.ShortDescription, Event.Details);
             }
-       }
+        }
 
         [Fact]
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_NoFilter_VerifyBusyTimeProperty()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB, inFile, false);
 
             // Act
             List<CalendarItem> CalendarItems = homeCalendar.GetCalendarItems(null, null, false, 9);
@@ -66,10 +75,14 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_FilterbyCategory()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB, inFile, false);
             int filterCategory = 2;
-            List<Event> listEvents = TestConstants2.filteredbyCat2();
+            List<Event> listEvents = TestConstants.filteredbyCat2();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
@@ -94,9 +107,13 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_2018_filterDate()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants2.filteredbyYear2018();
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB, inFile, false);
+            List<Event> listEvents = TestConstants.filteredbyYear2018();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
@@ -121,18 +138,22 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_NoStartEnd_verifyBusyTime()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants2.filteredbyCat2();
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB, inFile, false);
+            List<Event> listEvents = TestConstants.filteredbyCat2();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
             List<CalendarItem> CalendarItems = homeCalendar.GetCalendarItems(null, null,  true, 2);
             double total = CalendarItems[CalendarItems.Count-1].BusyTime;
-            
+
 
             // Assert
-            Assert.Equal(TestConstants2.filteredbyCat2Total, total);
+            Assert.Equal(TestConstants.filteredbyCat2Total, total);
         }
 
         // ========================================================================
@@ -141,9 +162,13 @@ namespace CalendarCodeTests
         public void HomeCalendarMethod_GetCalendarItems_2018_filterDateAndCat10()
         {
             // Arrange
-            string inFile = TestConstants2.GetSolutionDir() + "\\" + testInputFile;
-            HomeCalendar homeCalendar = new HomeCalendar(inFile);
-            List<Event> listEvents = TestConstants2.filteredbyYear2018AndCategory3();
+            string folder = TestConstants.GetSolutionDir();
+            string inFile = TestConstants.GetSolutionDir() + "\\" + testInputFile;
+            String goodDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(goodDB, messyDB, true);
+            HomeCalendar homeCalendar = new HomeCalendar(messyDB, inFile, false);
+            List<Event> listEvents = TestConstants.filteredbyYear2018AndCategory3();
             List<Category> listCategories = homeCalendar.categories.List();
 
             // Act
