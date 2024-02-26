@@ -50,12 +50,52 @@ namespace Calendar
             }
 
             SQLiteConnection.CreateFile(filename); // Create new database file
-            string cs = $"Data Source={filename}; Foreign Keys=1;"; // Enable foreign keys
+            string cs = $"Data Source={filename}; Version=3; Foreign Keys=1;"; // Enable foreign keys
             _connection = new SQLiteConnection(cs);
             _connection.Open();
 
             // Create tables
             CreateTables();
+        }
+
+        private static void CreateTables()
+        {
+            // Example SQL for creating a table, adjust according to your schema
+            string createCategoryTypesTable = @"
+    CREATE TABLE IF NOT EXISTS categoryTypes (
+        Id INTEGER PRIMARY KEY,
+        Description TEXT NOT NULL
+    );";
+
+            string createEventsTable = @"
+    CREATE TABLE IF NOT EXISTS events (
+        Id INTEGER PRIMARY KEY,
+        CategoryId INTEGER,
+        DurationInMinutes INTEGER,
+        StartDateTime DATETIME,
+        Details TEXT,
+        FOREIGN KEY(CategoryId) REFERENCES categoryTypes(Id)
+    );";
+
+            string createCategoriesTable = @"
+    CREATE TABLE IF NOT EXISTS categories (
+        Id INTEGER PRIMARY KEY,
+        Name TEXT,
+        TypeId INTEGER,
+        FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id)
+    );";
+
+            ExecuteNonQuery(createCategoryTypesTable);
+            ExecuteNonQuery(createEventsTable);
+            ExecuteNonQuery(createCategoriesTable);
+        }
+
+        private static void ExecuteNonQuery(string sql)
+        {
+            using (var command = new SQLiteCommand(sql, _connection))
+            {
+                command.ExecuteNonQuery();
+            }
         }
 
         // ===================================================================
@@ -74,24 +114,6 @@ namespace Calendar
         // close existing database, wait for garbage collector to
         // release the lock before continuing
         // ===================================================================
-        private static void CreateTables()
-        {
-            // Commands to create tables and foreign keys
-            string[] commands = new string[]
-            {
-                "CREATE TABLE categoryTypes (Id INTEGER PRIMARY KEY, Description TEXT NOT NULL)",
-                "CREATE TABLE categories (Id INTEGER PRIMARY KEY, Description TEXT NOT NULL, TypeId INTEGER, FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id))",
-                "CREATE TABLE events (Id INTEGER PRIMARY KEY, CategoryId INTEGER, DurationInMinutes INTEGER, StartDateTime TEXT, Details TEXT, FOREIGN KEY(CategoryId) REFERENCES categories(Id))"
-            };
-
-            foreach (var cmdText in commands)
-            {
-                using (var cmd = new SQLiteCommand(cmdText, _connection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
 
         public static void CloseDatabaseAndReleaseFile()
         {
