@@ -27,6 +27,7 @@ namespace Calendar
         private List<Category> _Categories = new List<Category>();
         private string? _FileName;
         private string? _DirName;
+        private SQLiteConnection connection;
 
 
         // ====================================================================
@@ -63,8 +64,7 @@ namespace Calendar
             }
             else
             {
-                using SQLiteConnection connection = new SQLiteConnection(conn);
-                connection.Open();
+                connection = conn;
             }
         }
 
@@ -82,23 +82,20 @@ namespace Calendar
         {
             Category category = null;
 
-            using (SQLiteConnection connection = Database.dbConnection)
+            string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", i);
+                command.Parameters.AddWithValue("@Id", i);
 
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            int id = Convert.ToInt32(reader["Id"]);
-                            string description = Convert.ToString(reader["Description"]);
-                            int typeId = Convert.ToInt32(reader["TypeId"]);
-                            Category.CategoryType type = (Category.CategoryType)typeId; //IDK
-                            category = new Category(id, description, type);
-                        }
+                        int id = Convert.ToInt32(reader["Id"]);
+                        string description = Convert.ToString(reader["Description"]);
+                        int typeId = Convert.ToInt32(reader["TypeId"]);
+                        Category.CategoryType type = (Category.CategoryType)typeId; //IDK
+                        category = new Category(id, description, type);
                     }
                 }
             }
@@ -206,7 +203,11 @@ namespace Calendar
             // ---------------------------------------------------------------
             // reset any current categories,
             // ---------------------------------------------------------------
-            _Categories.Clear();
+            string clearQuery = "DELETE FROM categories";
+            using (SQLiteCommand clearCommand = new SQLiteCommand(clearQuery, connection))
+            {
+                clearCommand.ExecuteNonQuery();
+            }
 
             // ---------------------------------------------------------------
             // Add Defaults
@@ -232,17 +233,12 @@ namespace Calendar
         /// <param name="category">The category to add</param>
         private void Add(Category category)
         {
-            //_Categories.Add(category);
-            using (SQLiteConnection connection = Database.dbConnection)
+            string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                connection.Open();
-                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Description", category.Description);
-                    command.Parameters.AddWithValue("@TypeId", (int)category.Type); //would this work?
-                    command.ExecuteNonQuery();
-                }
+                command.Parameters.AddWithValue("@Description", category.Description);
+                command.Parameters.AddWithValue("@TypeId", (int)category.Type); //would this work?
+                command.ExecuteNonQuery();
             }
         }
 
@@ -253,23 +249,12 @@ namespace Calendar
         /// <param name="type">The type of the category</param>
         public void Add(String desc, Category.CategoryType type)
         {
-            //int new_num = 1;
-            //if (_Categories.Count > 0)
-            //{
-            //    new_num = (from c in _Categories select c.Id).Max();
-            //    new_num++;
-            //}
-            //_Categories.Add(new Category(new_num, desc, type));
-            using (SQLiteConnection connection = Database.dbConnection)
+            string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                connection.Open();
-                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Description", desc);
-                    command.Parameters.AddWithValue("@TypeId", type); //would this work?
-                    command.ExecuteNonQuery();
-                }
+                command.Parameters.AddWithValue("@Description", desc);
+                command.Parameters.AddWithValue("@TypeId", type); //would this work?
+                command.ExecuteNonQuery();
             }
         }
 
@@ -283,23 +268,11 @@ namespace Calendar
         /// <param name="Id">The id of the category to be delete</param>
         public void Delete(int Id)
         {
-            //try
-            //{
-
-            //int i = _Categories.FindIndex(x => x.Id == Id);
-            //_Categories.RemoveAt(i);
-            //}catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            using (SQLiteConnection connection = Database.dbConnection)
+            string query = "DELETE FROM categories WHERE Id = @Id";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                string query = "DELETE FROM categories WHERE Id = @Id";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.ExecuteNonQuery();
-                }
+                command.Parameters.AddWithValue("@Id", Id);
+                command.ExecuteNonQuery();
             }
         }
 
