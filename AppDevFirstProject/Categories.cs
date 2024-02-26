@@ -92,7 +92,7 @@ namespace Calendar
 
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        if (reader.Read()) 
+                        if (reader.Read())
                         {
                             int id = Convert.ToInt32(reader["Id"]);
                             string description = Convert.ToString(reader["Description"]);
@@ -300,6 +300,26 @@ namespace Calendar
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", Id);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateProperties(int Id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string selectTypeQuery = "SELECT Type FROM Category where Id = @id";
+                using (SQLiteCommand command = new SQLiteCommand(selectTypeQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@id", Id);
+                }
+                string query = "UPDATE category SET Description = @newdescr, Type = @type";
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@newDescr", newDescr);
+                    command.Parameters.AddWithValue("@type", type);
                     command.ExecuteNonQuery();
                 }
             }
