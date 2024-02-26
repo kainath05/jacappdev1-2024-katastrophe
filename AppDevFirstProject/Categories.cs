@@ -333,52 +333,52 @@ namespace Calendar
         /// Reads categories from an XML file and adds them to the categories list
         /// </summary>
         /// <param name="filepath">The file path to read from.</param>
-        private void _ReadXMLFile(String filepath)
-        {
+        //private void _ReadXMLFile(String filepath)
+        //{
 
-            // ---------------------------------------------------------------
-            // read the categories from the xml file, and add to this instance
-            // ---------------------------------------------------------------
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(filepath);
+        //    // ---------------------------------------------------------------
+        //    // read the categories from the xml file, and add to this instance
+        //    // ---------------------------------------------------------------
+        //    try
+        //    {
+        //        XmlDocument doc = new XmlDocument();
+        //        doc.Load(filepath);
 
-                foreach (XmlNode category in doc.DocumentElement.ChildNodes)
-                {
-                    String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
-                    String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
-                    String desc = ((XmlElement)category).InnerText;
+        //        foreach (XmlNode category in doc.DocumentElement.ChildNodes)
+        //        {
+        //            String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
+        //            String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
+        //            String desc = ((XmlElement)category).InnerText;
 
-                    Category.CategoryType type;
-                    switch (typestring.ToLower())
-                    {
-                        case "event":
-                            type = Category.CategoryType.Event;
-                            break;
-                        case "alldayevent":
-                            type = Category.CategoryType.AllDayEvent;
-                            break;
-                        case "holiday":
-                            type = Category.CategoryType.Holiday;
-                            break;
-                        case "availability":
-                            type = Category.CategoryType.Availability;
-                            break;
-                        default:
-                            type = Category.CategoryType.Event;
-                            break;
-                    }
-                    this.Add(new Category(int.Parse(id), desc, type));
-                }
+        //            Category.CategoryType type;
+        //            switch (typestring.ToLower())
+        //            {
+        //                case "event":
+        //                    type = Category.CategoryType.Event;
+        //                    break;
+        //                case "alldayevent":
+        //                    type = Category.CategoryType.AllDayEvent;
+        //                    break;
+        //                case "holiday":
+        //                    type = Category.CategoryType.Holiday;
+        //                    break;
+        //                case "availability":
+        //                    type = Category.CategoryType.Availability;
+        //                    break;
+        //                default:
+        //                    type = Category.CategoryType.Event;
+        //                    break;
+        //            }
+        //            this.Add(new Category(int.Parse(id), desc, type));
+        //        }
 
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ReadXMLFile: Reading XML " + e.Message);
-            }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new Exception("ReadXMLFile: Reading XML " + e.Message);
+        //    }
 
-        }
+        //}
 
 
         // ====================================================================
@@ -389,41 +389,40 @@ namespace Calendar
         /// Writes all categories in the list to an XML file
         /// </summary>
         /// <param name="filepath">The file path to write to</param>
-        private void _WriteXMLFile(String filepath)
-        {
-            try
-            {
-                // create top level element of categories
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml("<Categories></Categories>");
+        //private void _WriteXMLFile(String filepath)
+        //{
+        //    try
+        //    {
+        //        // create top level element of categories
+        //        XmlDocument doc = new XmlDocument();
+        //        doc.LoadXml("<Categories></Categories>");
 
-                // foreach Category, create an new xml element
-                foreach (Category cat in _Categories)
-                {
-                    XmlElement ele = doc.CreateElement("Category");
-                    XmlAttribute attr = doc.CreateAttribute("ID");
-                    attr.Value = cat.Id.ToString();
-                    ele.SetAttributeNode(attr);
-                    XmlAttribute type = doc.CreateAttribute("type");
-                    type.Value = cat.Type.ToString();
-                    ele.SetAttributeNode(type);
+        //        // foreach Category, create an new xml element
+        //        foreach (Category cat in _Categories)
+        //        {
+        //            XmlElement ele = doc.CreateElement("Category");
+        //            XmlAttribute attr = doc.CreateAttribute("ID");
+        //            attr.Value = cat.Id.ToString();
+        //            ele.SetAttributeNode(attr);
+        //            XmlAttribute type = doc.CreateAttribute("type");
+        //            type.Value = cat.Type.ToString();
+        //            ele.SetAttributeNode(type);
 
-                    XmlText text = doc.CreateTextNode(cat.Description);
-                    doc.DocumentElement.AppendChild(ele);
-                    doc.DocumentElement.LastChild.AppendChild(text);
+        //            XmlText text = doc.CreateTextNode(cat.Description);
+        //            doc.DocumentElement.AppendChild(ele);
+        //            doc.DocumentElement.LastChild.AppendChild(text);
 
-                }
+        //        }
 
-                // write the xml to FilePath
-                doc.Save(filepath);
+        //        // write the xml to FilePath
+        //        doc.Save(filepath);
 
-            }
-            catch (Exception e)
-            {
-                throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
-            }
-
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
+        //    }
+        //}
 
     }
 }
