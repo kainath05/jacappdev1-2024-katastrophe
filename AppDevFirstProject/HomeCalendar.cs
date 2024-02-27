@@ -94,56 +94,29 @@ namespace Calendar
         /// </value>
         public Events events { get { return _events; } }
 
-        // -------------------------------------------------------------------
-        // Constructor (new... default categories, no events)
-        // -------------------------------------------------------------------
 
-        /// <summary>
-        /// initializes a HomeCalendar object with categories and events attributes
-        /// </summary>
-        public HomeCalendar()
+        public HomeCalendar(String databaseFile, String eventsXMLFile, bool newDB = false)
         {
-            _categories = new Categories();
+            // if database exists, and user doesn't want a new database, open existing DB
+            if (!newDB && File.Exists(databaseFile))
+            {
+                Database.existingDatabase(databaseFile);
+            }
+
+            // file did not exist, or user wants a new database, so open NEW DB
+            else
+            {
+                Database.newDatabase(databaseFile);
+                newDB = true;
+            }
+
+            // create the category object
+            _categories = new Categories(Database.dbConnection, newDB);
+
+            // create the _events course
             _events = new Events();
+            _events.ReadFromFile(eventsXMLFile);
         }
-
-        // -------------------------------------------------------------------
-        // Constructor (existing calendar ... must specify file)
-        // -------------------------------------------------------------------
-
-        /// <summary>
-        /// initializes a HomeCalendar object with categories and events attributes when we have the calendar filename as a param
-        /// </summary>
-        /// <param name="calendarFileName"></param>
-        public HomeCalendar(String calendarFileName)
-        {
-            _categories = new Categories();
-            _events = new Events();
-            ReadFromFile(calendarFileName);
-        }
-
-        //public HomeCalendar(String databaseFile, String eventsXMLFile, bool newDB = false)
-        //{
-        //    // if database exists, and user doesn't want a new database, open existing DB
-        //    if (!newDB && File.Exists(databaseFile))
-        //    {
-        //        Database.existingDatabase(databaseFile);
-        //    }
-
-        //    // file did not exist, or user wants a new database, so open NEW DB
-        //    else
-        //    {
-        //        Database.newDatabase(databaseFile);
-        //        newDB = true;
-        //    }
-
-        //    // create the category object
-        //    _categories = new Categories(Database.dbConnection, newDB);
-
-        //    // create the _events course
-        //    _events = new Events();
-        //    _events.ReadFromFile(eventsXMLFile);
-        //}
 
 
         #region OpenNewAndSave
