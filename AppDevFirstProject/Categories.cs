@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Data.SQLite;
+using System.Security.Cryptography;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -206,11 +207,12 @@ namespace Calendar
             // ---------------------------------------------------------------
             // reset any current categories,
             // ---------------------------------------------------------------
-            string clearQuery = "DELETE FROM categories";
-            using (SQLiteCommand clearCommand = new SQLiteCommand(clearQuery, connection))
+            using (SQLiteCommand clearCommand = new SQLiteCommand(connection))
             {
+                clearCommand.CommandText = "DELETE FROM categories";
                 clearCommand.ExecuteNonQuery();
             }
+
 
             // ---------------------------------------------------------------
             // Add Defaults
