@@ -58,13 +58,16 @@ namespace Calendar
         /// </summary>
         public Categories(SQLiteConnection conn, bool newDB)
         {
-            if (newDB == true)
+            if (conn == null)
             {
-                SetCategoriesToDefaults();
+                throw new ArgumentNullException(nameof(conn), "The database connection cannot be null.");
             }
-            else
+
+            this.connection = conn; 
+
+            if (newDB)
             {
-                connection = conn;
+                SetCategoriesToDefaults(); // Now connection should not be null when used here
             }
         }
 
@@ -233,12 +236,13 @@ namespace Calendar
         /// <param name="category">The category to add</param>
         private void Add(Category category)
         {
-            string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            using (var cmd = new SQLiteCommand(connection))
             {
-                command.Parameters.AddWithValue("@Description", category.Description);
-                command.Parameters.AddWithValue("@TypeId", (int)category.Type); //would this work?
-                command.ExecuteNonQuery();
+                int typeId = GetTypeIdFromCategoryType(category.Type); // Get the corresponding TypeId
+                cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                cmd.Parameters.AddWithValue("@Description", category.Description);
+                cmd.Parameters.AddWithValue("@TypeId", typeId);
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -247,16 +251,20 @@ namespace Calendar
         /// </summary>
         /// <param name="desc">The description of the category</param>
         /// <param name="type">The type of the category</param>
-        public void Add(String desc, Category.CategoryType type)
+
+        public void Add(string desc, Category.CategoryType type)
         {
-            string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            using (var cmd = new SQLiteCommand(connection))
             {
-                command.Parameters.AddWithValue("@Description", desc);
-                command.Parameters.AddWithValue("@TypeId", type); //would this work?
-                command.ExecuteNonQuery();
+                int typeId = GetTypeIdFromCategoryType(type); // Get the corresponding TypeId
+                cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                cmd.Parameters.AddWithValue("@Description", desc);
+                cmd.Parameters.AddWithValue("@TypeId", typeId);
+                cmd.ExecuteNonQuery();
             }
         }
+
+       
 
         // ====================================================================
         // Delete category
@@ -266,32 +274,57 @@ namespace Calendar
         /// Deletes a category with the specified id
         /// </summary>
         /// <param name="Id">The id of the category to be delete</param>
-        public void Delete(int Id)
+        public void Delete(int id)
         {
-            string query = "DELETE FROM categories WHERE Id = @Id";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            using (var transaction = connection.BeginTransaction())
             {
-                command.Parameters.AddWithValue("@Id", Id);
-                command.ExecuteNonQuery();
+                var deleteEventsCommandText = "DELETE FROM events WHERE CategoryId = @Id";
+                var deleteCategoryCommandText = "DELETE FROM categories WHERE Id = @Id";
+
+                // Delete referencing rows from events
+                using (var cmd = new SQLiteCommand(deleteEventsCommandText, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Delete the category
+                using (var cmd = new SQLiteCommand(deleteCategoryCommandText, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                transaction.Commit();
             }
         }
 
-        public void UpdateProperties(int Id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
+        public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
-            using (SQLiteConnection connection = Database.dbConnection)
+            using (var cmd = new SQLiteCommand(connection))
             {
-                string selectTypeQuery = "SELECT Type FROM Category where Id = @id";
-                using (SQLiteCommand command = new SQLiteCommand(selectTypeQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@id", Id);
-                }
-                string query = "UPDATE category SET Description = @newdescr, Type = @type";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@newDescr", newDescr);
-                    command.Parameters.AddWithValue("@type", type);
-                    command.ExecuteNonQuery();
-                }
+                cmd.CommandText = "UPDATE Categories SET Description = @Description, TypeId = @TypeId WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@Description", newDescr);
+                cmd.Parameters.AddWithValue("@TypeId", GetTypeIdFromCategoryType(type));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private int GetTypeIdFromCategoryType(Category.CategoryType type)
+        {
+            switch (type)
+            {
+                case Category.CategoryType.Event:
+                    return 1;
+                case Category.CategoryType.AllDayEvent:
+                    return 2;
+                case Category.CategoryType.Holiday:
+                    return 3;
+                case Category.CategoryType.Availability:
+                    return 4;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), $"Not expected CategoryType value: {type}");
             }
         }
 
@@ -307,13 +340,27 @@ namespace Calendar
         /// <returns>A new copy of the list of categories.</returns>
         public List<Category> List()
         {
-            List<Category> newList = new List<Category>();
-            foreach (Category category in _Categories)
+            List<Category> categories = new List<Category>();
+
+            // Query the database for all categories
+            string query = "SELECT Id, Description, TypeId FROM categories";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                newList.Add(new Category(category));
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = Convert.ToInt32(reader["Id"]);
+                        string description = Convert.ToString(reader["Description"]);
+                        int typeId = Convert.ToInt32(reader["TypeId"]);
+                        Category.CategoryType type = (Category.CategoryType)typeId;
+                        categories.Add(new Category(id, description, type));
+                    }
+                }
             }
-            return newList;
+            return categories;
         }
+
 
         // ====================================================================
         // read from an XML file and add categories to our categories list
