@@ -64,8 +64,7 @@ namespace Calendar
                 throw new ArgumentNullException(nameof(conn), "The database connection cannot be null.");
             }
 
-            this.connection = conn; 
-
+            this.connection = conn;
             if (newDB)
             {
                 SetCategoriesToDefaults(); // Now connection should not be null when used here
@@ -98,7 +97,7 @@ namespace Calendar
                         int id = Convert.ToInt32(reader["Id"]);
                         string description = Convert.ToString(reader["Description"]);
                         int typeId = Convert.ToInt32(reader["TypeId"]);
-                        Category.CategoryType type = (Category.CategoryType)typeId; //IDK
+                        Category.CategoryType type = (Category.CategoryType)typeId; 
                         category = new Category(id, description, type);
                     }
                 }
@@ -210,6 +209,10 @@ namespace Calendar
             using (SQLiteCommand clearCommand = new SQLiteCommand(connection))
             {
                 clearCommand.CommandText = "DELETE FROM categories";
+                clearCommand.ExecuteNonQuery();
+                clearCommand.CommandText = "DELETE FROM categoryTypes";
+                clearCommand.ExecuteNonQuery();
+                clearCommand.CommandText = @"INSERT INTO categoryTypes (Id, Description) VALUES (1, 'Event'), (2, 'AllDayEvent'), (3, 'Holiday'), (4, 'Availability'); ";
                 clearCommand.ExecuteNonQuery();
             }
 
