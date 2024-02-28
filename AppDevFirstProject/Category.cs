@@ -61,7 +61,7 @@ namespace Calendar
             /// <summary>
             /// Regular activity
             /// </summary>
-            Event,
+            Event = 1,
             /// <summary>
             /// Activity that lasts all day
             /// </summary>

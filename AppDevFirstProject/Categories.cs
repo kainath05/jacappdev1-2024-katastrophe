@@ -212,7 +212,22 @@ namespace Calendar
                 clearCommand.ExecuteNonQuery();
                 clearCommand.CommandText = "DELETE FROM categoryTypes";
                 clearCommand.ExecuteNonQuery();
-                clearCommand.CommandText = @"INSERT INTO categoryTypes (Id, Description) VALUES (1, 'Event'), (2, 'AllDayEvent'), (3, 'Holiday'), (4, 'Availability'); ";
+
+                //clearCommand.CommandText = @"INSERT INTO categoryTypes (Id, Description) VALUES (0, 'Event'), (1, 'AllDayEvent'), (2, 'Holiday'), (3, 'Availability'); ";
+                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
+                clearCommand.Parameters.AddWithValue("@desc", "Event");
+                clearCommand.ExecuteNonQuery();
+
+                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
+                clearCommand.Parameters.AddWithValue("@desc", "AllDayEvent");
+                clearCommand.ExecuteNonQuery();
+
+                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
+                clearCommand.Parameters.AddWithValue("@desc", "Holiday");
+                clearCommand.ExecuteNonQuery();
+
+                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
+                clearCommand.Parameters.AddWithValue("@desc", "Availability");
                 clearCommand.ExecuteNonQuery();
             }
 
@@ -243,7 +258,7 @@ namespace Calendar
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                int typeId = GetTypeIdFromCategoryType(category.Type); // Get the corresponding TypeId
+                int typeId = (int)category.Type; // Get the corresponding TypeId
                 cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
                 cmd.Parameters.AddWithValue("@Description", category.Description);
                 cmd.Parameters.AddWithValue("@TypeId", typeId);
@@ -261,10 +276,9 @@ namespace Calendar
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                int typeId = GetTypeIdFromCategoryType(type); // Get the corresponding TypeId
                 cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
                 cmd.Parameters.AddWithValue("@Description", desc);
-                cmd.Parameters.AddWithValue("@TypeId", typeId);
+                cmd.Parameters.AddWithValue("@TypeId", (int)type);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -311,25 +325,8 @@ namespace Calendar
                 cmd.CommandText = "UPDATE Categories SET Description = @Description, TypeId = @TypeId WHERE Id = @Id";
                 cmd.Parameters.AddWithValue("@Id", id);
                 cmd.Parameters.AddWithValue("@Description", newDescr);
-                cmd.Parameters.AddWithValue("@TypeId", GetTypeIdFromCategoryType(type));
+                cmd.Parameters.AddWithValue("@TypeId", (int)type);
                 cmd.ExecuteNonQuery();
-            }
-        }
-
-        private int GetTypeIdFromCategoryType(Category.CategoryType type)
-        {
-            switch (type)
-            {
-                case Category.CategoryType.Event:
-                    return 1;
-                case Category.CategoryType.AllDayEvent:
-                    return 2;
-                case Category.CategoryType.Holiday:
-                    return 3;
-                case Category.CategoryType.Availability:
-                    return 4;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), $"Not expected CategoryType value: {type}");
             }
         }
 
