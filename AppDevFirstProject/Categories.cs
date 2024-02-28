@@ -20,7 +20,7 @@ namespace Calendar
     //        - etc
     // ====================================================================
     /// <summary>
-    ///Categories class represents a collection of category items, providing functionality to read/write to a file and manage categories
+    ///Categories class represents a collection of category items, providing functionality to read/write to a database
     /// </summary>
     public class Categories
     {
@@ -80,7 +80,7 @@ namespace Calendar
         /// </summary>
         /// <param name="i">The id of the category to retrieve</param>
         /// <returns>The category with the specified id</returns>
-        /// <exception cref="Exception">Thrown if the specific id is not found associated to a category</exception>
+        /// <exception cref="Exception">Thrown if the category is equal to null</exception>
         public Category GetCategoryFromId(int i)
         {
             Category category = null;
@@ -122,8 +122,6 @@ namespace Calendar
         /// Populates categories from a file. If filepath is not specified, read/save in AppData file.
         /// </summary>
         /// <param name="filepath">The file path to read from</param>
-        /// <exception cref="FileNotFoundException">Thrown if the specified file does not exist</exception>
-        /// <exception cref="Exception">Thrown if the file cannot be read correctly (parsing XML)</exception>
         public void ReadFromFile(String? filepath = null)
         {
 
@@ -292,7 +290,7 @@ namespace Calendar
         /// <summary>
         /// Deletes a category with the specified id
         /// </summary>
-        /// <param name="Id">The id of the category to be delete</param>
+        /// <param name="id">The id of the category to be deleted</param>
         public void Delete(int id)
         {
             using (var transaction = connection.BeginTransaction())
@@ -318,6 +316,12 @@ namespace Calendar
             }
         }
 
+        /// <summary>
+        /// Updates the properties of a specific category
+        /// </summary>
+        /// <param name="id">The id of the category to be updated</param>
+        /// <param name="newDescr">the new description to be added to the category</param>
+        /// <param name="type">The type of category to be changed</param>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -372,6 +376,7 @@ namespace Calendar
         /// Reads categories from an XML file and adds them to the categories list
         /// </summary>
         /// <param name="filepath">The file path to read from.</param>
+        /// <exception cref="Exception">Exception thrown if there is an error trying to read the XML file</exception>
         private void _ReadXMLFile(String filepath)
         {
 
@@ -428,6 +433,7 @@ namespace Calendar
         /// Writes all categories in the list to an XML file
         /// </summary>
         /// <param name="filepath">The file path to write to</param>
+        /// <exception cref="Exception">Exception thrown if there is an error trying to write to the XML file</exception>
         private void _WriteXMLFile(String filepath)
         {
             try
