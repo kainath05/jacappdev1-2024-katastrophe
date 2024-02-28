@@ -80,7 +80,7 @@ namespace Calendar
             string createCategoriesTable = @"
     CREATE TABLE IF NOT EXISTS categories (
         Id INTEGER PRIMARY KEY,
-        Name TEXT,
+        Description TEXT,
         TypeId INTEGER,
         FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id)
     );";
