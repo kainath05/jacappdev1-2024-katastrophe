@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Data.SQLite;
+using System.Security.Cryptography;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -23,12 +24,12 @@ namespace Calendar
     /// </summary>
     public class Categories
     {
-        private string connectionString = @"URI=file:test?";
-
         private static String DefaultFileName = "calendarCategories.txt";
         private List<Category> _Categories = new List<Category>();
         private string? _FileName;
         private string? _DirName;
+        private SQLiteConnection connection;
+
 
         // ====================================================================
         // Properties
@@ -53,13 +54,22 @@ namespace Calendar
         // ====================================================================
         // Constructor
         // ====================================================================
-
         /// <summary>
         /// Constructor for the Categories class
         /// </summary>
-        public Categories()
+        public Categories(SQLiteConnection conn, bool newDB)
         {
-            SetCategoriesToDefaults();
+            if (conn == null)
+            {
+                throw new ArgumentNullException(nameof(conn), "The database connection cannot be null.");
+            }
+
+            this.connection = conn; 
+
+            if (newDB)
+            {
+                SetCategoriesToDefaults(); // Now connection should not be null when used here
+            }
         }
 
         // ====================================================================
@@ -74,32 +84,22 @@ namespace Calendar
         /// <exception cref="Exception">Thrown if the specific id is not found associated to a category</exception>
         public Category GetCategoryFromId(int i)
         {
-            //Category? c = _Categories.Find(x => x.Id == i);
-            //if (c == null)
-            //{
-            //    throw new Exception("Cannot find category with id " + i.ToString());
-            //}
-            //return c
-            Category category = null; // Initialize outside the using block
+            Category category = null;
 
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                connection.Open();
-                string query = "SELECT Id, Description, TypeId FROM categories WHERE Id = @Id";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", i);
+                command.Parameters.AddWithValue("@Id", i);
 
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
                     {
-                        if (reader.Read()) 
-                        {
-                            int id = Convert.ToInt32(reader["Id"]);
-                            string description = Convert.ToString(reader["Description"]);
-                            int typeId = Convert.ToInt32(reader["TypeId"]);
-                            Category.CategoryType type = (Category.CategoryType)typeId; //IDK
-                            category = new Category(id, description, type);
-                        }
+                        int id = Convert.ToInt32(reader["Id"]);
+                        string description = Convert.ToString(reader["Description"]);
+                        int typeId = Convert.ToInt32(reader["TypeId"]);
+                        Category.CategoryType type = (Category.CategoryType)typeId; //IDK
+                        category = new Category(id, description, type);
                     }
                 }
             }
@@ -207,7 +207,12 @@ namespace Calendar
             // ---------------------------------------------------------------
             // reset any current categories,
             // ---------------------------------------------------------------
-            _Categories.Clear();
+            using (SQLiteCommand clearCommand = new SQLiteCommand(connection))
+            {
+                clearCommand.CommandText = "DELETE FROM categories";
+                clearCommand.ExecuteNonQuery();
+            }
+
 
             // ---------------------------------------------------------------
             // Add Defaults
@@ -233,17 +238,13 @@ namespace Calendar
         /// <param name="category">The category to add</param>
         private void Add(Category category)
         {
-            //_Categories.Add(category);
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var cmd = new SQLiteCommand(connection))
             {
-                connection.Open();
-                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Description", category.Description);
-                    command.Parameters.AddWithValue("@TypeId", (int)category.Type); //would this work?
-                    command.ExecuteNonQuery();
-                }
+                int typeId = GetTypeIdFromCategoryType(category.Type); // Get the corresponding TypeId
+                cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                cmd.Parameters.AddWithValue("@Description", category.Description);
+                cmd.Parameters.AddWithValue("@TypeId", typeId);
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -252,27 +253,20 @@ namespace Calendar
         /// </summary>
         /// <param name="desc">The description of the category</param>
         /// <param name="type">The type of the category</param>
-        public void Add(String desc, Category.CategoryType type)
+
+        public void Add(string desc, Category.CategoryType type)
         {
-            //int new_num = 1;
-            //if (_Categories.Count > 0)
-            //{
-            //    new_num = (from c in _Categories select c.Id).Max();
-            //    new_num++;
-            //}
-            //_Categories.Add(new Category(new_num, desc, type));
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var cmd = new SQLiteCommand(connection))
             {
-                connection.Open();
-                string query = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Description", desc);
-                    command.Parameters.AddWithValue("@TypeId", type); //would this work?
-                    command.ExecuteNonQuery();
-                }
+                int typeId = GetTypeIdFromCategoryType(type); // Get the corresponding TypeId
+                cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
+                cmd.Parameters.AddWithValue("@Description", desc);
+                cmd.Parameters.AddWithValue("@TypeId", typeId);
+                cmd.ExecuteNonQuery();
             }
         }
+
+       
 
         // ====================================================================
         // Delete category
@@ -282,26 +276,57 @@ namespace Calendar
         /// Deletes a category with the specified id
         /// </summary>
         /// <param name="Id">The id of the category to be delete</param>
-        public void Delete(int Id)
+        public void Delete(int id)
         {
-            //try
-            //{
-
-            //int i = _Categories.FindIndex(x => x.Id == Id);
-            //_Categories.RemoveAt(i);
-            //}catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var transaction = connection.BeginTransaction())
             {
-                connection.Open();
-                string query = "DELETE FROM categories WHERE Id = @Id";
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                var deleteEventsCommandText = "DELETE FROM events WHERE CategoryId = @Id";
+                var deleteCategoryCommandText = "DELETE FROM categories WHERE Id = @Id";
+
+                // Delete referencing rows from events
+                using (var cmd = new SQLiteCommand(deleteEventsCommandText, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
                 }
+
+                // Delete the category
+                using (var cmd = new SQLiteCommand(deleteCategoryCommandText, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
+        {
+            using (var cmd = new SQLiteCommand(connection))
+            {
+                cmd.CommandText = "UPDATE Categories SET Description = @Description, TypeId = @TypeId WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@Description", newDescr);
+                cmd.Parameters.AddWithValue("@TypeId", GetTypeIdFromCategoryType(type));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private int GetTypeIdFromCategoryType(Category.CategoryType type)
+        {
+            switch (type)
+            {
+                case Category.CategoryType.Event:
+                    return 1;
+                case Category.CategoryType.AllDayEvent:
+                    return 2;
+                case Category.CategoryType.Holiday:
+                    return 3;
+                case Category.CategoryType.Availability:
+                    return 4;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), $"Not expected CategoryType value: {type}");
             }
         }
 
@@ -317,13 +342,27 @@ namespace Calendar
         /// <returns>A new copy of the list of categories.</returns>
         public List<Category> List()
         {
-            List<Category> newList = new List<Category>();
-            foreach (Category category in _Categories)
+            List<Category> categories = new List<Category>();
+
+            // Query the database for all categories
+            string query = "SELECT Id, Description, TypeId FROM categories";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                newList.Add(new Category(category));
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = Convert.ToInt32(reader["Id"]);
+                        string description = Convert.ToString(reader["Description"]);
+                        int typeId = Convert.ToInt32(reader["TypeId"]);
+                        Category.CategoryType type = (Category.CategoryType)typeId;
+                        categories.Add(new Category(id, description, type));
+                    }
+                }
             }
-            return newList;
+            return categories;
         }
+
 
         // ====================================================================
         // read from an XML file and add categories to our categories list
@@ -333,52 +372,52 @@ namespace Calendar
         /// Reads categories from an XML file and adds them to the categories list
         /// </summary>
         /// <param name="filepath">The file path to read from.</param>
-        //private void _ReadXMLFile(String filepath)
-        //{
+        private void _ReadXMLFile(String filepath)
+        {
 
-        //    // ---------------------------------------------------------------
-        //    // read the categories from the xml file, and add to this instance
-        //    // ---------------------------------------------------------------
-        //    try
-        //    {
-        //        XmlDocument doc = new XmlDocument();
-        //        doc.Load(filepath);
+            // ---------------------------------------------------------------
+            // read the categories from the xml file, and add to this instance
+            // ---------------------------------------------------------------
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filepath);
 
-        //        foreach (XmlNode category in doc.DocumentElement.ChildNodes)
-        //        {
-        //            String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
-        //            String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
-        //            String desc = ((XmlElement)category).InnerText;
+                foreach (XmlNode category in doc.DocumentElement.ChildNodes)
+                {
+                    String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
+                    String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
+                    String desc = ((XmlElement)category).InnerText;
 
-        //            Category.CategoryType type;
-        //            switch (typestring.ToLower())
-        //            {
-        //                case "event":
-        //                    type = Category.CategoryType.Event;
-        //                    break;
-        //                case "alldayevent":
-        //                    type = Category.CategoryType.AllDayEvent;
-        //                    break;
-        //                case "holiday":
-        //                    type = Category.CategoryType.Holiday;
-        //                    break;
-        //                case "availability":
-        //                    type = Category.CategoryType.Availability;
-        //                    break;
-        //                default:
-        //                    type = Category.CategoryType.Event;
-        //                    break;
-        //            }
-        //            this.Add(new Category(int.Parse(id), desc, type));
-        //        }
+                    Category.CategoryType type;
+                    switch (typestring.ToLower())
+                    {
+                        case "event":
+                            type = Category.CategoryType.Event;
+                            break;
+                        case "alldayevent":
+                            type = Category.CategoryType.AllDayEvent;
+                            break;
+                        case "holiday":
+                            type = Category.CategoryType.Holiday;
+                            break;
+                        case "availability":
+                            type = Category.CategoryType.Availability;
+                            break;
+                        default:
+                            type = Category.CategoryType.Event;
+                            break;
+                    }
+                    this.Add(new Category(int.Parse(id), desc, type));
+                }
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception("ReadXMLFile: Reading XML " + e.Message);
-        //    }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("ReadXMLFile: Reading XML " + e.Message);
+            }
 
-        //}
+        }
 
 
         // ====================================================================
@@ -389,40 +428,40 @@ namespace Calendar
         /// Writes all categories in the list to an XML file
         /// </summary>
         /// <param name="filepath">The file path to write to</param>
-        //private void _WriteXMLFile(String filepath)
-        //{
-        //    try
-        //    {
-        //        // create top level element of categories
-        //        XmlDocument doc = new XmlDocument();
-        //        doc.LoadXml("<Categories></Categories>");
+        private void _WriteXMLFile(String filepath)
+        {
+            try
+            {
+                // create top level element of categories
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml("<Categories></Categories>");
 
-        //        // foreach Category, create an new xml element
-        //        foreach (Category cat in _Categories)
-        //        {
-        //            XmlElement ele = doc.CreateElement("Category");
-        //            XmlAttribute attr = doc.CreateAttribute("ID");
-        //            attr.Value = cat.Id.ToString();
-        //            ele.SetAttributeNode(attr);
-        //            XmlAttribute type = doc.CreateAttribute("type");
-        //            type.Value = cat.Type.ToString();
-        //            ele.SetAttributeNode(type);
+                // foreach Category, create an new xml element
+                foreach (Category cat in _Categories)
+                {
+                    XmlElement ele = doc.CreateElement("Category");
+                    XmlAttribute attr = doc.CreateAttribute("ID");
+                    attr.Value = cat.Id.ToString();
+                    ele.SetAttributeNode(attr);
+                    XmlAttribute type = doc.CreateAttribute("type");
+                    type.Value = cat.Type.ToString();
+                    ele.SetAttributeNode(type);
 
-        //            XmlText text = doc.CreateTextNode(cat.Description);
-        //            doc.DocumentElement.AppendChild(ele);
-        //            doc.DocumentElement.LastChild.AppendChild(text);
+                    XmlText text = doc.CreateTextNode(cat.Description);
+                    doc.DocumentElement.AppendChild(ele);
+                    doc.DocumentElement.LastChild.AppendChild(text);
 
-        //        }
+                }
 
-        //        // write the xml to FilePath
-        //        doc.Save(filepath);
+                // write the xml to FilePath
+                doc.Save(filepath);
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
-        //    }
-        //}
+            }
+            catch (Exception e)
+            {
+                throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
+            }
+        }
 
     }
 }

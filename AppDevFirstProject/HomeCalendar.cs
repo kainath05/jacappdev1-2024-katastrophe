@@ -94,33 +94,6 @@ namespace Calendar
         /// </value>
         public Events events { get { return _events; } }
 
-        // -------------------------------------------------------------------
-        // Constructor (new... default categories, no events)
-        // -------------------------------------------------------------------
-
-        /// <summary>
-        /// initializes a HomeCalendar object with categories and events attributes
-        /// </summary>
-        public HomeCalendar()
-        {
-            _categories = new Categories();
-            _events = new Events();
-        }
-
-        // -------------------------------------------------------------------
-        // Constructor (existing calendar ... must specify file)
-        // -------------------------------------------------------------------
-
-        /// <summary>
-        /// initializes a HomeCalendar object with categories and events attributes when we have the calendar filename as a param
-        /// </summary>
-        /// <param name="calendarFileName"></param>
-        public HomeCalendar(String calendarFileName)
-        {
-            _categories = new Categories();
-            _events = new Events();
-            ReadFromFile(calendarFileName);
-        }
 
         public HomeCalendar(String databaseFile, String eventsXMLFile, bool newDB = false)
         {
@@ -138,7 +111,7 @@ namespace Calendar
             }
 
             // create the category object
-            //_categories = new Categories(Database.dbConnection, newDB);
+            _categories = new Categories(Database.dbConnection, newDB);
 
             // create the _events course
             _events = new Events();
