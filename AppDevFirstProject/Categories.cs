@@ -359,7 +359,7 @@ namespace Calendar
                         int id = Convert.ToInt32(reader["Id"]);
                         string description = Convert.ToString(reader["Description"]);
                         //int typeId = Convert.ToInt32(reader["TypeId"]);
-                        Category.CategoryType type = (Category.CategoryType)Enum.Parse(typeof(Category.CategoryType), Convert.ToString(reader["TypeId"]));
+                        Category.CategoryType type = (Category.CategoryType)Enum.Parse(typeof(Category.CategoryType), Convert.ToString(reader["TypeId"])); //Converting the type id to enum and find the category type
                         categories.Add(new Category(id, description, type));
                     }
                 }
