@@ -74,7 +74,7 @@ namespace Calendar
         DurationInMinutes INTEGER,
         StartDateTime DATETIME,
         Details TEXT,
-        FOREIGN KEY(CategoryId) REFERENCES categoryTypes(Id)
+        FOREIGN KEY(CategoryId) REFERENCES categories(Id)
     );";
 
             string createCategoriesTable = @"
@@ -88,6 +88,8 @@ namespace Calendar
             ExecuteNonQuery(createCategoryTypesTable);
             ExecuteNonQuery(createEventsTable);
             ExecuteNonQuery(createCategoriesTable);
+
+               
         }
 
         private static void ExecuteNonQuery(string sql)
