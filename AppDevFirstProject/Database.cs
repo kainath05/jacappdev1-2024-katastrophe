@@ -76,20 +76,40 @@ namespace Calendar
         // ===================================================================
         private static void CreateTables()
         {
-            // Commands to create tables and foreign keys
-            string[] commands = new string[]
-            {
-                "CREATE TABLE categoryTypes (Id INTEGER PRIMARY KEY, Description TEXT NOT NULL)",
-                "CREATE TABLE categories (Id INTEGER PRIMARY KEY, Description TEXT NOT NULL, TypeId INTEGER, FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id))",
-                "CREATE TABLE events (Id INTEGER PRIMARY KEY, CategoryId INTEGER, DurationInMinutes INTEGER, StartDateTime TEXT, Details TEXT, FOREIGN KEY(CategoryId) REFERENCES categories(Id))"
-            };
+            string createCategoryTypesTable = @"
+                CREATE TABLE IF NOT EXISTS categoryTypes (
+                    Id INTEGER PRIMARY KEY,
+                    Description TEXT NOT NULL
+                );";
 
-            foreach (var cmdText in commands)
+                        string createEventsTable = @"
+                CREATE TABLE IF NOT EXISTS events (
+                    Id INTEGER PRIMARY KEY,
+                    CategoryId INTEGER,
+                    DurationInMinutes INTEGER,
+                    StartDateTime DATETIME,
+                    Details TEXT,
+                    FOREIGN KEY(CategoryId) REFERENCES categoryTypes(Id)
+                );";
+
+                        string createCategoriesTable = @"
+                CREATE TABLE IF NOT EXISTS categories (
+                    Id INTEGER PRIMARY KEY,
+                    Name TEXT,
+                    TypeId INTEGER,
+                    FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id)
+                );";
+
+            ExecuteNonQuery(createCategoryTypesTable);
+            ExecuteNonQuery(createEventsTable);
+            ExecuteNonQuery(createCategoriesTable);
+        }
+
+        private static void ExecuteNonQuery(string sql)
+        {
+            using (var command = new SQLiteCommand(sql, _connection))
             {
-                using (var cmd = new SQLiteCommand(cmdText, _connection))
-                {
-                    cmd.ExecuteNonQuery();
-                }
+                command.ExecuteNonQuery();
             }
         }
 
