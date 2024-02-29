@@ -210,6 +210,7 @@ namespace Calendar
                 clearCommand.ExecuteNonQuery();
                 clearCommand.CommandText = "DELETE FROM categoryTypes";
                 clearCommand.ExecuteNonQuery();
+                //iterate over the enum so we dont hard code
 
                 //clearCommand.CommandText = @"INSERT INTO categoryTypes (Id, Description) VALUES (0, 'Event'), (1, 'AllDayEvent'), (2, 'Holiday'), (3, 'Availability'); ";
                 clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";

@@ -50,7 +50,7 @@ namespace Calendar
             }
 
             SQLiteConnection.CreateFile(filename); // Create new database file
-            string cs = $"Data Source={filename}; Version=3; Foreign Keys=1;"; // Enable foreign keys
+            string cs = $"Data Source={filename}; Foreign Keys=1;"; // Enable foreign keys
             _connection = new SQLiteConnection(cs);
             _connection.Open();
 
@@ -60,7 +60,7 @@ namespace Calendar
 
         private static void CreateTables()
         {
-            // Example SQL for creating a table, adjust according to your schema
+        //DROP TABLES
             string createCategoryTypesTable = @"
     CREATE TABLE IF NOT EXISTS categoryTypes (
         Id INTEGER PRIMARY KEY,
