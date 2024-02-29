@@ -60,11 +60,22 @@ namespace Calendar
 
         private static void CreateTables()
         {
-        //DROP TABLES
+
+            string dropTables = @"DROP TABLE IF EXISTS categoryTypes; DROP TABLE IF EXISTS categories; DROP TABLE IF EXISTS events;";
+
             string createCategoryTypesTable = @"
     CREATE TABLE IF NOT EXISTS categoryTypes (
         Id INTEGER PRIMARY KEY,
         Description TEXT NOT NULL
+    );";
+
+
+            string createCategoriesTable = @"
+    CREATE TABLE IF NOT EXISTS categories (
+        Id INTEGER PRIMARY KEY,
+        Description TEXT,
+        TypeId INTEGER,
+        FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id)
     );";
 
             string createEventsTable = @"
@@ -76,20 +87,10 @@ namespace Calendar
         Details TEXT,
         FOREIGN KEY(CategoryId) REFERENCES categories(Id)
     );";
-
-            string createCategoriesTable = @"
-    CREATE TABLE IF NOT EXISTS categories (
-        Id INTEGER PRIMARY KEY,
-        Description TEXT,
-        TypeId INTEGER,
-        FOREIGN KEY(TypeId) REFERENCES categoryTypes(Id)
-    );";
-
+            ExecuteNonQuery(dropTables);
             ExecuteNonQuery(createCategoryTypesTable);
-            ExecuteNonQuery(createEventsTable);
             ExecuteNonQuery(createCategoriesTable);
-
-               
+            ExecuteNonQuery(createEventsTable);
         }
 
         private static void ExecuteNonQuery(string sql)
