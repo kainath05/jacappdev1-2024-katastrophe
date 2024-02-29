@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
+using System.Data.SQLite;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -28,6 +29,8 @@ namespace Calendar
         private List<Event> _Events = new List<Event>();
         private string _FileName;
         private string _DirName;
+
+        private SQLiteConnection connection;
 
         // ====================================================================
         // Properties
@@ -163,6 +166,7 @@ namespace Calendar
         /// <param name="details">The details of the event</param>
         public void Add(DateTime date, int category, Double duration, String details)
         {
+            //TJ
             int new_id = 1;
 
             // if we already have Events, set ID to max
@@ -185,6 +189,7 @@ namespace Calendar
         /// <param name="Id">the specific index to be deleted</param>
         public void Delete(int Id)
         {
+            //TJ
             try
             {
 
@@ -209,6 +214,7 @@ namespace Calendar
         /// <returns>A new list containing copies of the events</returns>
         public List<Event> List()
         {
+            //tj
             List<Event> newList = new List<Event>();
             foreach (Event Event in _Events)
             {
