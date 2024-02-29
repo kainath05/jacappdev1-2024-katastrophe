@@ -98,6 +98,7 @@ namespace Calendar
             using (var command = new SQLiteCommand(sql, _connection))
             {
                 command.ExecuteNonQuery();
+                command.Dispose();
             }
         }
 

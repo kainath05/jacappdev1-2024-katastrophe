@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Data.SQLite;
 using System.Security.Cryptography;
+using static Calendar.Category;
 
 // ============================================================================
 // (c) Sandy Bultena 2018
@@ -210,24 +211,14 @@ namespace Calendar
                 clearCommand.ExecuteNonQuery();
                 clearCommand.CommandText = "DELETE FROM categoryTypes";
                 clearCommand.ExecuteNonQuery();
-                //iterate over the enum so we dont hard code
 
-                //clearCommand.CommandText = @"INSERT INTO categoryTypes (Id, Description) VALUES (0, 'Event'), (1, 'AllDayEvent'), (2, 'Holiday'), (3, 'Availability'); ";
-                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
-                clearCommand.Parameters.AddWithValue("@desc", "Event");
-                clearCommand.ExecuteNonQuery();
-
-                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
-                clearCommand.Parameters.AddWithValue("@desc", "AllDayEvent");
-                clearCommand.ExecuteNonQuery();
-
-                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
-                clearCommand.Parameters.AddWithValue("@desc", "Holiday");
-                clearCommand.ExecuteNonQuery();
-
-                clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
-                clearCommand.Parameters.AddWithValue("@desc", "Availability");
-                clearCommand.ExecuteNonQuery();
+                foreach (CategoryType categoryType in Enum.GetValues(typeof(CategoryType)))
+                {
+                    // Prepare the SQL command for inserting into the categoryTypes table
+                    clearCommand.CommandText = @"INSERT INTO categoryTypes(Description) VALUES (@desc)";
+                    clearCommand.Parameters.AddWithValue("@desc", categoryType.ToString());
+                    clearCommand.ExecuteNonQuery();
+                }
             }
 
 
