@@ -285,26 +285,40 @@ namespace Calendar
         /// <param name="id">The id of the category to be deleted</param>
         public void Delete(int id)
         {
-            using (var transaction = connection.BeginTransaction())
+            bool eventDeleted = false;
+            bool categoryDeleted = false;
+
+            var deleteEventsCommandText = "DELETE FROM events WHERE CategoryId = @Id";
+            var deleteCategoryCommandText = "DELETE FROM categories WHERE Id = @Id";
+
+            // Delete referencing rows from events
+            using (var cmd = new SQLiteCommand(deleteEventsCommandText, connection))
             {
-                var deleteEventsCommandText = "DELETE FROM events WHERE CategoryId = @Id";
-                var deleteCategoryCommandText = "DELETE FROM categories WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+                int rowsAffected = cmd.ExecuteNonQuery();
 
-                // Delete referencing rows from events
-                using (var cmd = new SQLiteCommand(deleteEventsCommandText, connection))
+                // Check if any rows were affected
+                if (rowsAffected > 0)
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
-                    cmd.ExecuteNonQuery();
+                    eventDeleted = true;
                 }
+            }
+            using (var cmd = new SQLiteCommand(deleteCategoryCommandText, connection))
+            {
+                cmd.Parameters.AddWithValue("@Id", id);
+                int rowsAffected = cmd.ExecuteNonQuery();
 
-                // Delete the category
-                using (var cmd = new SQLiteCommand(deleteCategoryCommandText, connection))
+                // Check if any rows were affected
+                if (rowsAffected > 0)
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
-                    cmd.ExecuteNonQuery();
+                    categoryDeleted = true;
                 }
+            }
 
-                transaction.Commit();
+            // Check if either the event or category was deleted
+            if (!eventDeleted && !categoryDeleted)
+            {
+                throw new Exception($"ID {id} not found.");
             }
         }
 

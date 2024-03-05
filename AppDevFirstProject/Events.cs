@@ -166,19 +166,74 @@ namespace Calendar
         /// <param name="details">The details of the event</param>
         public void Add(DateTime date, int category, Double duration, String details)
         {
-            //TJ
-            int new_id = 1;
-
-            // if we already have Events, set ID to max
-            if (_Events.Count > 0)
+            using (var cmd = new SQLiteCommand(connection))
             {
-                new_id = (from e in _Events select e.Id).Max();
-                new_id++;
+                cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
+                cmd.Parameters.AddWithValue("@CategoryId", category);
+                cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
+                cmd.Parameters.AddWithValue("@StartDateTime", date);
+                cmd.Parameters.AddWithValue("@Details", details);
             }
-
-            _Events.Add(new Event(new_id, date, category, duration, details));
-
         }
+
+        //public Event GetEventFromId(int i) //MADE IT KAINATH
+        //{
+        //    Event evt = null;
+        //    int categoryId = GetCategoryIdFromEventId(i);
+        //    string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events WHERE Id = @Id";
+        //    using (SQLiteCommand cmd = new SQLiteCommand(query, connection))
+        //    {
+        //        cmd.Parameters.AddWithValue("@Id", i);
+        //        using (SQLiteDataReader reader = cmd.ExecuteReader())
+        //        {
+        //            if (reader.Read())
+        //            {
+        //                int id = Convert.ToInt32(reader["Id"]);
+        //                double duration = Convert.ToDouble(reader["DurationInMinutes"]);
+        //                DateTime startDateTime = Convert.ToDateTime(reader["StartDateTime"]);
+        //                string details = Convert.ToString(reader["Details"]);
+
+        //                evt = new Event(id, startDateTime, categoryId, duration, details);
+        //            }
+        //        }
+
+        //    }
+
+        //    if (evt == null)
+        //    {
+        //        throw new Exception();
+        //    }
+
+        //    return evt;
+        //}
+
+        //public int GetCategoryIdFromEventId(int eventId) //ALSO MADE
+        //{
+        //    int categoryId = -1; //DEFAULT
+
+        //    string query = "SELECT CategoryId FROM events WHERE Id = @Id";
+
+        //    using (SQLiteCommand cmd = new SQLiteCommand(query, connection))
+        //    {
+        //        cmd.Parameters.AddWithValue("@Id", eventId);
+
+        //        using (SQLiteDataReader reader = cmd.ExecuteReader())
+        //        {
+        //            if (reader.Read())
+        //            {
+        //                categoryId = Convert.ToInt32(reader["CategoryId"]);
+        //            }
+        //        }
+        //    }
+
+        //    if (categoryId == -1)
+        //    {
+        //        throw new Exception("Event not found for the specified ID.");
+        //    }
+
+        //    return categoryId;
+        //}
+
 
         // ====================================================================
         // Delete Event
@@ -189,17 +244,24 @@ namespace Calendar
         /// <param name="Id">the specific index to be deleted</param>
         public void Delete(int Id)
         {
-            //TJ
-            try
+            bool eventDeleted = false;
+            var delete = "DELETE FROM events WHERE Id = @Id";
+            using (var cmd = new SQLiteCommand(delete, connection))
             {
+                cmd.Parameters.AddWithValue("@Id", Id);
+                int rowsAffected = cmd.ExecuteNonQuery();
 
-            int i = _Events.FindIndex(x => x.Id == Id);
-            _Events.RemoveAt(i);
-            }catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                // Check if any rows were affected
+                if (rowsAffected > 0)
+                {
+                    eventDeleted = true;
+                }
             }
 
+            if (!eventDeleted)
+            {
+                throw new Exception($"ID {Id} not found") ;
+            }
         }
 
         // ====================================================================
@@ -212,15 +274,28 @@ namespace Calendar
         /// Returns a new copy of the list of events, preventing modification of the original list
         /// </summary>
         /// <returns>A new list containing copies of the events</returns>
-        public List<Event> List()
+        public List<Event> List() //CHANGED
         {
-            //tj
-            List<Event> newList = new List<Event>();
-            foreach (Event Event in _Events)
+            var events = new List<Event>();
+            string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events ORDER BY Id";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                newList.Add(new Event(Event));
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = Convert.ToInt32(reader["Id"]);
+                        int categoryId = Convert.ToInt32(reader["CategoryId"]);
+                        double duration = Convert.ToDouble(reader["DurationInMinutes"]);
+                        DateTime startDateTime = Convert.ToDateTime(reader["StartDateTime"]);
+                        string details = Convert.ToString(reader["Details"]);
+
+                        events.Add(new Event(id, startDateTime, categoryId, duration, details));
+                    }
+                }
             }
-            return newList;
+
+            return events;
         }
 
 
