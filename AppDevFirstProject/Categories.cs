@@ -21,7 +21,7 @@ namespace Calendar
     //        - etc
     // ====================================================================
     /// <summary>
-    ///Categories class represents a collection of category items, providing functionality to read/write to a database
+    /// Categories class represents a collection of category items, providing functionality to read/write to a database
     /// </summary>
     public class Categories
     {
