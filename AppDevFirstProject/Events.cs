@@ -26,10 +26,10 @@ namespace Calendar
     public class Events
     {
 
-
+        /// <summary>
+        /// A property which initializes a connection to the database
+        /// </summary>
         private SQLiteConnection connection;
-
-
 
         // ====================================================================
         // Add Event

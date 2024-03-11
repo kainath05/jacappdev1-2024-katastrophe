@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace Calendar
 {
-    //DELETE MAYBE
-
     // ====================================================================
     // CLASS: CalendarItem
     //        A single calendar item, includes a Category and an Event
