@@ -25,10 +25,6 @@ namespace Calendar
     /// </summary>
     public class Categories
     {
-        private static String DefaultFileName = "calendarCategories.txt";
-        private List<Category> _Categories = new List<Category>();
-        private string? _FileName;
-        private string? _DirName;
         private SQLiteConnection connection;
 
 
