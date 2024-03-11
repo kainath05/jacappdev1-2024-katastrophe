@@ -27,27 +27,6 @@ namespace Calendar
     {
         private SQLiteConnection connection;
 
-
-        // ====================================================================
-        // Properties
-        // ====================================================================
-
-        /// <summary>
-        /// gets the file name associated with the categories
-        /// </summary>
-        /// <value>
-        /// Name of file
-        /// </value>
-        public String? FileName { get { return _FileName; } }
-
-        /// <summary>
-        /// Gets the directory name associated with the categories
-        /// </summary>
-        /// <value>
-        /// Directory name of file
-        /// </value>
-        public String? DirName { get { return _DirName; } }
-
         // ====================================================================
         // Constructor
         // ====================================================================
