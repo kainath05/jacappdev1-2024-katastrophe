@@ -73,7 +73,7 @@ namespace Calendar
                         int id = Convert.ToInt32(reader["Id"]);
                         string description = Convert.ToString(reader["Description"]);
                         int typeId = Convert.ToInt32(reader["TypeId"]);
-                        Category.CategoryType type = (Category.CategoryType)typeId; 
+                        Category.CategoryType type = (Category.CategoryType)typeId;
                         category = new Category(id, description, type);
                     }
                 }
@@ -85,42 +85,6 @@ namespace Calendar
             }
 
             return category;
-        }
-
-        // ====================================================================
-        // populate categories from a file
-        // if filepath is not specified, read/save in AppData file
-        // Throws System.IO.FileNotFoundException if file does not exist
-        // Throws System.Exception if cannot read the file correctly (parsing XML)
-        // ====================================================================
-
-        /// <summary>
-        /// Populates categories from a file. If filepath is not specified, read/save in AppData file.
-        /// </summary>
-        /// <param name="filepath">The file path to read from</param>
-        public void ReadFromFile(String? filepath = null)
-        {
-
-            // ---------------------------------------------------------------
-            // reading from file resets all the current categories,
-            // ---------------------------------------------------------------
-            _Categories.Clear();
-
-            // ---------------------------------------------------------------
-            // reset default dir/filename to null 
-            // ... filepath may not be valid, 
-            // ---------------------------------------------------------------
-            _DirName = null;
-            _FileName = null;
-
-            // ---------------------------------------------------------------
-            // get filepath name (throws exception if it doesn't exist)
-            // ---------------------------------------------------------------
-            filepath = CalendarFiles.VerifyReadFromFileName(filepath, DefaultFileName);
-
-
-            _DirName = Path.GetDirectoryName(filepath);
-            _FileName = Path.GetFileName(filepath);
         }
 
         // ====================================================================
