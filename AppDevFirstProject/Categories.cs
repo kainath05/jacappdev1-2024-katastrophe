@@ -143,10 +143,7 @@ namespace Calendar
             // ---------------------------------------------------------------
             filepath = CalendarFiles.VerifyReadFromFileName(filepath, DefaultFileName);
 
-            // ---------------------------------------------------------------
-            // If file exists, read it
-            // ---------------------------------------------------------------
-            _ReadXMLFile(filepath);
+
             _DirName = Path.GetDirectoryName(filepath);
             _FileName = Path.GetFileName(filepath);
         }
@@ -369,74 +366,7 @@ namespace Calendar
         }
 
 
-        // ====================================================================
-        // read from an XML file and add categories to our categories list
-        // ====================================================================
 
-        /// <summary>
-        /// Reads categories from an XML file and adds them to the categories list
-        /// </summary>
-        /// <param name="filepath">The file path to read from.</param>
-        /// <exception cref="Exception">Exception thrown if there is an error trying to read the XML file</exception>
-        private void _ReadXMLFile(String filepath)
-        {
-
-            // ---------------------------------------------------------------
-            // read the categories from the xml file, and add to this instance
-            // ---------------------------------------------------------------
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(filepath);
-
-                foreach (XmlNode category in doc.DocumentElement.ChildNodes)
-                {
-                    String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
-                    String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
-                    String desc = ((XmlElement)category).InnerText;
-
-                    Category.CategoryType type;
-                    switch (typestring.ToLower())
-                    {
-                        case "event":
-                            type = Category.CategoryType.Event;
-                            break;
-                        case "alldayevent":
-                            type = Category.CategoryType.AllDayEvent;
-                            break;
-                        case "holiday":
-                            type = Category.CategoryType.Holiday;
-                            break;
-                        case "availability":
-                            type = Category.CategoryType.Availability;
-                            break;
-                        default:
-                            type = Category.CategoryType.Event;
-                            break;
-                    }
-                    this.Add(new Category(int.Parse(id), desc, type));
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ReadXMLFile: Reading XML " + e.Message);
-            }
-
-        }
-
-
-        // ====================================================================
-        // write all categories in our list to XML file
-        // ====================================================================
-
-        /// <summary>
-        /// Writes all categories in the list to an XML file
-        /// </summary>
-        /// <param name="filepath">The file path to write to</param>
-        /// <exception cref="Exception">Exception thrown if there is an error trying to write to the XML file</exception>
-        
-        
 
     }
 }
