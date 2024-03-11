@@ -223,7 +223,7 @@ namespace Calendar
         /// </summary>
         /// <param name="id">The id of the category to be updated</param>
         /// <param name="newDescr">the new description to be added to the category</param>
-        /// <param name="type">The type of category to be changed</param>
+        /// <param name="type">The type of category to be changed, defaulted to Event category type.</param>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
