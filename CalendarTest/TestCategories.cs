@@ -153,7 +153,7 @@ namespace CalendarCodeTests
         // ========================================================================
 
         [Fact]
-        public void CategoriesMethod_Delete_InvalidIDDoesntCrash()
+        public void CategoriesMethod_Delete_InvalidIDDoesntCrash() //IT SHOULD CRASH NOW if invalid id
         {
             // Arrange
             // Arrange
@@ -171,13 +171,16 @@ namespace CalendarCodeTests
             try
             {
                 categories.Delete(IdToDelete);
-                Assert.Equal(sizeOfList, categories.List().Count);
+                Assert.True(false, "Invalid ID should have caused an exception."); //NEW
             }
 
             // Assert
-            catch
+            catch (Exception ex) 
             {
-                Assert.True(false, "Invalid ID causes Delete to break");
+                Assert.Equal(sizeOfList, categories.List().Count);// moved down here instead of the try
+                Assert.Contains($"ID {IdToDelete} not found.", ex.Message); //new
+
+                //Assert.True(false, "Invalid ID causes Delete to break");
             }
         }
 
