@@ -54,6 +54,17 @@ namespace Calendar
         /// <summary>
         /// Gets a specific category from the id associated to it
         /// </summary>
+        /// try
+        /// {
+        ///     int categoryId = 1; // Assuming you want to get the category with ID 1
+        ///     Category category = categories.GetCategoryFromId(categoryId);
+        ///
+        ///     Console.WriteLine($"Category Found: ID = {category.Id}, Description = {category.Description}, Type = {category.Type}");
+        /// }
+        /// catch (Exception ex)
+        /// {
+        ///     Console.WriteLine("Error retrieving category: " + ex.Message);
+        /// }
         /// <param name="i">The id of the category to retrieve</param>
         /// <returns>The category with the specified id</returns>
         /// <exception cref="Exception">Thrown if the category is equal to null</exception>
