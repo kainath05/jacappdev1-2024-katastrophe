@@ -28,8 +28,8 @@ namespace Calendar
 
     public class HomeCalendar
     {
-        private string? _FileName;
-        private string? _DirName;
+        //private string? _FileName;
+        //private string? _DirName;
         private Categories _categories;
         private Events _events;
 
@@ -45,7 +45,7 @@ namespace Calendar
         /// <value>
         /// Name of the file
         /// </value>
-        public String? FileName { get { return _FileName; } }
+        //public String? FileName { get { return _FileName; } }
 
         /// <summary>
         /// Gets the directoory name of where our calndar file is stored
@@ -53,7 +53,7 @@ namespace Calendar
         /// <value>
         /// Directory name of the file
         /// </value>
-        public String? DirName { get { return _DirName; } }
+        //public String? DirName { get { return _DirName; } }
 
         /// <summary>
         /// Path to find the calendar file
@@ -61,20 +61,20 @@ namespace Calendar
         /// <value>
         /// Path of the file
         /// </value>
-        public String? PathName
-        {
-            get
-            {
-                if (_FileName != null && _DirName != null)
-                {
-                    return Path.GetFullPath(_DirName + "\\" + _FileName);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+        //public String? PathName
+        //{
+        //    get
+        //    {
+        //        if (_FileName != null && _DirName != null)
+        //        {
+        //            return Path.GetFullPath(_DirName + "\\" + _FileName);
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //}
 
         // Properties (categories and events object)
 
@@ -134,10 +134,10 @@ namespace Calendar
 
             // create the _events course
             _events = new Events();
-            _events.ReadFromFile(eventsXMLFile);
+            //_events.ReadFromFile(eventsXMLFile);
         }
 
-
+       
         #region OpenNewAndSave
         // ---------------------------------------------------------------
         // Read
@@ -166,15 +166,15 @@ namespace Calendar
                 // Save information about the calendar file
                 // ----------------------------------------------------------------
                 string? folder = Path.GetDirectoryName(calendarFileName);
-                _FileName = Path.GetFileName(calendarFileName);
+                //_FileName = Path.GetFileName(calendarFileName);
 
                 // read the events and categories from their respective files
-                _categories.ReadFromFile(folder + "\\" + filenames[0]);
-                _events.ReadFromFile(folder + "\\" + filenames[1]);
+                //_categories.ReadFromFile(folder + "\\" + filenames[0]);
+                //_events.ReadFromFile(folder + "\\" + filenames[1]);
 
                 // Save information about calendar file
-                _DirName = Path.GetDirectoryName(calendarFileName);
-                _FileName = Path.GetFileName(calendarFileName);
+                //_DirName = Path.GetDirectoryName(calendarFileName);
+                //_FileName = Path.GetFileName(calendarFileName);
 
             }
 
@@ -207,8 +207,8 @@ namespace Calendar
             // ---------------------------------------------------------------
             // just in case filepath doesn't exist, reset path info
             // ---------------------------------------------------------------
-            _DirName = null;
-            _FileName = null;
+            //_DirName = null;
+            //_FileName = null;
 
             // ---------------------------------------------------------------
             // get filepath name (throws exception if we can't write to the file)
@@ -222,26 +222,26 @@ namespace Calendar
             // ---------------------------------------------------------------
             // construct file names for events and categories
             // ---------------------------------------------------------------
-            String eventpath = path + "\\" + file + "_events" + ".evts";
-            String categorypath = path + "\\" + file + "_categories" + ".cats";
+            //String eventpath = path + "\\" + file + "_events" + ".evts";
+            //String categorypath = path + "\\" + file + "_categories" + ".cats";
 
             // ---------------------------------------------------------------
             // save the events and categories into their own files
             // ---------------------------------------------------------------
-            _events.SaveToFile(eventpath);
-            _categories.SaveToFile(categorypath);
+            //_events.SaveToFile(eventpath);
+            //_categories.SaveToFile(categorypath);
 
             // ---------------------------------------------------------------
             // save filenames of events and categories to calendar file
             // ---------------------------------------------------------------
-            string[] files = { Path.GetFileName(categorypath), Path.GetFileName(eventpath) };
-            System.IO.File.WriteAllLines(filepath, files);
+            //string[] files = { Path.GetFileName(categorypath), Path.GetFileName(eventpath) };
+            //System.IO.File.WriteAllLines(filepath, files);
 
             // ----------------------------------------------------------------
             // save filename info for later use
             // ----------------------------------------------------------------
-            _DirName = path;
-            _FileName = Path.GetFileName(filepath);
+            //_DirName = path;
+            //_FileName = Path.GetFileName(filepath);
         }
         #endregion OpenNewAndSave
 

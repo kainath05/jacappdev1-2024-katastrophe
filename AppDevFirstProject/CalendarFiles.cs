@@ -12,6 +12,7 @@ using System.IO;
 
 namespace Calendar
 {
+    ///DELETE MAYBE
     
     /// <summary>
     /// CalendarFiles class is used to manage the files used in the Calendar project
