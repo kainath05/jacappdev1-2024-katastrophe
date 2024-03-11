@@ -17,7 +17,7 @@ namespace Calendar
     // ====================================================================
     // CLASS: categories
     //        - A collection of category items,
-    //        - Read / write to file
+    //        - Read/Write to Database.
     //        - etc
     // ====================================================================
     /// <summary>
