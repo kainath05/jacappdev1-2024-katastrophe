@@ -181,11 +181,6 @@ namespace Calendar
             // ---------------------------------------------------------------
             filepath = CalendarFiles.VerifyWriteToFileName(filepath, DefaultFileName);
 
-            // ---------------------------------------------------------------
-            // save as XML
-            // ---------------------------------------------------------------
-            _WriteXMLFile(filepath);
-
             // ----------------------------------------------------------------
             // save filename info for later use
             // ----------------------------------------------------------------
@@ -440,40 +435,8 @@ namespace Calendar
         /// </summary>
         /// <param name="filepath">The file path to write to</param>
         /// <exception cref="Exception">Exception thrown if there is an error trying to write to the XML file</exception>
-        private void _WriteXMLFile(String filepath)
-        {
-            try
-            {
-                // create top level element of categories
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml("<Categories></Categories>");
-
-                // foreach Category, create an new xml element
-                foreach (Category cat in _Categories)
-                {
-                    XmlElement ele = doc.CreateElement("Category");
-                    XmlAttribute attr = doc.CreateAttribute("ID");
-                    attr.Value = cat.Id.ToString();
-                    ele.SetAttributeNode(attr);
-                    XmlAttribute type = doc.CreateAttribute("type");
-                    type.Value = cat.Type.ToString();
-                    ele.SetAttributeNode(type);
-
-                    XmlText text = doc.CreateTextNode(cat.Description);
-                    doc.DocumentElement.AppendChild(ele);
-                    doc.DocumentElement.LastChild.AppendChild(text);
-
-                }
-
-                // write the xml to FilePath
-                doc.Save(filepath);
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
-            }
-        }
+        
+        
 
     }
 }
