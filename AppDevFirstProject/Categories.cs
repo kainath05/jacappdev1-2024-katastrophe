@@ -17,40 +17,15 @@ namespace Calendar
     // ====================================================================
     // CLASS: categories
     //        - A collection of category items,
-    //        - Read / write to file
+    //        - Read/Write to Database.
     //        - etc
     // ====================================================================
     /// <summary>
-    ///Categories class represents a collection of category items, providing functionality to read/write to a database
+    /// Categories class represents a collection of category items, providing functionality to read/write to a database
     /// </summary>
     public class Categories
     {
-        private static String DefaultFileName = "calendarCategories.txt";
-        private List<Category> _Categories = new List<Category>();
-        private string? _FileName;
-        private string? _DirName;
         private SQLiteConnection connection;
-
-
-        // ====================================================================
-        // Properties
-        // ====================================================================
-
-        /// <summary>
-        /// gets the file name associated with the categories
-        /// </summary>
-        /// <value>
-        /// Name of file
-        /// </value>
-        public String? FileName { get { return _FileName; } }
-
-        /// <summary>
-        /// Gets the directory name associated with the categories
-        /// </summary>
-        /// <value>
-        /// Directory name of file
-        /// </value>
-        public String? DirName { get { return _DirName; } }
 
         // ====================================================================
         // Constructor
@@ -98,7 +73,7 @@ namespace Calendar
                         int id = Convert.ToInt32(reader["Id"]);
                         string description = Convert.ToString(reader["Description"]);
                         int typeId = Convert.ToInt32(reader["TypeId"]);
-                        Category.CategoryType type = (Category.CategoryType)typeId; 
+                        Category.CategoryType type = (Category.CategoryType)typeId;
                         category = new Category(id, description, type);
                     }
                 }
@@ -112,86 +87,7 @@ namespace Calendar
             return category;
         }
 
-        // ====================================================================
-        // populate categories from a file
-        // if filepath is not specified, read/save in AppData file
-        // Throws System.IO.FileNotFoundException if file does not exist
-        // Throws System.Exception if cannot read the file correctly (parsing XML)
-        // ====================================================================
-
-        /// <summary>
-        /// Populates categories from a file. If filepath is not specified, read/save in AppData file.
-        /// </summary>
-        /// <param name="filepath">The file path to read from</param>
-        public void ReadFromFile(String? filepath = null)
-        {
-
-            // ---------------------------------------------------------------
-            // reading from file resets all the current categories,
-            // ---------------------------------------------------------------
-            _Categories.Clear();
-
-            // ---------------------------------------------------------------
-            // reset default dir/filename to null 
-            // ... filepath may not be valid, 
-            // ---------------------------------------------------------------
-            _DirName = null;
-            _FileName = null;
-
-            // ---------------------------------------------------------------
-            // get filepath name (throws exception if it doesn't exist)
-            // ---------------------------------------------------------------
-            filepath = CalendarFiles.VerifyReadFromFileName(filepath, DefaultFileName);
-
-            // ---------------------------------------------------------------
-            // If file exists, read it
-            // ---------------------------------------------------------------
-            _ReadXMLFile(filepath);
-            _DirName = Path.GetDirectoryName(filepath);
-            _FileName = Path.GetFileName(filepath);
-        }
-
-        // ====================================================================
-        // save to a file
-        // if filepath is not specified, read/save in AppData file
-        // ====================================================================
-
-        /// <summary>
-        /// Saves categories to a file. If filepath is not specified, read/save in AppData file.
-        /// </summary>
-        /// <param name="filepath">The file path to save to</param>
-        public void SaveToFile(String? filepath = null)
-        {
-            // ---------------------------------------------------------------
-            // if file path not specified, set to last read file
-            // ---------------------------------------------------------------
-            if (filepath == null && DirName != null && FileName != null)
-            {
-                filepath = DirName + "\\" + FileName;
-            }
-
-            // ---------------------------------------------------------------
-            // just in case filepath doesn't exist, reset path info
-            // ---------------------------------------------------------------
-            _DirName = null;
-            _FileName = null;
-
-            // ---------------------------------------------------------------
-            // get filepath name (throws exception if it doesn't exist)
-            // ---------------------------------------------------------------
-            filepath = CalendarFiles.VerifyWriteToFileName(filepath, DefaultFileName);
-
-            // ---------------------------------------------------------------
-            // save as XML
-            // ---------------------------------------------------------------
-            _WriteXMLFile(filepath);
-
-            // ----------------------------------------------------------------
-            // save filename info for later use
-            // ----------------------------------------------------------------
-            _DirName = Path.GetDirectoryName(filepath);
-            _FileName = Path.GetFileName(filepath);
-        }
+        
 
         // ====================================================================
         // set categories to default
@@ -327,7 +223,7 @@ namespace Calendar
         /// </summary>
         /// <param name="id">The id of the category to be updated</param>
         /// <param name="newDescr">the new description to be added to the category</param>
-        /// <param name="type">The type of category to be changed</param>
+        /// <param name="type">The type of category to be changed, defaulted to Event category type.</param>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -374,106 +270,7 @@ namespace Calendar
         }
 
 
-        // ====================================================================
-        // read from an XML file and add categories to our categories list
-        // ====================================================================
 
-        /// <summary>
-        /// Reads categories from an XML file and adds them to the categories list
-        /// </summary>
-        /// <param name="filepath">The file path to read from.</param>
-        /// <exception cref="Exception">Exception thrown if there is an error trying to read the XML file</exception>
-        private void _ReadXMLFile(String filepath)
-        {
-
-            // ---------------------------------------------------------------
-            // read the categories from the xml file, and add to this instance
-            // ---------------------------------------------------------------
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(filepath);
-
-                foreach (XmlNode category in doc.DocumentElement.ChildNodes)
-                {
-                    String id = (((XmlElement)category).GetAttributeNode("ID")).InnerText;
-                    String typestring = (((XmlElement)category).GetAttributeNode("type")).InnerText;
-                    String desc = ((XmlElement)category).InnerText;
-
-                    Category.CategoryType type;
-                    switch (typestring.ToLower())
-                    {
-                        case "event":
-                            type = Category.CategoryType.Event;
-                            break;
-                        case "alldayevent":
-                            type = Category.CategoryType.AllDayEvent;
-                            break;
-                        case "holiday":
-                            type = Category.CategoryType.Holiday;
-                            break;
-                        case "availability":
-                            type = Category.CategoryType.Availability;
-                            break;
-                        default:
-                            type = Category.CategoryType.Event;
-                            break;
-                    }
-                    this.Add(new Category(int.Parse(id), desc, type));
-                }
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ReadXMLFile: Reading XML " + e.Message);
-            }
-
-        }
-
-
-        // ====================================================================
-        // write all categories in our list to XML file
-        // ====================================================================
-
-        /// <summary>
-        /// Writes all categories in the list to an XML file
-        /// </summary>
-        /// <param name="filepath">The file path to write to</param>
-        /// <exception cref="Exception">Exception thrown if there is an error trying to write to the XML file</exception>
-        private void _WriteXMLFile(String filepath)
-        {
-            try
-            {
-                // create top level element of categories
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml("<Categories></Categories>");
-
-                // foreach Category, create an new xml element
-                foreach (Category cat in _Categories)
-                {
-                    XmlElement ele = doc.CreateElement("Category");
-                    XmlAttribute attr = doc.CreateAttribute("ID");
-                    attr.Value = cat.Id.ToString();
-                    ele.SetAttributeNode(attr);
-                    XmlAttribute type = doc.CreateAttribute("type");
-                    type.Value = cat.Type.ToString();
-                    ele.SetAttributeNode(type);
-
-                    XmlText text = doc.CreateTextNode(cat.Description);
-                    doc.DocumentElement.AppendChild(ele);
-                    doc.DocumentElement.LastChild.AppendChild(text);
-
-                }
-
-                // write the xml to FilePath
-                doc.Save(filepath);
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("_WriteXMLFile: Reading XML " + e.Message);
-            }
-        }
 
     }
 }
