@@ -127,18 +127,20 @@ namespace Calendar
 
             return events;
         }
+        public void UpdateProperties(int id, DateTime StartDateTime, Double DurationInMinutes, String Details, int Category) // What is Date property?
+        {
+            using (var cmd = new SQLiteCommand(connection))
+            {
+                cmd.CommandText = "UPDATE events SET StartDateTime = @StartDateTime, DurationInMinutes = @DurationInMinutes, Details = @Details, Category = @Category WHERE Id = @Id";
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@StartDateTime", StartDateTime);
+                cmd.Parameters.AddWithValue("@DurationInMinutes", DurationInMinutes);
+                cmd.Parameters.AddWithValue("@Details", Details);
+                cmd.Parameters.AddWithValue("@Category", Category);
+                cmd.ExecuteNonQuery();
+            }
+        }
 
-        //public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
-        //{
-        //    using (var cmd = new SQLiteCommand(connection))
-        //    {
-        //        cmd.CommandText = "UPDATE Categories SET Description = @Description, TypeId = @TypeId WHERE Id = @Id";
-        //        cmd.Parameters.AddWithValue("@Id", id);
-        //        cmd.Parameters.AddWithValue("@Description", newDescr);
-        //        cmd.Parameters.AddWithValue("@TypeId", (int)type);
-        //        cmd.ExecuteNonQuery();
-        //    }
-        //}
 
 
 
