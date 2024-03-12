@@ -233,7 +233,6 @@ namespace Calendar
         /// }
         /// </code>
         /// </example>
-
         public void Delete(int id)
         {
             bool eventDeleted = false;
@@ -279,6 +278,18 @@ namespace Calendar
         /// <param name="id">The id of the category to be updated</param>
         /// <param name="newDescr">the new description to be added to the category</param>
         /// <param name="type">The type of category to be changed, defaulted to Event category type.</param>
+        /// <example>
+        /// <code>
+        /// int categoryIdToUpdate = 3; // Assuming you want to update the category with ID 3
+        /// string newDescription = "Work - Updated";
+        /// Category.CategoryType newType = Category.CategoryType.Event;
+        /// 
+        /// categories.UpdateProperties(categoryIdToUpdate, newDescription, newType);
+        /// 
+        /// Console.WriteLine($"Category with ID {categoryIdToUpdate} updated. New Description: {newDescription}, New Type: {newType}");
+        /// </code>
+        /// </example>
+
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
