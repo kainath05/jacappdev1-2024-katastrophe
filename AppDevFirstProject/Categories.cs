@@ -54,6 +54,17 @@ namespace Calendar
         /// <summary>
         /// Gets a specific category from the id associated to it
         /// </summary>
+        /// try
+        /// {
+        ///     int categoryId = 1; // Assuming you want to get the category with ID 1
+        ///     Category category = categories.GetCategoryFromId(categoryId);
+        ///
+        ///     Console.WriteLine($"Category Found: ID = {category.Id}, Description = {category.Description}, Type = {category.Type}");
+        /// }
+        /// catch (Exception ex)
+        /// {
+        ///     Console.WriteLine("Error retrieving category: " + ex.Message);
+        /// }
         /// <param name="i">The id of the category to retrieve</param>
         /// <returns>The category with the specified id</returns>
         /// <exception cref="Exception">Thrown if the category is equal to null</exception>
@@ -87,7 +98,7 @@ namespace Calendar
             return category;
         }
 
-        
+
 
         // ====================================================================
         // set categories to default
@@ -96,6 +107,14 @@ namespace Calendar
         /// <summary>
         /// Sets categories to default values
         /// </summary>
+        /// <example>
+        /// <code>
+        /// // Resets categories to default values
+        /// categories.SetCategoriesToDefaults();
+        /// 
+        /// Console.WriteLine("Categories reset to default values.");
+        /// </code>
+        /// </example>
         public void SetCategoriesToDefaults()
         {
             // ---------------------------------------------------------------
@@ -140,6 +159,16 @@ namespace Calendar
         /// Adds a category
         /// </summary>
         /// <param name="category">The category to add</param>
+        /// <example>
+        /// <code>
+        /// string description = "Work";
+        /// 
+        /// // Add new category
+        /// categories.Add(description);
+        /// 
+        /// Console.WriteLine($"Added new category: {description}");
+        /// </code>
+        /// </example>
         private void Add(Category category)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -157,7 +186,17 @@ namespace Calendar
         /// </summary>
         /// <param name="desc">The description of the category</param>
         /// <param name="type">The type of the category</param>
-
+        /// <example>
+        /// <code>
+        /// string description = "Work";
+        /// Category.CategoryType type = Category.CategoryType.Event;
+        /// 
+        /// // Add new category
+        /// categories.Add(description, type);
+        /// 
+        /// Console.WriteLine($"Added new category: {description}");
+        /// </code>
+        /// </example>
         public void Add(string desc, Category.CategoryType type)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -169,7 +208,7 @@ namespace Calendar
             }
         }
 
-       
+
 
         // ====================================================================
         // Delete category
@@ -179,6 +218,21 @@ namespace Calendar
         /// Deletes a category with the specified id
         /// </summary>
         /// <param name="id">The id of the category to be deleted</param>
+        /// <example>
+        /// <code>
+        /// int categoryIdToDelete = 2; // Assuming you want to delete the category with ID 2
+        /// 
+        /// try
+        /// {
+        ///     categories.Delete(categoryIdToDelete);
+        ///     Console.WriteLine($"Category with ID {categoryIdToDelete} deleted successfully.");
+        /// }
+        /// catch (Exception ex)
+        /// {
+        ///     Console.WriteLine($"Error deleting category: {ex.Message}");
+        /// }
+        /// </code>
+        /// </example>
         public void Delete(int id)
         {
             bool eventDeleted = false;
@@ -224,6 +278,17 @@ namespace Calendar
         /// <param name="id">The id of the category to be updated</param>
         /// <param name="newDescr">the new description to be added to the category</param>
         /// <param name="type">The type of category to be changed, defaulted to Event category type.</param>
+        /// <example>
+        /// <code>
+        /// int categoryIdToUpdate = 3; // Assuming you want to update the category with ID 3
+        /// string newDescription = "Work - Updated";
+        /// Category.CategoryType newType = Category.CategoryType.Event;
+        /// 
+        /// categories.UpdateProperties(categoryIdToUpdate, newDescription, newType);
+        /// 
+        /// Console.WriteLine($"Category with ID {categoryIdToUpdate} updated. New Description: {newDescription}, New Type: {newType}");
+        /// </code>
+        /// </example>
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -246,6 +311,17 @@ namespace Calendar
         /// Returns a list of categories 
         /// </summary>
         /// <returns>A new copy of the list of categories.</returns>
+        /// <example>
+        /// <code>
+        /// List<Category> categoryList = categories.List();
+        /// 
+        /// Console.WriteLine("Categories List:");
+        /// foreach (var category in categoryList)
+        /// {
+        ///     Console.WriteLine($"ID: {category.Id}, Description: {category.Description}, Type: {category.Type}");
+        /// }
+        /// </code>
+        /// </example>
         public List<Category> List()
         {
             List<Category> categories = new List<Category>();

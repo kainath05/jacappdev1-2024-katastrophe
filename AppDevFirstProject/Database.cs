@@ -32,13 +32,29 @@ namespace Calendar
 {
     public class Database
     {
-
+        /// <summary>
+        /// Gets the current SQLite database connection.
+        /// </summary>
+        /// <value>
+        /// The SQLiteConnection object representing the open connection to the database. If no connection is open, this value will be null.
+        /// </value>
         public static SQLiteConnection dbConnection { get { return _connection; } }
         private static SQLiteConnection _connection;
 
         // ===================================================================
         // create and open a new database
         // ===================================================================
+        /// <summary>
+        /// Creates and opens a new SQLite database with the specified filename, sets up the necessary tables, and enables foreign key constraints.
+        /// </summary>
+        /// <param name="filename">The filename for the new SQLite database file. If a file with this name already exists, it will be overwritten.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// string filename = "myNewCalendarDB.sqlite";
+        /// Database.newDatabase(filename);
+        /// </code>
+        /// </example>
         public static void newDatabase(string filename)
         {
             CloseDatabaseAndReleaseFile();
@@ -58,6 +74,13 @@ namespace Calendar
             CreateTables();
         }
 
+        /// <summary>
+        /// Creates the necessary tables for the Calendar application in the SQLite database, including 'categoryTypes', 'categories', and 'events'.
+        /// Existing tables will be dropped and recreated.
+        /// </summary>
+        /// <remarks>
+        /// No code example as it's used internally and is private.
+        /// </remarks>
         private static void CreateTables()
         {
 
@@ -93,6 +116,17 @@ namespace Calendar
             ExecuteNonQuery(createEventsTable);
         }
 
+        /// <summary>
+        /// Executes a SQL command that does not return any data, such as an INSERT, UPDATE, DELETE, or DDL statement.
+        /// </summary>
+        /// <param name="sql">The SQL statement to execute.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage for executing a non-query SQL command:
+        /// string sql = "INSERT INTO categories (Description, TypeId) VALUES ('Work', 1)";
+        /// Database.ExecuteNonQuery(sql);
+        /// </code>
+        /// </example>
         private static void ExecuteNonQuery(string sql)
         {
             using (var command = new SQLiteCommand(sql, _connection))
@@ -105,6 +139,17 @@ namespace Calendar
         // ===================================================================
         // open an existing database
         // ===================================================================
+        /// <summary>
+        /// Opens an existing SQLite database using the specified filename and enables foreign key constraints.
+        /// </summary>
+        /// <param name="filename">The filename of the SQLite database to open.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// string filename = "existingCalendarDB.sqlite";
+        /// Database.existingDatabase(filename);
+        /// </code>
+        /// </example>
         public static void existingDatabase(string filename)
         {
             CloseDatabaseAndReleaseFile();
@@ -118,7 +163,15 @@ namespace Calendar
         // close existing database, wait for garbage collector to
         // release the lock before continuing
         // ===================================================================
-
+        /// <summary>
+        /// Closes the current SQLite database connection, disposes of the connection object, and ensures that the database file is no longer locked.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// Database.CloseDatabaseAndReleaseFile();
+        /// </code>
+        /// </example>
         public static void CloseDatabaseAndReleaseFile()
         {
             if (_connection != null)
