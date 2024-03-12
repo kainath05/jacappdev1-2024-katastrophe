@@ -98,7 +98,7 @@ namespace Calendar
             return category;
         }
 
-        
+
 
         // ====================================================================
         // set categories to default
@@ -107,7 +107,14 @@ namespace Calendar
         /// <summary>
         /// Sets categories to default values
         /// </summary>
+        /// <example>
+        /// <code>
+        /// // Resets categories to default values
+        /// categories.SetCategoriesToDefaults();
         /// 
+        /// Console.WriteLine("Categories reset to default values.");
+        /// </code>
+        /// </example>
         public void SetCategoriesToDefaults()
         {
             // ---------------------------------------------------------------
@@ -152,6 +159,17 @@ namespace Calendar
         /// Adds a category
         /// </summary>
         /// <param name="category">The category to add</param>
+        /// <example>
+        /// <code>
+        /// string description = "Work";
+        /// Category.CategoryType type = Category.CategoryType.Event;
+        /// 
+        /// // Add new category
+        /// categories.Add(description, type);
+        /// 
+        /// Console.WriteLine($"Added new category: {description}");
+        /// </code>
+        /// </example>
         private void Add(Category category)
         {
             using (var cmd = new SQLiteCommand(connection))
