@@ -208,7 +208,7 @@ namespace Calendar
             }
         }
 
-       
+
 
         // ====================================================================
         // Delete category
@@ -218,6 +218,22 @@ namespace Calendar
         /// Deletes a category with the specified id
         /// </summary>
         /// <param name="id">The id of the category to be deleted</param>
+        /// <example>
+        /// <code>
+        /// int categoryIdToDelete = 2; // Assuming you want to delete the category with ID 2
+        /// 
+        /// try
+        /// {
+        ///     categories.Delete(categoryIdToDelete);
+        ///     Console.WriteLine($"Category with ID {categoryIdToDelete} deleted successfully.");
+        /// }
+        /// catch (Exception ex)
+        /// {
+        ///     Console.WriteLine($"Error deleting category: {ex.Message}");
+        /// }
+        /// </code>
+        /// </example>
+
         public void Delete(int id)
         {
             bool eventDeleted = false;
