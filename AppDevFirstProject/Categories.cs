@@ -107,6 +107,7 @@ namespace Calendar
         /// <summary>
         /// Sets categories to default values
         /// </summary>
+        /// 
         public void SetCategoriesToDefaults()
         {
             // ---------------------------------------------------------------
