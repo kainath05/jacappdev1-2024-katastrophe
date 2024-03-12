@@ -159,17 +159,7 @@ namespace Calendar
         /// Adds a category
         /// </summary>
         /// <param name="category">The category to add</param>
-        /// <example>
-        /// <code>
-        /// string description = "Work";
-        /// Category.CategoryType type = Category.CategoryType.Event;
         /// 
-        /// // Add new category
-        /// categories.Add(description, type);
-        /// 
-        /// Console.WriteLine($"Added new category: {description}");
-        /// </code>
-        /// </example>
         private void Add(Category category)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -187,7 +177,17 @@ namespace Calendar
         /// </summary>
         /// <param name="desc">The description of the category</param>
         /// <param name="type">The type of the category</param>
-
+        /// <example>
+        /// <code>
+        /// string description = "Work";
+        /// Category.CategoryType type = Category.CategoryType.Event;
+        /// 
+        /// // Add new category
+        /// categories.Add(description, type);
+        /// 
+        /// Console.WriteLine($"Added new category: {description}");
+        /// </code>
+        /// </example>
         public void Add(string desc, Category.CategoryType type)
         {
             using (var cmd = new SQLiteCommand(connection))
