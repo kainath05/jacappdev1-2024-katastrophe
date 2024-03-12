@@ -74,6 +74,13 @@ namespace Calendar
             CreateTables();
         }
 
+        /// <summary>
+        /// Creates the necessary tables for the Calendar application in the SQLite database, including 'categoryTypes', 'categories', and 'events'.
+        /// Existing tables will be dropped and recreated.
+        /// </summary>
+        /// <remarks>
+        /// No code example as it's used internally and is private.
+        /// </remarks>
         private static void CreateTables()
         {
 
@@ -109,6 +116,17 @@ namespace Calendar
             ExecuteNonQuery(createEventsTable);
         }
 
+        /// <summary>
+        /// Executes a SQL command that does not return any data, such as an INSERT, UPDATE, DELETE, or DDL statement.
+        /// </summary>
+        /// <param name="sql">The SQL statement to execute.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage for executing a non-query SQL command:
+        /// string sql = "INSERT INTO categories (Description, TypeId) VALUES ('Work', 1)";
+        /// Database.ExecuteNonQuery(sql);
+        /// </code>
+        /// </example>
         private static void ExecuteNonQuery(string sql)
         {
             using (var command = new SQLiteCommand(sql, _connection))
