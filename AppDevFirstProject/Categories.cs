@@ -289,7 +289,6 @@ namespace Calendar
         /// Console.WriteLine($"Category with ID {categoryIdToUpdate} updated. New Description: {newDescription}, New Type: {newType}");
         /// </code>
         /// </example>
-
         public void UpdateProperties(int id, string newDescr, Category.CategoryType type = Category.CategoryType.Event)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -323,7 +322,6 @@ namespace Calendar
         /// }
         /// </code>
         /// </example>
-
         public List<Category> List()
         {
             List<Category> categories = new List<Category>();

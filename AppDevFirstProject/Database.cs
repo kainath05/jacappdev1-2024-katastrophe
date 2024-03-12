@@ -32,13 +32,29 @@ namespace Calendar
 {
     public class Database
     {
-
+        /// <summary>
+        /// Gets the current SQLite database connection.
+        /// </summary>
+        /// <value>
+        /// The SQLiteConnection object representing the open connection to the database. If no connection is open, this value will be null.
+        /// </value>
         public static SQLiteConnection dbConnection { get { return _connection; } }
         private static SQLiteConnection _connection;
 
         // ===================================================================
         // create and open a new database
         // ===================================================================
+        /// <summary>
+        /// Creates and opens a new SQLite database with the specified filename, sets up the necessary tables, and enables foreign key constraints.
+        /// </summary>
+        /// <param name="filename">The filename for the new SQLite database file. If a file with this name already exists, it will be overwritten.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// string filename = "myNewCalendarDB.sqlite";
+        /// Database.newDatabase(filename);
+        /// </code>
+        /// </example>
         public static void newDatabase(string filename)
         {
             CloseDatabaseAndReleaseFile();
