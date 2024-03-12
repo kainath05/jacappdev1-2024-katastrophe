@@ -139,6 +139,17 @@ namespace Calendar
         // ===================================================================
         // open an existing database
         // ===================================================================
+        /// <summary>
+        /// Opens an existing SQLite database using the specified filename and enables foreign key constraints.
+        /// </summary>
+        /// <param name="filename">The filename of the SQLite database to open.</param>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// string filename = "existingCalendarDB.sqlite";
+        /// Database.existingDatabase(filename);
+        /// </code>
+        /// </example>
         public static void existingDatabase(string filename)
         {
             CloseDatabaseAndReleaseFile();
