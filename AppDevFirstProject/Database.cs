@@ -163,7 +163,15 @@ namespace Calendar
         // close existing database, wait for garbage collector to
         // release the lock before continuing
         // ===================================================================
-
+        /// <summary>
+        /// Closes the current SQLite database connection, disposes of the connection object, and ensures that the database file is no longer locked.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// Database.CloseDatabaseAndReleaseFile();
+        /// </code>
+        /// </example>
         public static void CloseDatabaseAndReleaseFile()
         {
             if (_connection != null)
