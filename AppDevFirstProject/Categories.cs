@@ -312,6 +312,18 @@ namespace Calendar
         /// Returns a list of categories 
         /// </summary>
         /// <returns>A new copy of the list of categories.</returns>
+        /// <example>
+        /// <code>
+        /// List<Category> categoryList = categories.List();
+        /// 
+        /// Console.WriteLine("Categories List:");
+        /// foreach (var category in categoryList)
+        /// {
+        ///     Console.WriteLine($"ID: {category.Id}, Description: {category.Description}, Type: {category.Type}");
+        /// }
+        /// </code>
+        /// </example>
+
         public List<Category> List()
         {
             List<Category> categories = new List<Category>();
