@@ -18,7 +18,7 @@ namespace CalendarCodeTests
         // ========================================================================
 
         [Fact]
-        public void EventsObject_New()
+        public void EventsObject_New() //HI
         {
             // Arrange
             String folder = TestConstants.GetSolutionDir();
