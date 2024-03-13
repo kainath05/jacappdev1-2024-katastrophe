@@ -41,7 +41,7 @@ namespace Calendar
             this.connection = conn;
             if (newDB)
             {
-                
+                Add(DateTime.Now, 6,120, "smdos");
             }
         }
 
