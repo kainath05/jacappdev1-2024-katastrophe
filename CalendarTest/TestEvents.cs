@@ -3,6 +3,7 @@ using Xunit;
 using System.IO;
 using System.Collections.Generic;
 using Calendar;
+using System.Data.SQLite;
 
 namespace CalendarCodeTests
 {
@@ -20,15 +21,16 @@ namespace CalendarCodeTests
         public void EventsObject_New()
         {
             // Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String newDB = $"{folder}\\newDB.db";
+            Database.newDatabase(newDB);
+            SQLiteConnection conn = Database.dbConnection;
 
             // Act
-            Events Events = new Events();
+            Events Events = new Events(conn, true);
 
             // Assert 
             Assert.IsType<Events>(Events);
-
-            Assert.True(typeof(Events).GetProperty("FileName").CanWrite == false);
-            Assert.True(typeof(Events).GetProperty("DirName").CanWrite == false);
 
         }
 

@@ -48,7 +48,7 @@ namespace CalendarCodeTests
 
             // Act
             Event copy = new Event(Event);
-            copy.DurationInMinutes = Event.DurationInMinutes + 15;
+            //copy.DurationInMinutes = Event.DurationInMinutes + 15; //CANNOT WRITE ONTO IT ANYMORE
 
             // Assert 
             Assert.Equal(id, Event.Id);
@@ -57,6 +57,28 @@ namespace CalendarCodeTests
             Assert.Equal(descr, Event.Details);
             Assert.Equal(category, Event.Category);
             Assert.Equal(now, Event.StartDateTime);
+        }
+
+        [Fact]
+        public void EventObject_PropertiesAreReadOnly()
+        {
+            // Arrange
+            DateTime now = DateTime.Now;
+            double mins = 24.50;
+            string descr = "Project Coordination";
+            int id = 42;
+            int category = 1;
+
+            // Act
+            Event eve = new Event(id, now, category, mins, descr);
+
+            // Assert 
+            Assert.IsType<Event>(eve);
+            Assert.True(typeof(Event).GetProperty("Id").CanWrite == false);
+            Assert.True(typeof(Event).GetProperty("StartDateTime").CanWrite == false);
+            Assert.True(typeof(Event).GetProperty("Category").CanWrite == false);
+            Assert.True(typeof(Event).GetProperty("Details").CanWrite == false);
+            Assert.True(typeof(Event).GetProperty("DurationInMinutes").CanWrite == false);
         }
 
 

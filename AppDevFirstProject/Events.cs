@@ -31,6 +31,20 @@ namespace Calendar
         /// </summary>
         private SQLiteConnection connection;
 
+        public Events(SQLiteConnection conn, bool newDB)
+        {
+            if (conn == null)
+            {
+                throw new ArgumentNullException(nameof(conn), "The database connection cannot be null.");
+            }
+
+            this.connection = conn;
+            if (newDB)
+            {
+                
+            }
+        }
+
         // ====================================================================
         // Add Event
         // ====================================================================
