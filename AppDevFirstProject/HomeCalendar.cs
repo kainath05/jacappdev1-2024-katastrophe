@@ -69,7 +69,7 @@ namespace Calendar
         /// ]]>
         /// </code>
         /// </example>
-        public HomeCalendar(String databaseFile, String eventsXMLFile, bool newDB = false)
+        public HomeCalendar(String databaseFile, bool newDB = false)
         {
             // if database exists, and user doesn't want a new database, open existing DB
             if (!newDB && File.Exists(databaseFile))
@@ -88,7 +88,7 @@ namespace Calendar
             _categories = new Categories(Database.dbConnection, newDB);
 
             // create the _events course
-            _events = new Events();
+            _events = new Events(Database.dbConnection, newDB);
         }
 
 

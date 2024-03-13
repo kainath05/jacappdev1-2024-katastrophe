@@ -47,7 +47,7 @@ namespace Calendar
         /// <value>
         /// Length in minutes of an event
         /// </value>
-        public Double DurationInMinutes { get; set; }
+        public Double DurationInMinutes { get; }
 
         /// <summary>
         /// Get and set details of the event in string format
@@ -55,7 +55,7 @@ namespace Calendar
         /// <value>
         /// Short description of an event
         /// </value>
-        public String Details { get; set; }
+        public String Details { get;  }
 
         /// <summary>
         /// Get and set the id of the event
@@ -63,7 +63,7 @@ namespace Calendar
         /// <value>
         /// Categorization of events
         /// </value>
-        public int Category { get; set; }
+        public int Category { get; }
 
         // ====================================================================
         // Constructor
