@@ -108,50 +108,50 @@ namespace Calendar
         ///// <param name="FilterFlag">Boolean that returns true if we have a specific category and false if there isn't a specific category</param>
         ///// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
         ///// <returns>A list of calendar items</returns>
-        //public List<CalendarItem> GetCalendarItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        //{
-        //    // ------------------------------------------------------------------------
-        //    // return joined list within time frame
-        //    // ------------------------------------------------------------------------
-        //    Start = Start ?? new DateTime(1900, 1, 1);
-        //    End = End ?? new DateTime(2500, 1, 1);
+        public List<CalendarItem> GetCalendarItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        {
+            // ------------------------------------------------------------------------
+            // return joined list within time frame
+            // ------------------------------------------------------------------------
+            Start = Start ?? new DateTime(1900, 1, 1);
+            End = End ?? new DateTime(2500, 1, 1);
 
-        //    var query = from c in _categories.List()
-        //                join e in _events.List() on c.Id equals e.Category
-        //                where e.StartDateTime >= Start && e.StartDateTime <= End
-        //                select new { CatId = c.Id, EventId = e.Id, e.StartDateTime, Category = c.Description, e.Details, e.DurationInMinutes };
+            var query = from c in _categories.List()
+                        join e in _events.List() on c.Id equals e.Category
+                        where e.StartDateTime >= Start && e.StartDateTime <= End
+                        select new { CatId = c.Id, EventId = e.Id, e.StartDateTime, Category = c.Description, e.Details, e.DurationInMinutes };
 
-        //    // ------------------------------------------------------------------------
-        //    // create a CalendarItem list with totals,
-        //    // ------------------------------------------------------------------------
-        //    List<CalendarItem> items = new List<CalendarItem>();
-        //    Double totalBusyTime = 0;
+            // ------------------------------------------------------------------------
+            // create a CalendarItem list with totals,
+            // ------------------------------------------------------------------------
+            List<CalendarItem> items = new List<CalendarItem>();
+            Double totalBusyTime = 0;
 
-        //    foreach (var e in query.OrderBy(q => q.StartDateTime))
-        //    {
-        //        // filter out unwanted categories if filter flag is on
-        //        if (FilterFlag && CategoryID != e.CatId)
-        //        {
-        //            continue;
-        //        }
+            foreach (var e in query.OrderBy(q => q.StartDateTime))
+            {
+                // filter out unwanted categories if filter flag is on
+                if (FilterFlag && CategoryID != e.CatId)
+                {
+                    continue;
+                }
 
-        //        // keep track of running totals
-        //        totalBusyTime = totalBusyTime + e.DurationInMinutes;
-        //        // Group all events month by month (sorted by year/month)
-        //        items.Add(new CalendarItem
-        //        {
-        //            CategoryID = e.CatId,
-        //            EventID = e.EventId,
-        //            ShortDescription = e.Details,
-        //            StartDateTime = e.StartDateTime,
-        //            DurationInMinutes = e.DurationInMinutes,
-        //            Category = e.Category,
-        //            BusyTime = totalBusyTime
-        //        });
-        //    }
+                // keep track of running totals
+                totalBusyTime = totalBusyTime + e.DurationInMinutes;
+                // Group all events month by month (sorted by year/month)
+                items.Add(new CalendarItem
+                {
+                    CategoryID = e.CatId,
+                    EventID = e.EventId,
+                    ShortDescription = e.Details,
+                    StartDateTime = e.StartDateTime,
+                    DurationInMinutes = e.DurationInMinutes,
+                    Category = e.Category,
+                    BusyTime = totalBusyTime
+                });
+            }
 
-        //    return items;
-        //}
+            return items;
+        }
         ///// <example>
         ////
         ///// <b>Getting a list of ALL calendar items</b>
