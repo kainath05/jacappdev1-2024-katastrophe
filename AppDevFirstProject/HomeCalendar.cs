@@ -185,6 +185,7 @@ namespace Calendar
 
             return items;
         }
+
         ///// <example>
         ////
         ///// <b>Getting a list of ALL calendar items</b>
