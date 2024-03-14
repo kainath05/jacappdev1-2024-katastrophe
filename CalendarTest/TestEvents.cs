@@ -117,7 +117,7 @@
             double DurationInMinutes = 98.1;
 
             // Act
-            events.Add(DateTime.Now,category,DurationInMinutes,"new Event");
+            events.Add(DateTime.Now, category,DurationInMinutes,"new Event");
             List<Event> EventsList = events.List();
             int sizeOfList = events.List().Count;
 
@@ -149,7 +149,7 @@
             int sizeOfList = EventsList.Count;
 
             // Assert
-            //Assert.Equal(numberOfEventsInFile - 1, sizeOfList);
+            Assert.Equal(numberOfEventsInFile - 1, sizeOfList);
             Assert.False(EventsList.Exists(e => e.Id == IdToDelete), "correct Event item deleted");
 
 //        }
@@ -158,6 +158,12 @@
         public void EventsMethod_Update()
         {
             // Arrange
+            int IdToUpdate = 1;
+            DateTime start = DateTime.Now;
+            double duration = 120;
+            string details = "Updated Event";
+            int category = 1;
+
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
             String messyDB = $"{folder}\\messy.db";
@@ -165,23 +171,43 @@
             Database.existingDatabase(messyDB);
             SQLiteConnection conn = Database.dbConnection;
             Events events = new Events(conn, false);
-            List<Event> list = events.List();
-            int IdToUpdate = 1;
-            DateTime start = DateTime.Now;
-            double duration = 120;
-            string details = "Updated Event";
-            int category = 1;
 
-            // Act
+            // Act 
             events.UpdateProperties(IdToUpdate, start, duration, details, category);
+            Event eve = GetEventById(IdToUpdate); //private method used to find event from id
 
             // Assert
-            Assert.Equal(list[0].Id, IdToUpdate);
-            Assert.Equal(list[0].StartDateTime, start);
-            Assert.Equal(list[0].DurationInMinutes, duration);
-            Assert.Equal(list[0].Details, details);
-            Assert.Equal(list[0].Category, category);
+            Assert.Equal(details, eve.Details);
+            Assert.Equal(category, eve.Category);
+            Assert.Equal(IdToUpdate, eve.Id);
+            Assert.Equal(duration, eve.DurationInMinutes);
+            Assert.Equal(start, eve.StartDateTime);
+        }
 
+        private Event GetEventById(int id)
+        {
+            string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events WHERE Id = @Id";
+            using (SQLiteCommand command = new SQLiteCommand(query, Database.dbConnection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        int categoryId = Convert.ToInt32(reader["CategoryId"]);
+                        double duration = Convert.ToDouble(reader["DurationInMinutes"]);
+                        DateTime startDateTime = Convert.ToDateTime(reader["StartDateTime"]);
+                        string details = Convert.ToString(reader["Details"]);
+
+                        return new Event(id, startDateTime, categoryId, duration, details);
+                    }
+                    else
+                    {
+                        // Event with the given ID not found
+                        return null;
+                    }
+                }
+            }
         }
 
         // ========================================================================
@@ -214,7 +240,25 @@
             }
         }
 
-        
+        [Fact]
+        public void EventaMethod_PrivateGetEventFromId()
+        {
+            // Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
+            Database.existingDatabase(newDB);
+            SQLiteConnection conn = Database.dbConnection;
+            Events eve = new Events(conn, false);
+            int id= 7;
+
+            // Act
+            Event ev = GetEventById(id);
+
+            // Assert
+            Assert.Equal(id, ev.Id);
+        }
+
+
 
         // ========================================================================
 
