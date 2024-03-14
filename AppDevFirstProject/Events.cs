@@ -41,7 +41,13 @@ namespace Calendar
             this.connection = conn;
             if (newDB)
             {
-                
+                using (SQLiteCommand clearCommand = new SQLiteCommand(connection))
+                {
+                    clearCommand.CommandText = "DELETE FROM events";
+                    clearCommand.ExecuteNonQuery();
+                    clearCommand.CommandText = "DELETE FROM categories";
+                    clearCommand.ExecuteNonQuery();
+                }
             }
         }
 
@@ -60,22 +66,22 @@ namespace Calendar
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                cmd.CommandText = $"Select Id from categories where Id = {category}";
-                int rowsAffected = cmd.ExecuteNonQuery();
+                //cmd.CommandText = $"Select Id from categories where Id = {category}";
+                //int rowsAffected = cmd.ExecuteNonQuery();
 
-                if (rowsAffected > 0)
-                {
+                //if (rowsAffected > 0)
+                //{
                     cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
                     cmd.Parameters.AddWithValue("@CategoryId", category);
                     cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
                     cmd.Parameters.AddWithValue("@StartDateTime", date);
                     cmd.Parameters.AddWithValue("@Details", details);
                     cmd.ExecuteNonQuery();
-                }
-                else
-                {
-                    throw new Exception($"event of type {category} not found");
-                }
+                //}
+                //else
+                //{
+                //    throw new Exception($"event of type {category} not found");
+                //}
             }
         }
 
@@ -120,8 +126,9 @@ namespace Calendar
         /// <returns>A new list containing copies of the events</returns>
         public List<Event> List()
         {
-            var events = new List<Event>();
+            List<Event> events = new List<Event>();
             string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events ORDER BY Id";
+            //e JOIN categories c ON e.CategoryId = c.Id
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -141,11 +148,12 @@ namespace Calendar
 
             return events;
         }
+
         public void UpdateProperties(int id, DateTime StartDateTime, Double DurationInMinutes, String Details, int Category) // What is Date property?
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                cmd.CommandText = "UPDATE events SET StartDateTime = @StartDateTime, DurationInMinutes = @DurationInMinutes, Details = @Details, Category = @Category WHERE Id = @Id";
+                cmd.CommandText = "UPDATE events SET StartDateTime = @StartDateTime, DurationInMinutes = @DurationInMinutes, Details = @Details, CategoryId = @Category WHERE Id = @Id";
                 cmd.Parameters.AddWithValue("@Id", id);
                 cmd.Parameters.AddWithValue("@StartDateTime", StartDateTime);
                 cmd.Parameters.AddWithValue("@DurationInMinutes", DurationInMinutes);
