@@ -74,7 +74,7 @@ namespace Calendar
                     cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
                     cmd.Parameters.AddWithValue("@CategoryId", category);
                     cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
-                    cmd.Parameters.AddWithValue("@StartDateTime", date);
+                    cmd.Parameters.AddWithValue("@StartDateTime", date); // M/d/yyyy h:mm:ss tt cultureojrgjhewrgjwrjklbg
                     cmd.Parameters.AddWithValue("@Details", details);
                     cmd.ExecuteNonQuery();
                 //}
