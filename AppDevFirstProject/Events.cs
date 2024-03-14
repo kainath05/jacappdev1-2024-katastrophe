@@ -121,7 +121,7 @@ namespace Calendar
         public List<Event> List()
         {
             var events = new List<Event>();
-            string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events e JOIN e.CategoryId = c.Id on categories ORDER BY Id";
+            string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events ORDER BY Id";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
