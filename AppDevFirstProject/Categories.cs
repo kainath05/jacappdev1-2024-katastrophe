@@ -155,31 +155,6 @@ namespace Calendar
         // Add category
         // ====================================================================
 
-        /// <summary>
-        /// Adds a category
-        /// </summary>
-        /// <param name="category">The category to add</param>
-        /// <example>
-        /// <code>
-        /// string description = "Work";
-        /// 
-        /// // Add new category
-        /// categories.Add(description);
-        /// 
-        /// Console.WriteLine($"Added new category: {description}");
-        /// </code>
-        /// </example>
-        private void Add(Category category)
-        {
-            using (var cmd = new SQLiteCommand(connection))
-            {
-                int typeId = (int)category.Type; // Get the corresponding TypeId
-                cmd.CommandText = "INSERT INTO categories (Description, TypeId) VALUES (@Description, @TypeId)";
-                cmd.Parameters.AddWithValue("@Description", category.Description);
-                cmd.Parameters.AddWithValue("@TypeId", typeId);
-                cmd.ExecuteNonQuery();
-            }
-        }
 
         /// <summary>
         /// Adds a category with the specified description and type
