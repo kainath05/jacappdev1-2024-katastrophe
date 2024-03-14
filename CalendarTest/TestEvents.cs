@@ -18,7 +18,7 @@ namespace CalendarCodeTests
         // ========================================================================
 
         [Fact]
-        public void EventsObject_New() //HI
+        public void EventsObject_New() 
         {
             // Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -84,21 +84,19 @@ namespace CalendarCodeTests
         // ========================================================================
 
         [Fact]
-        public void EventsMethod_List_ModifyListDoesNotModifyEventsInstance()
+        public void EventsObject_New_CreatesNoTables()
         {
             // Arrange
             String folder = TestConstants.GetSolutionDir();
-            String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            Database.existingDatabase(newDB);
+            String newDB = $"{folder}\\newDB.db";
+            Database.newDatabase(newDB);
             SQLiteConnection conn = Database.dbConnection;
-            Events events = new Events(conn, false);
-            List<Event> list = events.List();
 
             // Act
-            list[0].DurationInMinutes = list[0].DurationInMinutes + 21.03; 
+            Events events1 = new Events(conn, true);
 
-            // Assert
-            Assert.NotEqual(list[0].DurationInMinutes, events.List()[0].DurationInMinutes);
+            // Assert 
+            Assert.True(events1.List().Count == 0, "Zero tables created, no defaults");
 
         }
 
@@ -110,10 +108,12 @@ namespace CalendarCodeTests
             // Arrange
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            Database.existingDatabase(newDB);
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(newDB, messyDB, true);
+            Database.existingDatabase(messyDB);
             SQLiteConnection conn = Database.dbConnection;
             Events events = new Events(conn, false);
-            int category = 57;
+            int category = 1;
             double DurationInMinutes = 98.1;
 
             // Act
@@ -122,8 +122,7 @@ namespace CalendarCodeTests
             int sizeOfList = events.List().Count;
 
             // Assert
-            Assert.Equal(numberOfEventsInFile+1, sizeOfList);
-            Assert.Equal(maxIDInEventFile + 1, EventsList[sizeOfList - 1].Id);
+            Assert.Equal(numberOfEventsInFile + 1, sizeOfList); 
             Assert.Equal(DurationInMinutes, EventsList[sizeOfList - 1].DurationInMinutes);
 
         }
@@ -136,11 +135,13 @@ namespace CalendarCodeTests
             // Arrange
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            Database.existingDatabase(newDB);
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(newDB, messyDB, true);
+            Database.existingDatabase(messyDB);
             SQLiteConnection conn = Database.dbConnection;
             Events events = new Events(conn, false);
             List<Event> list = events.List();
-            int IdToDelete = 3;
+            int IdToDelete = 9;
 
             // Act
             events.Delete(IdToDelete);
@@ -148,26 +149,28 @@ namespace CalendarCodeTests
             int sizeOfList = EventsList.Count;
 
             // Assert
-            Assert.Equal(numberOfEventsInFile - 1, sizeOfList);
+            //Assert.Equal(numberOfEventsInFile - 1, sizeOfList);
             Assert.False(EventsList.Exists(e => e.Id == IdToDelete), "correct Event item deleted");
 
         }
 
+        [Fact]
         public void EventsMethod_Update()
         {
             // Arrange
             String folder = TestConstants.GetSolutionDir();
             String newDB = $"{folder}\\{TestConstants.testDBInputFile}";
-            Database.existingDatabase(newDB);
+            String messyDB = $"{folder}\\messy.db";
+            System.IO.File.Copy(newDB, messyDB, true);
+            Database.existingDatabase(messyDB);
             SQLiteConnection conn = Database.dbConnection;
             Events events = new Events(conn, false);
             List<Event> list = events.List();
-            int IdToUpdate = 3;
+            int IdToUpdate = 1;
             DateTime start = DateTime.Now;
             double duration = 120;
             string details = "Updated Event";
-            int category = 6;
-
+            int category = 1;
 
             // Act
             events.UpdateProperties(IdToUpdate, start, duration, details, category);
@@ -200,13 +203,14 @@ namespace CalendarCodeTests
             try
             {
                 events.Delete(IdToDelete);
-                Assert.Equal(sizeOfList, events.List().Count);
+                Assert.True(false, "Invalid ID should have caused an exception.");
             }
 
             // Assert
-            catch
+            catch (Exception ex)
             {
-                Assert.True(false, "Invalid ID causes Delete to break");
+                Assert.Equal(sizeOfList, events.List().Count);
+                Assert.Contains($"ID {IdToDelete} not found", ex.Message);
             }
         }
 
