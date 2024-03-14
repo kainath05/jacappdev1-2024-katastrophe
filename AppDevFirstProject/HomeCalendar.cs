@@ -156,6 +156,8 @@ namespace Calendar
                 {
                     while (reader.Read())
                     {
+                        // GetOrdinal allows shows where the column is located without needing 
+                        // to keep a consistent order. Essentially just finding the strings it's fed.
                         var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
                         var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
                         var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
@@ -165,6 +167,7 @@ namespace Calendar
                         var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
 
                         totalBusyTime += duration;
+
 
                         items.Add(new CalendarItem
                         {
