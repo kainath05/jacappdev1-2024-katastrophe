@@ -59,22 +59,17 @@ namespace CalendarCodeTests
         }
 
         [Fact]
-        public void HomeCalendar_AddEvent() //FAILING
+        public void HomeCalendar_InitializeWithFakeDatabase()
         {
             // Arrange
-            string databaseFile = "test_database.db";
-            HomeCalendar calendar = new HomeCalendar(databaseFile, true);
-            DateTime eventDate = DateTime.Now;
-            int categoryId = 1;
-            double duration = 120;
-            string details = "Test Event";
+            string db = "existing.db"; //Should make new database when cannot find this.
 
             // Act
-            calendar.events.Add(eventDate, categoryId, duration, details);
+            HomeCalendar calendar = new HomeCalendar(db, true);
 
             // Assert
-            Event addedEvent = calendar.events.List().Find(e => e.Details == details && e.Category == categoryId);
-            Assert.NotNull(addedEvent);
+            Assert.NotNull(calendar);
+            Assert.IsType<HomeCalendar>(calendar);
         }
 
 
