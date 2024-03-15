@@ -50,22 +50,21 @@ namespace Calendar
         public Events events { get { return _events; } }
 
         /// <summary>
-        /// Initializes a home calendar using a database and an events xml file. If a database does not exist, create a new one.
+        /// Initializes a home calendar using a database. If a database does not exist, create a new one.
         /// </summary>
         /// <param name="databaseFile">The database to use file</param>
-        /// <param name="eventsXMLFile">The xml file to create the events</param>
         /// <param name="newDB">a bool if we use a new database or not</param>
         /// <example>
         /// Creating a HomeCalendar instance with existing database
         /// <code>
         /// <![CDATA[
-        /// HomeCalendar calendar1 = new HomeCalendar("existing_database.db", "events.xml");
+        /// HomeCalendar calendar1 = new HomeCalendar("existing_database.db");
         /// ]]>
         /// </code>
         /// Creating a HomeCalendar instance with a new database
         /// <code>
         /// <![CDATA[
-        /// HomeCalendar calendar2 = new HomeCalendar("new_database.db", "events.xml", true);
+        /// HomeCalendar calendar2 = new HomeCalendar("new_database.db", true);
         /// ]]>
         /// </code>
         /// </example>
