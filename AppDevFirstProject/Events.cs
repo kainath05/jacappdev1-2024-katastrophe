@@ -66,22 +66,12 @@ namespace Calendar
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                //cmd.CommandText = $"Select Id from categories where Id = {category}";
-                //int rowsAffected = cmd.ExecuteNonQuery();
-
-                //if (rowsAffected > 0)
-                //{
                     cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
                     cmd.Parameters.AddWithValue("@CategoryId", category);
                     cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
                     cmd.Parameters.AddWithValue("@StartDateTime", date); // M/d/yyyy h:mm:ss tt cultureojrgjhewrgjwrjklbg
                     cmd.Parameters.AddWithValue("@Details", details);
                     cmd.ExecuteNonQuery();
-                //}
-                //else
-                //{
-                //    throw new Exception($"event of type {category} not found");
-                //}
             }
         }
 
@@ -162,7 +152,6 @@ namespace Calendar
                 cmd.ExecuteNonQuery();
             }
         }
-
 
 
 

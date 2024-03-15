@@ -34,29 +34,29 @@ namespace CalendarCodeTests
 
         // ========================================================================
 
-        //[Fact]
-        //public void EventCopyConstructoryIsDeepCopy()
-        //{
+        [Fact]
+        public void EventCopyConstructoryIsDeepCopy()
+        {
 
-        //    // Arrange
-        //    DateTime now = DateTime.Now;
-        //    double DurationInMinutes = 24.55;
-        //    string descr = "New Sweater";
-        //    int category = 34;
-        //    int id = 42;
-        //    Event Event = new Event(id, now, category, DurationInMinutes, descr);
+            // Arrange
+            DateTime now = DateTime.Now;
+            double DurationInMinutes = 24.55;
+            string descr = "New Sweater";
+            int category = 34;
+            int id = 42;
+            Event Event = new Event(id, now, category, DurationInMinutes, descr);
 
-        //    // Act
-        //    Event copy = new Event(Event);
+            // Act
+            Event copy = new Event(Event);
 
-        //    // Assert 
-        //    Assert.Equal(id, Event.Id);
-        //    Assert.NotEqual(DurationInMinutes, copy.DurationInMinutes);
-        //    Assert.Equal(Event.DurationInMinutes, copy.DurationInMinutes);
-        //    Assert.Equal(descr, Event.Details);
-        //    Assert.Equal(category, Event.Category);
-        //    Assert.Equal(now, Event.StartDateTime);
-        //}
+            // Assert 
+            Assert.Equal(id, Event.Id);
+            Assert.NotEqual(DurationInMinutes + 15, copy.DurationInMinutes);
+            Assert.Equal(Event.DurationInMinutes, copy.DurationInMinutes);
+            Assert.Equal(descr, Event.Details);
+            Assert.Equal(category, Event.Category);
+            Assert.Equal(now, Event.StartDateTime);
+        }
 
         [Fact]
         public void EventObject_PropertiesAreReadOnly() //New test

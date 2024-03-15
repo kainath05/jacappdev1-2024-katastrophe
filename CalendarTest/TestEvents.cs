@@ -118,6 +118,7 @@ namespace CalendarCodeTests
 
             // Act
             events.Add(DateTime.Now, category, DurationInMinutes, "new Event");
+
             List<Event> EventsList = events.List();
             int sizeOfList = events.List().Count;
 
@@ -250,6 +251,7 @@ namespace CalendarCodeTests
             SQLiteConnection conn = Database.dbConnection;
             Events eve = new Events(conn, false);
             int id = 7;
+
 
             // Act
             Event ev = GetEventById(id);
