@@ -66,12 +66,12 @@ namespace Calendar
         {
             using (var cmd = new SQLiteCommand(connection))
             {
-                cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
-                cmd.Parameters.AddWithValue("@CategoryId", category);
-                cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
-                cmd.Parameters.AddWithValue("@StartDateTime", date);
-                cmd.Parameters.AddWithValue("@Details", details);
-                cmd.ExecuteNonQuery();
+                    cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
+                    cmd.Parameters.AddWithValue("@CategoryId", category);
+                    cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
+                    cmd.Parameters.AddWithValue("@StartDateTime", date); // M/d/yyyy h:mm:ss tt cultureojrgjhewrgjwrjklbg
+                    cmd.Parameters.AddWithValue("@Details", details);
+                    cmd.ExecuteNonQuery();
             }
         }
 

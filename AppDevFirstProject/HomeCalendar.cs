@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -115,10 +116,25 @@ namespace Calendar
             Start = Start ?? new DateTime(1900, 1, 1);
             End = End ?? new DateTime(2500, 1, 1);
 
-            var query = from c in _categories.List()
-                        join e in _events.List() on c.Id equals e.Category
-                        where e.StartDateTime >= Start && e.StartDateTime <= End
-                        select new { CatId = c.Id, EventId = e.Id, e.StartDateTime, Category = c.Description, e.Details, e.DurationInMinutes };
+            DateTime startDate = Start.Value;
+            DateTime endDate = End.Value;
+
+            string startString = startDate.ToString("yyyy-MM-dd");
+            string endString = endDate.ToString("yyyy-MM-dd");
+
+            string query = @$"
+                SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
+                    c.Description AS CategoryDescription
+                FROM events e
+                JOIN categories c ON e.CategoryId = c.Id
+                WHERE e.StartDateTime >= '{startString}' AND e.StartDateTime <= '{endString}'"; 
+
+            if (FilterFlag)
+            {
+                query += $" AND e.CategoryId = {CategoryID}";
+            }
+
+            query += " ORDER BY e.StartDateTime";
 
             // ------------------------------------------------------------------------
             // create a CalendarItem list with totals,
@@ -126,31 +142,49 @@ namespace Calendar
             List<CalendarItem> items = new List<CalendarItem>();
             Double totalBusyTime = 0;
 
-            foreach (var e in query.OrderBy(q => q.StartDateTime))
+            using (var cmd = new SQLiteCommand(query, Database.dbConnection))
             {
-                // filter out unwanted categories if filter flag is on
-                if (FilterFlag && CategoryID != e.CatId)
+                cmd.Parameters.AddWithValue("@Start", Start);
+                cmd.Parameters.AddWithValue("@End", End);
+                if (FilterFlag)
                 {
-                    continue;
+                    cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
                 }
 
-                // keep track of running totals
-                totalBusyTime = totalBusyTime + e.DurationInMinutes;
-                // Group all events month by month (sorted by year/month)
-                items.Add(new CalendarItem
+                using (var reader = cmd.ExecuteReader())
                 {
-                    CategoryID = e.CatId,
-                    EventID = e.EventId,
-                    ShortDescription = e.Details,
-                    StartDateTime = e.StartDateTime,
-                    DurationInMinutes = e.DurationInMinutes,
-                    Category = e.Category,
-                    BusyTime = totalBusyTime
-                });
+                    while (reader.Read())
+                    {
+                        // GetOrdinal allows shows where the column is located without needing 
+                        // to keep a consistent order. Essentially just finding the strings it's fed.
+                        var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
+                        var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
+                        var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
+                        var startDateTime = DateTime.ParseExact(startDateTimeString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                        var duration = reader.GetDouble(reader.GetOrdinal("DurationInMinutes"));
+                        var details = reader.GetString(reader.GetOrdinal("Details"));
+                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
+
+                        totalBusyTime += duration;
+
+
+                        items.Add(new CalendarItem
+                        {
+                            EventID = eventId,
+                            CategoryID = categoryId,
+                            StartDateTime = startDateTime,
+                            DurationInMinutes = duration,
+                            ShortDescription = details,
+                            Category = categoryDescription,
+                            BusyTime = totalBusyTime
+                        });
+                    }
+                }
             }
 
             return items;
         }
+
         ///// <example>
         ////
         ///// <b>Getting a list of ALL calendar items</b>
@@ -287,7 +321,7 @@ namespace Calendar
         //    // -----------------------------------------------------------------------
         //    // Group by year/month
         //    // -----------------------------------------------------------------------
-        //    var GroupedByMonth = items.GroupBy(c => c.StartDateTime.Year.ToString("D4") + "/" + c.StartDateTime.Month.ToString("D2"));
+        //    var GroupedByMonth = items.GroupBy(c => c.StartDateTime.Year.ToString("D4") + "/" + c.StartDateTime.Month.ToString("D2")); // THIS SHOULD BE A QUERYYYYYYYYYYYYUYUYUYYYYYYYY
 
         //    // -----------------------------------------------------------------------
         //    // create new list
@@ -462,7 +496,7 @@ namespace Calendar
         //    // -----------------------------------------------------------------------
         //    // Group by Category
         //    // -----------------------------------------------------------------------
-        //    var GroupedByCategory = filteredItems.GroupBy(c => c.Category);
+        //    var GroupedByCategory = filteredItems.GroupBy(c => c.Category); // THIS SHOULD BE A QUERYYYYYYYYYYYYUYUYUYYYYYYYY
 
         //    // -----------------------------------------------------------------------
         //    // create new list

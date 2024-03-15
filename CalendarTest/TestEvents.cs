@@ -18,7 +18,7 @@ namespace CalendarCodeTests
         // ========================================================================
 
         [Fact]
-        public void EventsObject_New() 
+        public void EventsObject_New()
         {
             // Arrange
             String folder = TestConstants.GetSolutionDir();
@@ -117,12 +117,13 @@ namespace CalendarCodeTests
             double DurationInMinutes = 98.1;
 
             // Act
-            events.Add(DateTime.Now, category,DurationInMinutes,"new Event");
+            events.Add(DateTime.Now, category, DurationInMinutes, "new Event");
+
             List<Event> EventsList = events.List();
             int sizeOfList = events.List().Count;
 
             // Assert
-            Assert.Equal(numberOfEventsInFile + 1, sizeOfList); 
+            Assert.Equal(numberOfEventsInFile + 1, sizeOfList);
             Assert.Equal(DurationInMinutes, EventsList[sizeOfList - 1].DurationInMinutes);
 
         }
@@ -249,7 +250,8 @@ namespace CalendarCodeTests
             Database.existingDatabase(newDB);
             SQLiteConnection conn = Database.dbConnection;
             Events eve = new Events(conn, false);
-            int id= 7;
+            int id = 7;
+
 
             // Act
             Event ev = GetEventById(id);
