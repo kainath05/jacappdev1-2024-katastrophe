@@ -311,44 +311,29 @@ namespace Calendar
         ///// <param name="FilterFlag">Boolean that filters by category if true</param>
         ///// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
         ///// <returns>A list of calendar items grouped by month</returns>
-        //public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        //{
-        //    // -----------------------------------------------------------------------
-        //    // get all items first
-        //    // -----------------------------------------------------------------------
-        //    List<CalendarItem> items = GetCalendarItems(Start, End, FilterFlag, CategoryID);
+        public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        {
+            var summary = new List<CalendarItemsByMonth>();
 
-        //    // -----------------------------------------------------------------------
-        //    // Group by year/month
-        //    // -----------------------------------------------------------------------
-        //    var GroupedByMonth = items.GroupBy(c => c.StartDateTime.Year.ToString("D4") + "/" + c.StartDateTime.Month.ToString("D2")); // THIS SHOULD BE A QUERYYYYYYYYYYYYUYUYUYYYYYYYY
+            Start = Start ?? new DateTime(1900, 1, 1);
+            End = End ?? new DateTime(2500, 12, 31);
 
-        //    // -----------------------------------------------------------------------
-        //    // create new list
-        //    // -----------------------------------------------------------------------
-        //    var summary = new List<CalendarItemsByMonth>();
-        //    foreach (var MonthGroup in GroupedByMonth)
-        //    {
-        //        // calculate totalBusyTime for this month, and create list of items
-        //        double total = 0;
-        //        var itemsList = new List<CalendarItem>();
-        //        foreach (var item in MonthGroup)
-        //        {
-        //            total = total + item.DurationInMinutes;
-        //            itemsList.Add(item);
-        //        }
+            string groupQuery = $@"
+SELECT DISTINCT 
+    strftime('%Y', StartDateTime) AS Year,
+    strftime('%m', StartDateTime) AS Month
+FROM events
+WHERE StartDateTime BETWEEN @Start AND @End
+" + (FilterFlag ? "AND CategoryId = @CategoryId" : "") + @"
+ORDER BY Year, Month;";
 
-        //        // Add new CalendarItemsByMonth to our list
-        //        summary.Add(new CalendarItemsByMonth
-        //        {
-        //            Month = MonthGroup.Key,
-        //            Items = itemsList,
-        //            TotalBusyTime = total
-        //        });
-        //    }
+            
+            }
 
-        //    return summary;
-        //}
+            return summary;
+        }
+
+
 
         ///// <example>
         ////
