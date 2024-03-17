@@ -116,22 +116,16 @@ namespace Calendar
             Start = Start ?? new DateTime(1900, 1, 1);
             End = End ?? new DateTime(2500, 1, 1);
 
-            DateTime startDate = Start.Value;
-            DateTime endDate = End.Value;
-
-            string startString = startDate.ToString("yyyy-MM-dd");
-            string endString = endDate.ToString("yyyy-MM-dd");
-
-            string query = @$"
-                SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
-                    c.Description AS CategoryDescription
-                FROM events e
-                JOIN categories c ON e.CategoryId = c.Id
-                WHERE e.StartDateTime >= '{startString}' AND e.StartDateTime <= '{endString}'"; 
+            string query = @"
+        SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
+            c.Description AS CategoryDescription
+        FROM events e
+        JOIN categories c ON e.CategoryId = c.Id
+        WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End";
 
             if (FilterFlag)
             {
-                query += $" AND e.CategoryId = {CategoryID}";
+                query += " AND e.CategoryId = @CategoryId";
             }
 
             query += " ORDER BY e.StartDateTime";
@@ -144,8 +138,9 @@ namespace Calendar
 
             using (var cmd = new SQLiteCommand(query, Database.dbConnection))
             {
-                cmd.Parameters.AddWithValue("@Start", Start);
-                cmd.Parameters.AddWithValue("@End", End);
+                // Add parameters to the command to avoid SQL injection
+                cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
+                cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
                 if (FilterFlag)
                 {
                     cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
@@ -155,8 +150,7 @@ namespace Calendar
                 {
                     while (reader.Read())
                     {
-                        // GetOrdinal allows shows where the column is located without needing 
-                        // to keep a consistent order. Essentially just finding the strings it's fed.
+                        // Read the data using the column names, ensuring type safety
                         var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
                         var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
                         var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
@@ -165,9 +159,10 @@ namespace Calendar
                         var details = reader.GetString(reader.GetOrdinal("Details"));
                         var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
 
+                        // Accumulate the total busy time
                         totalBusyTime += duration;
 
-
+                        // Add a new CalendarItem object to the list
                         items.Add(new CalendarItem
                         {
                             EventID = eventId,
@@ -176,7 +171,7 @@ namespace Calendar
                             DurationInMinutes = duration,
                             ShortDescription = details,
                             Category = categoryDescription,
-                            BusyTime = totalBusyTime
+                            BusyTime = totalBusyTime 
                         });
                     }
                 }
