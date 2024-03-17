@@ -318,6 +318,11 @@ namespace Calendar
             Start = Start ?? new DateTime(1900, 1, 1);
             End = End ?? new DateTime(2500, 12, 31);
 
+            // Prepare the SQL query to select distinct year and month combinations from the events table.
+            // The query filters events between the provided start and end dates.
+            // If the FilterFlag is true, it further filters events by the specified CategoryID.
+
+            // STRFTIME extracts the year and month from StartDateTime respectively.
             string groupQuery = $@"
 SELECT DISTINCT 
     strftime('%Y', StartDateTime) AS Year,
@@ -327,7 +332,39 @@ WHERE StartDateTime BETWEEN @Start AND @End
 " + (FilterFlag ? "AND CategoryId = @CategoryId" : "") + @"
 ORDER BY Year, Month;";
 
-            
+            using (var cmd = new SQLiteCommand(groupQuery, Database.dbConnection))
+            {
+                // Add parameters to the query to protect against SQL injection.
+                cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
+                cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
+                if (FilterFlag) cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        // Parse the year and month from the query result.
+                        var year = reader.GetString(reader.GetOrdinal("Year"));
+                        var month = reader.GetString(reader.GetOrdinal("Month"));
+
+                        // Calculate the start and end DateTime objects for the month.
+                        var startOfMonth = new DateTime(int.Parse(year), int.Parse(month), 1);
+                        var endOfMonth = startOfMonth.AddMonths(1).AddSeconds(-1);
+
+                        List<CalendarItem> items = GetCalendarItems(startOfMonth, endOfMonth, FilterFlag, CategoryID);
+
+                        double totalBusyTime = items.Sum(item => item.DurationInMinutes);
+
+                        // Add a new CalendarItemsByMonth object to the summary list for this month,
+                        // including the list of items and the total busy time.
+                        summary.Add(new CalendarItemsByMonth
+                        {
+                            Month = $"{year}/{month}",
+                            Items = items,
+                            TotalBusyTime = totalBusyTime
+                        });
+                    }
+                }
             }
 
             return summary;
