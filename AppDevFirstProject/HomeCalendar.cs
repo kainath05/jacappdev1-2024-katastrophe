@@ -316,15 +316,15 @@ namespace Calendar
             // Prepare the SQL query to select distinct year and month combinations from the events table.
             // The query filters events between the provided start and end dates.
             // If the FilterFlag is true, it further filters events by the specified CategoryID.
-
             // STRFTIME extracts the year and month from StartDateTime respectively.
+            // Lastly, filterFlag is used in a ternary operator to decide whether or not to use it.
             string groupQuery = $@"
 SELECT DISTINCT 
     strftime('%Y', StartDateTime) AS Year,
     strftime('%m', StartDateTime) AS Month
 FROM events
 WHERE StartDateTime BETWEEN @Start AND @End
-" + (FilterFlag ? "AND CategoryId = @CategoryId" : "") + @"
+" + (FilterFlag ? "AND CategoryId = @CategoryId" : "") + @" 
 ORDER BY Year, Month;";
 
             using (var cmd = new SQLiteCommand(groupQuery, Database.dbConnection))
