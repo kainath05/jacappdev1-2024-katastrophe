@@ -17,11 +17,11 @@ namespace Calendar
     // ====================================================================
     // CLASS: Events
     //        - A collection of Event items,
-    //        - Read / write to file
+    //        - Read / write to database
     //        - etc
     // ====================================================================
     /// <summary>
-    /// Represents a collection of Event items with functionality for reading and writing to a file
+    /// Represents a collection of Event items with functionality
     /// </summary>
     public class Events
     {
