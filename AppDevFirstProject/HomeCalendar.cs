@@ -171,7 +171,7 @@ namespace Calendar
                             DurationInMinutes = duration,
                             ShortDescription = details,
                             Category = categoryDescription,
-                            BusyTime = totalBusyTime 
+                            BusyTime = totalBusyTime
                         });
                     }
                 }
@@ -543,62 +543,53 @@ ORDER BY Year, Month;";
         //}
         public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
+            var summary = new List<CalendarItemsByCategory>();
             Start = Start ?? new DateTime(1900, 1, 1);
-            End = End ?? new DateTime(2500, 1, 1);
+            End = End ?? new DateTime(2500, 12, 31);
 
-            string query = @"
-        SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
-            c.Description AS CategoryDescription
-        FROM events e
-        JOIN categories c ON e.CategoryId = c.Id
-        WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End";
-
-            if (FilterFlag)
-            {
-                query += " AND e.CategoryId = @CategoryId";
-            }
-
-            query += " ORDER BY e.StartDateTime";
-
-            List<CalendarItemsByCategory> items = new List<CalendarItemsByCategory>();
+            // Instead of selecting each event individually, group them by category first.
+            string query = $@"
+SELECT c.Description AS CategoryDescription
+FROM events e
+JOIN categories c ON e.CategoryId = c.Id
+WHERE e.StartDateTime BETWEEN @Start AND @End
+" + (FilterFlag ? "AND CategoryId = @CategoryId " : "") + @"
+GROUP BY c.Description
+ORDER BY c.Description;";
 
             using (var cmd = new SQLiteCommand(query, Database.dbConnection))
             {
                 cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
                 cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
-
-                if (FilterFlag)
-                {
-                    cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
-                }
-
+                if (FilterFlag) cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
-                        var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
-                        var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
-                        var startDateTime = DateTime.ParseExact(startDateTimeString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-                        var duration = reader.GetDouble(reader.GetOrdinal("DurationInMinutes"));
-                        var details = reader.GetString(reader.GetOrdinal("Details"));
-                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
 
-                        items.Add(new CalendarItemsByCategory
-                        {
-                            EventID = eventId,
-                            CategoryID = categoryId,
-                            StartDateTime = startDateTime,
-                            DurationInMinutes = duration,
-                            ShortDescription = details,
-                            Category = categoryDescription
-                        });
+                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
+       
+
+                        // For each category, get the list of CalendarItems
+                        List<CalendarItem> items = GetCalendarItems(Start, End, FilterFlag, CategoryID);
+
+
+                        var totalBusyTime = (items.Sum(item => item.DurationInMinutes));
+
+                            // Create and add the new CalendarItemsByCategory object to the summary list.
+                            summary.Add(new CalendarItemsByCategory
+                            {
+                                Category = categoryDescription,
+                                Items = items,
+                                TotalBusyTime = totalBusyTime
+                            });
                     }
                 }
             }
 
-            return items;
+            return summary;
         }
+
 
         ///// <example>
         ////
