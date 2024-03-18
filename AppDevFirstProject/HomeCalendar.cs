@@ -524,6 +524,64 @@ namespace Calendar
 
         //    return summary;
         //}
+        public List<CalendarItem> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        {
+            Start = Start ?? new DateTime(1900, 1, 1);
+            End = End ?? new DateTime(2500, 1, 1);
+
+            string query = @"
+        SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
+            c.Description AS CategoryDescription
+        FROM events e
+        JOIN categories c ON e.CategoryId = c.Id
+        WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End";
+
+            if (FilterFlag)
+            {
+                query += " AND e.CategoryId = @CategoryId";
+            }
+
+            query += " ORDER BY e.StartDateTime";
+
+            List<CalendarItem> items = new List<CalendarItem>();
+
+            using (var cmd = new SQLiteCommand(query, Database.dbConnection))
+            {
+                cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
+                cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
+
+                if (FilterFlag)
+                {
+                    cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
+                }
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
+                        var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
+                        var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
+                        var startDateTime = DateTime.ParseExact(startDateTimeString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                        var duration = reader.GetDouble(reader.GetOrdinal("DurationInMinutes"));
+                        var details = reader.GetString(reader.GetOrdinal("Details"));
+                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
+
+                        items.Add(new CalendarItem
+                        {
+                            EventID = eventId,
+                            CategoryID = categoryId,
+                            StartDateTime = startDateTime,
+                            DurationInMinutes = duration,
+                            ShortDescription = details,
+                            Category = categoryDescription
+                        });
+                    }
+                }
+            }
+
+            return items;
+        }
 
         ///// <example>
         ////
