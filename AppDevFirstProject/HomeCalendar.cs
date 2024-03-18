@@ -541,7 +541,7 @@ ORDER BY Year, Month;";
 
         //    return summary;
         //}
-        public List<CalendarItem> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             Start = Start ?? new DateTime(1900, 1, 1);
             End = End ?? new DateTime(2500, 1, 1);
@@ -560,7 +560,7 @@ ORDER BY Year, Month;";
 
             query += " ORDER BY e.StartDateTime";
 
-            List<CalendarItem> items = new List<CalendarItem>();
+            List<CalendarItemsByCategory> items = new List<CalendarItemsByCategory>();
 
             using (var cmd = new SQLiteCommand(query, Database.dbConnection))
             {
@@ -584,7 +584,7 @@ ORDER BY Year, Month;";
                         var details = reader.GetString(reader.GetOrdinal("Details"));
                         var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
 
-                        items.Add(new CalendarItem
+                        items.Add(new CalendarItemsByCategory
                         {
                             EventID = eventId,
                             CategoryID = categoryId,
@@ -758,82 +758,82 @@ ORDER BY Year, Month;";
         ///// <param name="FilterFlag"></param>
         ///// <param name="CategoryID"></param>
         ///// <returns></returns>
-        //public List<Dictionary<string, object>> GetCalendarDictionaryByCategoryAndMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        //{
-        //// -----------------------------------------------------------------------
-        //// get all items by month 
-        //// -----------------------------------------------------------------------
-        //List<CalendarItemsByMonth> GroupedByMonth = GetCalendarItemsByMonth(Start, End, FilterFlag, CategoryID);
+        public List<Dictionary<string, object>> GetCalendarDictionaryByCategoryAndMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        {
+            // -----------------------------------------------------------------------
+            // get all items by month 
+            // -----------------------------------------------------------------------
+            List<CalendarItemsByMonth> GroupedByMonth = GetCalendarItemsByMonth(Start, End, FilterFlag, CategoryID);
 
-        //// -----------------------------------------------------------------------
-        //// loop over each month
-        //// -----------------------------------------------------------------------
-        //var summary = new List<Dictionary<string, object>>();
-        //var totalBusyTimePerCategory = new Dictionary<String, Double>();
+            // -----------------------------------------------------------------------
+            // loop over each month
+            // -----------------------------------------------------------------------
+            var summary = new List<Dictionary<string, object>>();
+            var totalBusyTimePerCategory = new Dictionary<String, Double>();
 
-        //foreach (var MonthGroup in GroupedByMonth)
-        //{
-        //    // create record object for this month
-        //    Dictionary<string, object> record = new Dictionary<string, object>();
-        //    record["Month"] = MonthGroup.Month;
-        //    record["TotalBusyTime"] = MonthGroup.TotalBusyTime;
+            foreach (var MonthGroup in GroupedByMonth)
+            {
+                // create record object for this month
+                Dictionary<string, object> record = new Dictionary<string, object>();
+                record["Month"] = MonthGroup.Month;
+                record["TotalBusyTime"] = MonthGroup.TotalBusyTime;
 
-        //    // break up the month items into categories
-        //    var GroupedByCategory = MonthGroup.Items.GroupBy(c => c.Category);
+                // break up the month items into categories
+                var GroupedByCategory = MonthGroup.Items.GroupBy(c => c.Category);
 
-        //    // -----------------------------------------------------------------------
-        //    // loop over each category
-        //    // -----------------------------------------------------------------------
-        //    foreach (var CategoryGroup in GroupedByCategory.OrderBy(g => g.Key))
-        //    {
+                // -----------------------------------------------------------------------
+                // loop over each category
+                // -----------------------------------------------------------------------
+                foreach (var CategoryGroup in GroupedByCategory.OrderBy(g => g.Key))
+                {
 
-        //        // calculate totals for the cat/month, and create list of items
-        //        double totalCategoryBusyTimeForThisMonth = 0;
-        //        var details = new List<CalendarItem>();
+                    // calculate totals for the cat/month, and create list of items
+                    double totalCategoryBusyTimeForThisMonth = 0;
+                    var details = new List<CalendarItem>();
 
-        //        foreach (var item in CategoryGroup)
-        //        {
-        //            totalCategoryBusyTimeForThisMonth = totalCategoryBusyTimeForThisMonth + item.DurationInMinutes;
-        //            details.Add(item);
-        //        }
+                    foreach (var item in CategoryGroup)
+                    {
+                        totalCategoryBusyTimeForThisMonth = totalCategoryBusyTimeForThisMonth + item.DurationInMinutes;
+                        details.Add(item);
+                    }
 
-        //        // add new properties and values to our record object
-        //        record["items:" + CategoryGroup.Key] = details;
-        //        record[CategoryGroup.Key] = totalCategoryBusyTimeForThisMonth;
+                    // add new properties and values to our record object
+                    record["items:" + CategoryGroup.Key] = details;
+                    record[CategoryGroup.Key] = totalCategoryBusyTimeForThisMonth;
 
-        //        // keep track of totals for each category
-        //        if (totalBusyTimePerCategory.TryGetValue(CategoryGroup.Key, out Double currentTotalBusyTimeForCategory))
-        //        {
-        //            totalBusyTimePerCategory[CategoryGroup.Key] = currentTotalBusyTimeForCategory + totalCategoryBusyTimeForThisMonth;
-        //        }
-        //        else
-        //        {
-        //            totalBusyTimePerCategory[CategoryGroup.Key] = totalCategoryBusyTimeForThisMonth;
-        //        }
-        //    }
+                    // keep track of totals for each category
+                    if (totalBusyTimePerCategory.TryGetValue(CategoryGroup.Key, out Double currentTotalBusyTimeForCategory))
+                    {
+                        totalBusyTimePerCategory[CategoryGroup.Key] = currentTotalBusyTimeForCategory + totalCategoryBusyTimeForThisMonth;
+                    }
+                    else
+                    {
+                        totalBusyTimePerCategory[CategoryGroup.Key] = totalCategoryBusyTimeForThisMonth;
+                    }
+                }
 
-        //    // add record to collection
-        //    summary.Add(record);
-        //}
-        //// ---------------------------------------------------------------------------
-        //// add final record which is the totals for each category
-        //// ---------------------------------------------------------------------------
-        //Dictionary<string, object> totalsRecord = new Dictionary<string, object>();
-        //totalsRecord["Month"] = "TOTALS";
+                // add record to collection
+                summary.Add(record);
+            }
+            // ---------------------------------------------------------------------------
+            // add final record which is the totals for each category
+            // ---------------------------------------------------------------------------
+            Dictionary<string, object> totalsRecord = new Dictionary<string, object>();
+            totalsRecord["Month"] = "TOTALS";
 
-        //foreach (var cat in categories.List())
-        //{
-        //    try
-        //    {
-        //        totalsRecord.Add(cat.Description, totalBusyTimePerCategory[cat.Description]);
-        //    }
-        //    catch { }
-        //}
-        //summary.Add(totalsRecord);
+            foreach (var cat in categories.List())
+            {
+                try
+                {
+                    totalsRecord.Add(cat.Description, totalBusyTimePerCategory[cat.Description]);
+                }
+                catch { }
+            }
+            summary.Add(totalsRecord);
 
 
-        //return summary;
-        //}
+            return summary;
+        }
         ///// <example>
         ////
         ///// <b>Getting a calendar dictionary by month and category</b>
