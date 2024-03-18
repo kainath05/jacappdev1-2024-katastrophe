@@ -92,7 +92,7 @@ namespace Calendar
         }
 
 
-        //#region GetList
+        #region GetList
 
 
 
@@ -1037,7 +1037,7 @@ ORDER BY Year, Month;";
         ///// 
         ///// </example> 
 
-        //#endregion GetList
+#endregion GetList
 
     }
 }
