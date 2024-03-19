@@ -368,14 +368,10 @@ ORDER BY Year, Month;";
 
         public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
-            // --------------------------------------------------------
-            // get all items first
-            // --------------------------------------------------------
             var cmd = new SQLiteCommand(Database.dbConnection);
             Start = Start ?? new DateTime(1900, 1, 1);
             End = End ?? new DateTime(2500, 1, 1);
             List<CalendarItemsByCategory> itemsByCategory = new List<CalendarItemsByCategory>();
-            Double totalBusyTime = 0;
 
             if (FilterFlag)
             {
