@@ -299,14 +299,44 @@ namespace Calendar
         //// "year/month", list of calendar items, and totalBusyTime for that month
         //// ============================================================================
 
-        ///// <summary>
-        ///// Adding a list of calendar items grouped by month
-        ///// </summary>
-        ///// <param name="Start">start of specific calendar item</param>
-        ///// <param name="End">End of specific calendar item</param>
-        ///// <param name="FilterFlag">Boolean that filters by category if true</param>
-        ///// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
-        ///// <returns>A list of calendar items grouped by month</returns>
+        /// <summary>
+        /// Retrieves a list of calendar items, optionally filtered by category, and groups them by month.
+        /// </summary>
+        /// <param name="Start">The start date from which to begin retrieving calendar items. If null, defaults to January 1, 1900.</param>
+        /// <param name="End">The end date at which to stop retrieving calendar items. If null, defaults to December 31, 2500.</param>
+        /// <param name="FilterFlag">A boolean flag indicating whether to filter the items by a specific category. If true, items will be filtered by the specified CategoryID.</param>
+        /// <param name="CategoryID">The ID of the category to filter by. This parameter is used only if FilterFlag is set to true.</param>
+        /// <returns>A list of CalendarItemsByMonth objects, each representing a collection of calendar items for a specific month, along with the total busy time calculated from the durations of the included items.</returns>
+        /// <example>
+        /// Example of retrieving all calendar items by month without any category filter:
+        /// <code>
+        /// List<CalendarItemsByMonth> calendarItemsByMonths = calendar.GetCalendarItemsByMonth(null, null, false, 0);
+        /// Console.WriteLine("Date               Short Description         Duration     BusyTime");
+        /// foreach (CalendarItemsByMonth calendarItem in calendarItemsByMonths)
+        /// {
+        ///     Console.WriteLine("Month:" + calendarItem.Month);
+        ///     foreach (CalendarItem item in calendarItem.Items)
+        ///     {
+        ///         Console.WriteLine(
+        ///             $"{item.StartDateTime:yyyy/MMM/dd/HH/mm} {item.ShortDescription,-20}  {item.DurationInMinutes,8} {item.BusyTime,12}");
+        ///     }
+        /// }
+        /// </code>
+        /// Sample output:
+        /// <code>
+        /// Date               Short Description         Duration     BusyTime
+        /// Month:2018/01
+        /// 2018-Jan-10-10-00 App Dev Homework            40           40
+        /// 2018-Jan-11-10-15 Sprint retrospective        60          100
+        /// 2018-Jan-11-19-30 Staff meeting               15          115
+        /// Month:2020/01
+        /// 2020-Jan-01-00-00 New Year's                1440         1555
+        /// 2020-Jan-09-00-00 Honolulu                  1440         2995
+        /// 2020-Jan-10-00-00 Honolulu                  1440         4435
+        /// 2020-Jan-12-00-00 Wendy's birthday          1440         5875
+        /// 2020-Jan-20-11-00 On call security           180         6055
+        /// </code>
+        /// </example>
         public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             var summary = new List<CalendarItemsByMonth>();
