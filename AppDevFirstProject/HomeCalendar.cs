@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Drawing;
 using System.Globalization;
@@ -365,6 +366,40 @@ ORDER BY Year, Month;";
             return summary;
         }
 
+        public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        {
+            // --------------------------------------------------------
+            // get all items first
+            // --------------------------------------------------------
+            var cmd = new SQLiteCommand(Database.dbConnection);
+            Start = Start ?? new DateTime(1900, 1, 1);
+            End = End ?? new DateTime(2500, 1, 1);
+            List<CalendarItemsByCategory> itemsByCategory = new List<CalendarItemsByCategory>();
+            Double totalBusyTime = 0;
+
+            if (FilterFlag)
+            {
+                cmd.CommandText = $"SELECT e.CategoryId, c.Description FROM events e " +
+                $"INNER JOIN categories c ON e.CategoryId = c.Id WHERE e.StartDateTime >= '{Start}' AND e.StartDateTime <= '{End}' AND e.CategoryId = '{CategoryID}' GROUP BY c.Id ORDER BY c.Description";
+            }
+            else
+            {
+                cmd.CommandText = $"SELECT e.CategoryId, c.Description FROM events e " +
+                $"INNER JOIN categories c ON e.CategoryId = c.Id WHERE e.StartDateTime >= '{Start}' AND e.StartDateTime <= '{End}' GROUP BY c.Id ORDER BY c.Description";
+            }
+
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                int categoryId = Convert.ToInt32(reader["CategoryId"]);
+                string desc = (string)reader["Description"];
+                List<CalendarItem> items = GetCalendarItems(Start, End, true, categoryId);
+                itemsByCategory.Add(new CalendarItemsByCategory { Category = desc, Items = items, TotalBusyTime = items[items.Count - 1].BusyTime });
+            }
+
+            return itemsByCategory;
+        }
+
 
 
         ///// <example>
@@ -541,54 +576,6 @@ ORDER BY Year, Month;";
 
         //    return summary;
         //}
-        public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        {
-            var summary = new List<CalendarItemsByCategory>();
-            Start = Start ?? new DateTime(1900, 1, 1);
-            End = End ?? new DateTime(2500, 12, 31);
-
-            // Instead of selecting each event individually, group them by category first.
-            string query = $@"
-SELECT c.Description AS CategoryDescription
-FROM events e
-JOIN categories c ON e.CategoryId = c.Id
-WHERE e.StartDateTime BETWEEN @Start AND @End
-" + (FilterFlag ? "AND CategoryId = @CategoryId " : "") + @"
-GROUP BY c.Description
-ORDER BY c.Description;";
-
-            using (var cmd = new SQLiteCommand(query, Database.dbConnection))
-            {
-                cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
-                if (FilterFlag) cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-
-                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
-       
-
-                        // For each category, get the list of CalendarItems
-                        List<CalendarItem> items = GetCalendarItems(Start, End, FilterFlag, CategoryID);
-
-
-                        var totalBusyTime = (items.Sum(item => item.DurationInMinutes));
-
-                            // Create and add the new CalendarItemsByCategory object to the summary list.
-                            summary.Add(new CalendarItemsByCategory
-                            {
-                                Category = categoryDescription,
-                                Items = items,
-                                TotalBusyTime = totalBusyTime
-                            });
-                    }
-                }
-            }
-
-            return summary;
-        }
 
 
         ///// <example>
