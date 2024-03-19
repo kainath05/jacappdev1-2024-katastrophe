@@ -101,14 +101,76 @@ namespace Calendar
         //// Get all events list
         //// ============================================================================
 
-        ///// <summary>
-        ///// Adding a list calendar items in order from starting time
-        ///// </summary>
-        ///// <param name="Start">start time of first calendar item</param>
-        ///// <param name="End">End time for last category item</param>
-        ///// <param name="FilterFlag">Boolean that returns true if we have a specific category and false if there isn't a specific category</param>
-        ///// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
-        ///// <returns>A list of calendar items</returns>
+        /// <summary>
+        /// Retrieves a list of calendar items within a specified time frame, optionally filtered by a specific category.
+        /// </summary>
+        /// <param name="Start">The start time from which to begin retrieving calendar items. If null, a default of January 1, 1900, is used.</param>
+        /// <param name="End">The end time at which to stop retrieving calendar items. If null, a default of January 1, 2500, is used.</param>
+        /// <param name="FilterFlag">Indicates whether the calendar items should be filtered by a specific category. True to enable filtering; false otherwise.</param>
+        /// <param name="CategoryID">Specifies the category ID to filter by. This parameter is considered only if FilterFlag is true.</param>
+        /// <returns>A list of CalendarItem objects, each representing a calendar event within the specified time frame and optionally filtered by category.</returns>
+        /// <example>
+        /// <b>Example 1: Retrieving all calendar items without any category filter</b>
+        /// <code>
+        /// HomeCalendar calendar = new HomeCalendar();
+        /// calendar.ReadFromFile(filename);
+        /// List<CalendarItem> calendarItems = calendar.GetCalendarItems(null, null, false, 0);
+        /// 
+        /// foreach (var item in calendarItems)
+        /// {
+        ///     Console.WriteLine($"{item.StartDateTime:yyyy/MMM/dd/HH/mm} {item.ShortDescription,-20}  {item.DurationInMinutes,8} {item.BusyTime,12}");
+        /// }
+        /// </code>
+        /// Sample output:
+        /// <code>
+        /// Date               Short Description         Duration     BusyTime
+        /// 2018-Jan.-10-10-00 App Dev Homework            40           40
+        /// 2018-Jan.-11-10-15 Sprint retrospective        60          100
+        /// 2018-Jan.-11-19-30 staff meeting               15          115
+        /// 2020-Jan.-01-00-00 New Year's                1440         1555
+        /// 2020-Jan.-09-00-00 Honolulu                  1440         2995
+        /// 2020-Jan.-10-00-00 Honolulu                  1440         4435
+        /// 2020-Jan.-12-00-00 Wendy's birthday          1440         5875
+        /// 2020-Jan.-20-11-00 On call security           180         6055
+        /// </code>
+        /// </example>
+        /// <example>
+        /// <b>Example 2: Retrieving calendar items within a specified time frame</b>
+        /// <code>
+        /// List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, false, 0);
+        /// 
+        /// foreach (var item in calendarItems)
+        /// {
+        ///     Console.WriteLine($"{item.StartDateTime:yyyy/MMM/dd/HH/mm} {item.ShortDescription,-20}  {item.DurationInMinutes,8} {item.BusyTime,12}");
+        /// }
+        /// </code>
+        /// Sample output:
+        /// <code>
+        /// Date               Short Description         Duration     BusyTime
+        /// 2020-Jan.-01-00-00 New Year's                1440         1440
+        /// 2020-Jan.-09-00-00 Honolulu                  1440         2880
+        /// 2020-Jan.-10-00-00 Honolulu                  1440         4320
+        /// 2020-Jan.-12-00-00 Wendy's birthday          1440         5760
+        /// 2020-Jan.-20-11-00 On call security           180         5940
+        /// </code>
+        /// </example>
+        /// <example>
+        /// <b>Example 3: Filtering calendar items by category</b>
+        /// <code>
+        /// List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
+        /// 
+        /// foreach (var item in calendarItems)
+        /// {
+        ///     Console.WriteLine($"{item.StartDateTime:yyyy/MMM/dd/HH/mm} {item.ShortDescription,-20}  {item.DurationInMinutes,8} {item.BusyTime,12}");
+        /// }
+        /// </code>
+        /// Sample output:
+        /// <code>
+        /// Date               Short Description         Duration     BusyTime
+        /// 2020-Jan-01-00-00 New Year's                1440         1440
+        /// </code>
+        /// </example>
+
         public List<CalendarItem> GetCalendarItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             // ------------------------------------------------------------------------
@@ -181,118 +243,7 @@ namespace Calendar
             return items;
         }
 
-        ///// <example>
-        ////
-        ///// <b>Getting a list of ALL calendar items</b>
-        ///// 
-        ///// <code>
-        ///// <![CDATA[
-        /////  HomeCalendar calendar = new HomeCalendar();
-        /////  calendar.ReadFromFile(filename);
-        ///// 
-        /////   List <CalendarItem> calendarItems = calendar.GetCalendarItems(null, null, false, 0);
-        /////             
-        /////   // print important information
-        /////   foreach (var ci in calendarItems)
-        /////   {
-        /////     Console.WriteLine(
-        /////        String.Format("{0} {1,-20}  {2,8} {3,12}",
-        /////            ci.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        /////            ci.ShortDescription,
-        /////            ci.DurationInMinutes, ci.BusyTime)
-        /////      );
-        /////   }
-        /////
-        /////
-        ///// ]]>
-        ///// </code>
-        ///// 
-        ///// Sample output:
-        ///// <code>
-        ///// Date               Short Description         Duration     BusyTime
-        ///// 2018-Jan.-10-10-00 App Dev Homework            40           40
-        ///// 2018-Jan.-11-10-15 Sprint retrospective        60          100
-        ///// 2018-Jan.-11-19-30 staff meeting               15          115
-        ///// 2020-Jan.-01-00-00 New Year's                1440         1555
-        ///// 2020-Jan.-09-00-00 Honolulu                  1440         2995
-        ///// 2020-Jan.-10-00-00 Honolulu                  1440         4435
-        ///// 2020-Jan.-12-00-00 Wendy's birthday          1440         5875
-        ///// 2020-Jan.-20-11-00 On call security           180         6055
-        ///// </code>
-        ///// 
-        ///// </example>
-
-        ///// <example>
-        ////
-        ///// <b>Getting a list of ALL calendar items with start and end date</b>
-        ///// 
-        ///// <code>
-        ///// <![CDATA[
-        /////  HomeCalendar calendar = new HomeCalendar();
-        /////  calendar.ReadFromFile(filename);
-        ///// 
-        /////   List <CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, false, 0);
-        /////             
-        /////   // print important information
-        /////   foreach (var ci in calendarItems)
-        /////   {
-        /////     Console.WriteLine(
-        /////        String.Format("{0} {1,-20}  {2,8} {3,12}",
-        /////            ci.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        /////            ci.ShortDescription,
-        /////            ci.DurationInMinutes, ci.BusyTime)
-        /////      );
-        /////   }
-        /////
-        /////
-        ///// ]]>
-        ///// </code>
-        ///// 
-        ///// Sample output:
-        ///// <code>
-        ///// Date               Short Description         Duration     BusyTime
-        ///// 2020-Jan.-01-00-00 New Year's                1440         1440
-        ///// 2020-Jan.-09-00-00 Honolulu                  1440         2880
-        ///// 2020-Jan.-10-00-00 Honolulu                  1440         4320
-        ///// 2020-Jan.-12-00-00 Wendy's birthday          1440         5760
-        ///// 2020-Jan.-20-11-00 On call security           180         5940
-        ///// </code>
-        ///// 
-        ///// </example>
-        ///// 
-        ///// <example>
-        ////
-        ///// <b>Getting a list of ALL calendar items with all values</b>
-        ///// 
-        ///// <code>
-        ///// <![CDATA[
-        /////  HomeCalendar calendar = new HomeCalendar();
-        /////  calendar.ReadFromFile(filename);
-        ///// 
-        /////   List <CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
-        /////             
-        /////   // print important information
-        /////   foreach (var ci in calendarItems)
-        /////   {
-        /////     Console.WriteLine(
-        /////        String.Format("{0} {1,-20}  {2,8} {3,12}",
-        /////            ci.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        /////            ci.ShortDescription,
-        /////            ci.DurationInMinutes, ci.BusyTime)
-        /////      );
-        /////   }
-        /////
-        /////
-        ///// ]]>
-        ///// </code>
-        ///// 
-        ///// Sample output:
-        ///// <code>
-        ///// Date Short Description Duration     BusyTime
-        ///// 2020-Jan.-01-00-00 New Year's                1440         1440
-        ///// </code>
-        ///// 
-        ///// </example>
+        
 
         //// ============================================================================
         //// returns a list of CalendarItemsByMonth which is 
