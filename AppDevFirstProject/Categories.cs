@@ -16,15 +16,16 @@ namespace Calendar
 {
     // ====================================================================
     // CLASS: categories
-    //        - A collection of category items,
-    //        - Read/Write to Database.
-    //        - etc
+    //        - A collection of category items
     // ====================================================================
     /// <summary>
     /// Categories class represents a collection of category items, providing functionality to read/write to a database
     /// </summary>
     public class Categories
     {
+        /// <summary>
+        /// Database connection for categories
+        /// </summary>
         private SQLiteConnection connection;
 
         // ====================================================================
@@ -53,7 +54,12 @@ namespace Calendar
 
         /// <summary>
         /// Gets a specific category from the id associated to it
-        /// </summary>
+        /// </summary
+        /// <param name="i">The id of the category to retrieve</param>
+        /// <returns>The category with the specified id</returns>
+        /// <exception cref="Exception">Thrown if the category is equal to null</exception> 
+        /// <example>
+        /// <code>
         /// try
         /// {
         ///     int categoryId = 1; // Assuming you want to get the category with ID 1
@@ -65,9 +71,8 @@ namespace Calendar
         /// {
         ///     Console.WriteLine("Error retrieving category: " + ex.Message);
         /// }
-        /// <param name="i">The id of the category to retrieve</param>
-        /// <returns>The category with the specified id</returns>
-        /// <exception cref="Exception">Thrown if the category is equal to null</exception>
+        /// </code>
+        /// </example>
         public Category GetCategoryFromId(int i)
         {
             Category category = null;

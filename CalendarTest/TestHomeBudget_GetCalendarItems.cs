@@ -55,6 +55,7 @@ namespace CalendarCodeTests
             String messyDB = $"{folder}\\messy.db";
             System.IO.File.Copy(goodDB, messyDB, true);
             HomeCalendar homeCalendar = new HomeCalendar(messyDB, false);
+            //Categories cat = new Categories(Database.dbConnection, false);
 
             // Act
             List<CalendarItem> CalendarItems = homeCalendar.GetCalendarItems(null, null, false, 9);
@@ -63,7 +64,10 @@ namespace CalendarCodeTests
             double busyTime = 0;
             foreach (CalendarItem CalendarItem in CalendarItems)
             {
-                busyTime = busyTime + CalendarItem.DurationInMinutes;
+                //if (cat.GetCategoryFromId(CalendarItem.CategoryID).Type != Category.CategoryType.Availability)
+                //{
+                    busyTime += CalendarItem.DurationInMinutes;
+                //}
                 Assert.Equal(busyTime, CalendarItem.BusyTime);
             }
 

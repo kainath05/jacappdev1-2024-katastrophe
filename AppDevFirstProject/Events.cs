@@ -53,16 +53,6 @@ namespace Calendar
             }
 
             this.connection = conn;
-            if (newDB)
-            {
-                using (SQLiteCommand clearCommand = new SQLiteCommand(connection))
-                {
-                    clearCommand.CommandText = "DELETE FROM events";
-                    clearCommand.ExecuteNonQuery();
-                    clearCommand.CommandText = "DELETE FROM categories";
-                    clearCommand.ExecuteNonQuery();
-                }
-            }
         }
 
         // ====================================================================
@@ -89,7 +79,7 @@ namespace Calendar
                     cmd.CommandText = "INSERT INTO events(CategoryId, DurationInMinutes, StartDateTime, Details) VALUES (@CategoryId, @DurationInMinutes, @StartDateTime, @Details)";
                     cmd.Parameters.AddWithValue("@CategoryId", category);
                     cmd.Parameters.AddWithValue("@DurationInMinutes", duration);
-                    cmd.Parameters.AddWithValue("@StartDateTime", date); // M/d/yyyy h:mm:ss tt cultureojrgjhewrgjwrjklbg
+                    cmd.Parameters.AddWithValue("@StartDateTime", date);
                     cmd.Parameters.AddWithValue("@Details", details);
                     cmd.ExecuteNonQuery();
             }
@@ -132,13 +122,6 @@ namespace Calendar
             }
         }
 
-        // ====================================================================
-        // Return list of Events
-        // Note:  make new copy of list, so user cannot modify what is part of
-        //        this instance
-        // ====================================================================
-
-
 
         /// <summary>
         /// Returns a new copy of the list of events, preventing modification of the original list.
@@ -158,7 +141,6 @@ namespace Calendar
         {
             List<Event> events = new List<Event>();
             string query = "SELECT Id, CategoryId, DurationInMinutes, StartDateTime, Details FROM events ORDER BY Id";
-            //e JOIN categories c ON e.CategoryId = c.Id
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -195,7 +177,7 @@ namespace Calendar
         /// events.UpdateProperties(firstEvent.Id, DateTime.Now, 90, "Updated details", 2);
         /// </code>
         /// </example>
-        public void UpdateProperties(int id, DateTime StartDateTime, Double DurationInMinutes, String Details, int Category) // What is Date property?
+        public void UpdateProperties(int id, DateTime StartDateTime, Double DurationInMinutes, String Details, int Category) 
         {
             using (var cmd = new SQLiteCommand(connection))
             {
@@ -208,9 +190,6 @@ namespace Calendar
                 cmd.ExecuteNonQuery();
             }
         }
-
-
-
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.Entity.Core.Common.CommandTrees;
 using System.Data.SQLite;
 using System.Drawing;
 using System.Globalization;
@@ -220,7 +221,11 @@ namespace Calendar
                         var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
 
                         // Accumulate the total busy time
-                        totalBusyTime += duration;
+                        //Category category = categories.GetCategoryFromId(eventId);
+                        //if (category.Type != Category.CategoryType.Availability)
+                        //{
+                            totalBusyTime += duration;
+                        //}
 
                         // Add a new CalendarItem object to the list
                         items.Add(new CalendarItem
@@ -233,6 +238,7 @@ namespace Calendar
                             Category = categoryDescription,
                             BusyTime = totalBusyTime
                         });
+
                     }
                 }
             }
@@ -240,28 +246,22 @@ namespace Calendar
             return items;
         }
 
-        
+
 
         //// ============================================================================
         //// returns a list of CalendarItemsByMonth which is 
         //// "year/month", list of calendar items, and totalBusyTime for that month
         //// ============================================================================
 
+
         /// <summary>
-        /// Adding a list calendar items in order from starting time
+        /// Adding a list of calendar items grouped by month
         /// </summary>
-        /// <param name="Start">start time of first calendar item</param>
-        /// <param name="End">End time for last category item</param>
-        /// <param name="FilterFlag">Boolean that returns true if we have a specific category and false if there isn't a specific category</param>
+        /// <param name="Start">start of specific calendar item</param>
+        /// <param name="End">End of specific calendar item</param>
+        /// <param name="FilterFlag">Boolean that filters by category if true</param>
         /// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
-        /// <returns>A list of calendar items</returns>
-        /// Retrieves a list of calendar items, optionally filtered by category, and groups them by month.
-        /// </summary>
-        /// <param name="Start">The start date from which to begin retrieving calendar items. If null, defaults to January 1, 1900.</param>
-        /// <param name="End">The end date at which to stop retrieving calendar items. If null, defaults to December 31, 2500.</param>
-        /// <param name="FilterFlag">A boolean flag indicating whether to filter the items by a specific category. If true, items will be filtered by the specified CategoryID.</param>
-        /// <param name="CategoryID">The ID of the category to filter by. This parameter is used only if FilterFlag is set to true.</param>
-        /// <returns>A list of CalendarItemsByMonth objects, each representing a collection of calendar items for a specific month, along with the total busy time calculated from the durations of the included items.</returns>
+        /// <returns>A list of calendar items grouped by month</returns>
         /// <example>
         /// Example of retrieving all calendar items by month without any category filter:
         /// <code>
@@ -292,18 +292,8 @@ namespace Calendar
         /// 2020-Jan-20-11-00 On call security           180         6055
         /// </code>
         /// </example>
-        
 
-       
-        /// <summary>
-        /// Adding a list of calendar items grouped by month
-        /// </summary>
-        /// <param name="Start">start of specific calendar item</param>
-        /// <param name="End">End of specific calendar item</param>
-        /// <param name="FilterFlag">Boolean that filters by category if true</param>
-        /// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
-        /// <returns>A list of calendar items grouped by month</returns>
-        public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
+        public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID) //need group by for query, distinct looks for pairs?
         {
             var summary = new List<CalendarItemsByMonth>();
 
@@ -340,7 +330,7 @@ ORDER BY Year, Month;";
                         var month = reader.GetString(reader.GetOrdinal("Month"));
 
                         // Calculate the start and end DateTime objects for the month.
-                        var startOfMonth = new DateTime(int.Parse(year), int.Parse(month), 1);
+                        var startOfMonth = new DateTime(int.Parse(year), int.Parse(month), 1); // handle day of month and unit test made
                         var endOfMonth = startOfMonth.AddMonths(1).AddSeconds(-1);
 
                         List<CalendarItem> items = GetCalendarItems(startOfMonth, endOfMonth, FilterFlag, CategoryID);
@@ -362,61 +352,6 @@ ORDER BY Year, Month;";
             return summary;
         }
 
-        //// ============================================================================
-        //// Group all events by category (ordered by category name)
-        //// ============================================================================
-
-
-        //public List<CalendarItemsByCategory> GetCalendarItemsByCategory(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        //{
-        //    var cmd = new SQLiteCommand(Database.dbConnection);
-        //    Start = Start ?? new DateTime(1900, 1, 1);
-        //    End = End ?? new DateTime(2500, 1, 1);
-        //    List<CalendarItemsByCategory> itemsByCategory = new List<CalendarItemsByCategory>();
-
-        //    if (FilterFlag)
-        //    {
-        //        cmd.CommandText = $"SELECT e.CategoryId, c.Description FROM events e " +
-        //        $"INNER JOIN categories c ON e.CategoryId = c.Id WHERE e.StartDateTime >= '{Start}' AND e.StartDateTime <= '{End}' AND e.CategoryId = '{CategoryID}' GROUP BY c.Id ORDER BY c.Description";
-        //    }
-        //    else
-        //    {
-        //        cmd.CommandText = $"SELECT e.CategoryId, c.Description FROM events e " +
-        //        $"INNER JOIN categories c ON e.CategoryId = c.Id WHERE e.StartDateTime >= '{Start}' AND e.StartDateTime <= '{End}' GROUP BY c.Id ORDER BY c.Description";
-        //    }
-
-        //    SQLiteDataReader reader = cmd.ExecuteReader();
-        //    while (reader.Read())
-        //    {
-        //        int categoryId = Convert.ToInt32(reader["CategoryId"]);
-        //        string desc = (string)reader["Description"];
-        //        List<CalendarItem> items = GetCalendarItems(Start, End, true, categoryId);
-        //        itemsByCategory.Add(new CalendarItemsByCategory { Category = desc, Items = items, TotalBusyTime = items[items.Count - 1].BusyTime });
-        //    }
-
-        //    return itemsByCategory;
-        //}
-
-
-        
-
-        //// ============================================================================
-        //// Group all events by category and Month
-        //// creates a list of Dictionary objects with:
-        ////          one dictionary object per month,
-        ////          and one dictionary object for the category total busy times
-        //// 
-        //// Each per month dictionary object has the following key value pairs:
-        ////           "Month", <name of month>
-        ////           "TotalBusyTime", <the total durations for the month>
-        ////             for each category for which there is an event in the month:
-        ////             "items:category", a List<CalendarItem>
-        ////             "category", the total busy time for that category for this month
-        //// The one dictionary for the category total busy times has the following key value pairs:
-        ////             for each category for which there is an event in ANY month:
-        ////             "category", the total busy time for that category for all the months
-        //// ============================================================================
-
         /// <summary>
         /// Adds a list of calendar items sorted by category
         /// </summary>
@@ -424,7 +359,7 @@ ORDER BY Year, Month;";
         /// <param name="End">End time of specific calendar item</param>
         /// <param name="FilterFlag">Boolean that filters by category if true</param>
         /// <param name="CategoryID">A list of calendar items sorted by category</param>
-        /// <returns></returns>
+        /// <returns>A list of category items by category</returns>
         /// <example>
         ///
         /// <b>Getting a list of ALL calendar items by category</b>
@@ -544,31 +479,25 @@ ORDER BY Year, Month;";
             End = End ?? new DateTime(2500, 1, 1);
             List<CalendarItemsByCategory> itemsByCategory = new List<CalendarItemsByCategory>();
 
-            using (var cmd = new SQLiteCommand(Database.dbConnection))
+            string queryCategory = @"
+                SELECT e.CategoryId, c.Description 
+                FROM events e 
+                INNER JOIN categories c ON e.CategoryId = c.Id 
+                WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End";
+
+            if (FilterFlag)
+            {
+                queryCategory += " AND e.CategoryId = @CategoryId";
+            }
+            queryCategory += " GROUP BY c.Id ORDER BY c.Description";
+            using (var cmd = new SQLiteCommand(queryCategory, Database.dbConnection))
             {
                 cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
                 cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
 
                 if (FilterFlag)
                 {
-                    cmd.CommandText = @"
-                SELECT e.CategoryId, c.Description 
-                FROM events e 
-                INNER JOIN categories c ON e.CategoryId = c.Id 
-                WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End AND e.CategoryId = @CategoryId 
-                GROUP BY c.Id 
-                ORDER BY c.Description";
                     cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
-                }
-                else
-                {
-                    cmd.CommandText = @"
-                SELECT e.CategoryId, c.Description 
-                FROM events e 
-                INNER JOIN categories c ON e.CategoryId = c.Id 
-                WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End 
-                GROUP BY c.Id 
-                ORDER BY c.Description";
                 }
 
                 using (SQLiteDataReader reader = cmd.ExecuteReader())
@@ -586,210 +515,216 @@ ORDER BY Year, Month;";
             return itemsByCategory;
         }
 
-        /// <example>
-        //
-        /// <b>Getting a calendar dictionary by month and category</b>
-        /// 
-        /// <code>
-        /// <![CDATA[
-        ///  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
-        ///
-        ///List<CalendarItem> calendarItems = calendar.GetCalendarItems(null, null, false, 0);
-        ///
-        ///    foreach (CalendarItem item in calendarItems)
-        ///    {
-        ///        string monthKey = item.StartDateTime.ToString("MM/yyyy");
-        ///string categoryKey = item.Category;
-        ///
-        ///        if (!calendarDictionary.ContainsKey(monthKey))
-        ///        {
-        ///            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
-        ///        }
-        ///
-        ///        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
-        ///        {
-        ///            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
-        ///        }
-        ///
-        ///calendarDictionary[monthKey][categoryKey].Add(item);
-        ///    }
-        ///
-        ///            foreach (var monthEntry in calendarDictionary)
-        ///{
-        ///    Console.WriteLine($"Month: {monthEntry.Key}");
-        ///
-        ///    foreach (var categoryEntry in monthEntry.Value)
-        ///    {
-        ///        Console.WriteLine($"  Category: {categoryEntry.Key}");
-        ///
-        ///        foreach (var calendarItem in categoryEntry.Value)
-        ///        {
-        ///            Console.WriteLine(
-        ///                String.Format("{0} {1,-20}  {2,8} {3,12}",
-        ///                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        ///                    calendarItem.ShortDescription,
-        ///                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
-        ///            );
-        ///        }
-        ///    }
-        ///}
-        ///
-        /// 
-        /// ]]>
-        /// </code>
-        /// 
-        /// Sample output:
-        /// <code>
-        /// Month: 01-2018
-        /// Category: Fun
-        /// 2018-Jan.-10-10-00 App Dev Homework            40           40
-        /// Category: Work
-        /// 2018-Jan.-11-10-15 Sprint retrospective        60          100
-        /// 2018-Jan.-11-19-30 staff meeting               15          115
-        /// Month: 01-2020
-        /// Category: Canadian Holidays
-        /// 2020-Jan.-01-00-00 New Year's                1440         1555
-        /// Category: Vacation
-        /// 2020-Jan.-09-00-00 Honolulu                  1440         2995
-        /// 2020-Jan.-10-00-00 Honolulu                  1440         4435
-        /// Category: Birthdays
-        /// 2020-Jan.-12-00-00 Wendy's birthday          1440         5875
-        /// Category: On call
-        /// 2020-Jan.-20-11-00 On call security           180         6055
-        /// </code>
-        /// 
-        /// </example>    
+        ///// <example>
+        ////
+        ///// <b>Getting a calendar dictionary by month and category</b>
+        ///// 
+        ///// <code>
+        ///// <![CDATA[
+        /////  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
+        /////
+        /////List<CalendarItem> calendarItems = calendar.GetCalendarItems(null, null, false, 0);
+        /////
+        /////    foreach (CalendarItem item in calendarItems)
+        /////    {
+        /////        string monthKey = item.StartDateTime.ToString("MM/yyyy");
+        /////string categoryKey = item.Category;
+        /////
+        /////        if (!calendarDictionary.ContainsKey(monthKey))
+        /////        {
+        /////            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
+        /////        }
+        /////
+        /////        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
+        /////        {
+        /////            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
+        /////        }
+        /////
+        /////calendarDictionary[monthKey][categoryKey].Add(item);
+        /////    }
+        /////
+        /////            foreach (var monthEntry in calendarDictionary)
+        /////{
+        /////    Console.WriteLine($"Month: {monthEntry.Key}");
+        /////
+        /////    foreach (var categoryEntry in monthEntry.Value)
+        /////    {
+        /////        Console.WriteLine($"  Category: {categoryEntry.Key}");
+        /////
+        /////        foreach (var calendarItem in categoryEntry.Value)
+        /////        {
+        /////            Console.WriteLine(
+        /////                String.Format("{0} {1,-20}  {2,8} {3,12}",
+        /////                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
+        /////                    calendarItem.ShortDescription,
+        /////                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
+        /////            );
+        /////        }
+        /////    }
+        /////}
+        /////
+        ///// 
+        ///// ]]>
+        ///// </code>
+        ///// 
+        ///// Sample output:
+        ///// <code>
+        ///// Month: 01-2018
+        ///// Category: Fun
+        ///// 2018-Jan.-10-10-00 App Dev Homework            40           40
+        ///// Category: Work
+        ///// 2018-Jan.-11-10-15 Sprint retrospective        60          100
+        ///// 2018-Jan.-11-19-30 staff meeting               15          115
+        ///// Month: 01-2020
+        ///// Category: Canadian Holidays
+        ///// 2020-Jan.-01-00-00 New Year's                1440         1555
+        ///// Category: Vacation
+        ///// 2020-Jan.-09-00-00 Honolulu                  1440         2995
+        ///// 2020-Jan.-10-00-00 Honolulu                  1440         4435
+        ///// Category: Birthdays
+        ///// 2020-Jan.-12-00-00 Wendy's birthday          1440         5875
+        ///// Category: On call
+        ///// 2020-Jan.-20-11-00 On call security           180         6055
+        ///// </code>
+        ///// 
+        ///// </example>    
 
-        /// <example>
-        ///
-        /// <b>Getting a calendar dictionary by month and category with start and end dates</b>
+        ///// <example>
+        /////
+        ///// <b>Getting a calendar dictionary by month and category with start and end dates</b>
+        ///// 
+        ///// <code>
+        ///// <![CDATA[
+        /////  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
+        /////
+        /////  List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
+        /////
+        /////    foreach (CalendarItem item in calendarItems)
+        /////    {
+        /////        string monthKey = item.StartDateTime.ToString("MM/yyyy");
+        /////        string categoryKey = item.Category;
+        /////
+        /////        if (!calendarDictionary.ContainsKey(monthKey))
+        /////        {
+        /////            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
+        /////        }
+        /////
+        /////        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
+        /////        {
+        /////            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
+        /////        }
+        /////
+        /////        calendarDictionary[monthKey][categoryKey].Add(item);
+        /////   }
+        /////
+        /////   foreach (var monthEntry in calendarDictionary)
+        /////   {
+        /////    Console.WriteLine($"Month: {monthEntry.Key}");
+        /////
+        /////    foreach (var categoryEntry in monthEntry.Value)
+        /////    {
+        /////        Console.WriteLine($"  Category: {categoryEntry.Key}");
+        /////
+        /////        foreach (var calendarItem in categoryEntry.Value)
+        /////        {
+        /////            Console.WriteLine(
+        /////                String.Format("{0} {1,-20}  {2,8} {3,12}",
+        /////                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
+        /////                    calendarItem.ShortDescription,
+        /////                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
+        /////            );
+        /////        }
+        /////    }
+        /////}
+        /////
+        ///// 
+        ///// ]]>
+        ///// </code>
+        ///// 
+        ///// Sample output:
+        ///// <code>
+        ///// Month: 01-2020
+        ///// Category: Canadian Holidays
+        ///// 2020-Jan.-01-00-00 New Year's                1440         1440
+        ///// Category: Vacation
+        ///// 2020-Jan.-09-00-00 Honolulu                  1440         2880
+        ///// 2020-Jan.-10-00-00 Honolulu                  1440         4320
+        ///// Category: Birthdays
+        ///// 2020-Jan.-12-00-00 Wendy's birthday          1440         5760
+        ///// Category: On call
+        ///// 2020-Jan.-20-11-00 On call security           180         5940
+        ///// </code>
+        ///// 
+        ///// </example> 
+        ///// 
+        ///// <example>
+        ////
+        ///// <b>Getting a calendar dictionary by month and category with all values</b>
+        ///// 
+        ///// <code>
+        ///// <![CDATA[
+        /////  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
+        /////
+        /////  List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
+        /////
+        /////    foreach (CalendarItem item in calendarItems)
+        /////    {
+        /////        string monthKey = item.StartDateTime.ToString("MM/yyyy");
+        /////string categoryKey = item.Category;
+        /////
+        /////        if (!calendarDictionary.ContainsKey(monthKey))
+        /////        {
+        /////            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
+        /////        }
+        /////
+        /////        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
+        /////        {
+        /////            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
+        /////        }
+        /////
+        /////calendarDictionary[monthKey][categoryKey].Add(item);
+        /////    }
+        /////
+        /////            foreach (var monthEntry in calendarDictionary)
+        /////{
+        /////    Console.WriteLine($"Month: {monthEntry.Key}");
+        /////
+        /////    foreach (var categoryEntry in monthEntry.Value)
+        /////    {
+        /////        Console.WriteLine($"  Category: {categoryEntry.Key}");
+        /////
+        /////        foreach (var calendarItem in categoryEntry.Value)
+        /////        {
+        /////            Console.WriteLine(
+        /////                String.Format("{0} {1,-20}  {2,8} {3,12}",
+        /////                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
+        /////                    calendarItem.ShortDescription,
+        /////                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
+        /////            );
+        /////        }
+        /////    }
+        /////}
+        /////
+        ///// 
+        ///// ]]>
+        ///// </code>
+        ///// 
+        ///// Sample output:
+        ///// <code>
+        ///// Month: 01-2020
+        ///// Category: Canadian Holidays
+        ///// 2020-Jan.-01-00-00 New Year's                1440         1440
+        ///// </code>
+        ///// 
+        ///// </example> 
+        /// <summary>
         /// 
-        /// <code>
-        /// <![CDATA[
-        ///  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
-        ///
-        ///  List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
-        ///
-        ///    foreach (CalendarItem item in calendarItems)
-        ///    {
-        ///        string monthKey = item.StartDateTime.ToString("MM/yyyy");
-        ///        string categoryKey = item.Category;
-        ///
-        ///        if (!calendarDictionary.ContainsKey(monthKey))
-        ///        {
-        ///            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
-        ///        }
-        ///
-        ///        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
-        ///        {
-        ///            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
-        ///        }
-        ///
-        ///        calendarDictionary[monthKey][categoryKey].Add(item);
-        ///   }
-        ///
-        ///   foreach (var monthEntry in calendarDictionary)
-        ///   {
-        ///    Console.WriteLine($"Month: {monthEntry.Key}");
-        ///
-        ///    foreach (var categoryEntry in monthEntry.Value)
-        ///    {
-        ///        Console.WriteLine($"  Category: {categoryEntry.Key}");
-        ///
-        ///        foreach (var calendarItem in categoryEntry.Value)
-        ///        {
-        ///            Console.WriteLine(
-        ///                String.Format("{0} {1,-20}  {2,8} {3,12}",
-        ///                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        ///                    calendarItem.ShortDescription,
-        ///                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
-        ///            );
-        ///        }
-        ///    }
-        ///}
-        ///
-        /// 
-        /// ]]>
-        /// </code>
-        /// 
-        /// Sample output:
-        /// <code>
-        /// Month: 01-2020
-        /// Category: Canadian Holidays
-        /// 2020-Jan.-01-00-00 New Year's                1440         1440
-        /// Category: Vacation
-        /// 2020-Jan.-09-00-00 Honolulu                  1440         2880
-        /// 2020-Jan.-10-00-00 Honolulu                  1440         4320
-        /// Category: Birthdays
-        /// 2020-Jan.-12-00-00 Wendy's birthday          1440         5760
-        /// Category: On call
-        /// 2020-Jan.-20-11-00 On call security           180         5940
-        /// </code>
-        /// 
-        /// </example> 
-        /// 
-        /// <example>
-        //
-        /// <b>Getting a calendar dictionary by month and category with all values</b>
-        /// 
-        /// <code>
-        /// <![CDATA[
-        ///  Dictionary<string, Dictionary<string, List<CalendarItem>>> calendarDictionary = new Dictionary<string, Dictionary<string, List<CalendarItem>>>();
-        ///
-        ///  List<CalendarItem> calendarItems = calendar.GetCalendarItems(DateTime.Now.AddYears(-5), DateTime.Now, true, 8);
-        ///
-        ///    foreach (CalendarItem item in calendarItems)
-        ///    {
-        ///        string monthKey = item.StartDateTime.ToString("MM/yyyy");
-        ///string categoryKey = item.Category;
-        ///
-        ///        if (!calendarDictionary.ContainsKey(monthKey))
-        ///        {
-        ///            calendarDictionary[monthKey] = new Dictionary<string, List<CalendarItem>>();
-        ///        }
-        ///
-        ///        if (!calendarDictionary[monthKey].ContainsKey(categoryKey))
-        ///        {
-        ///            calendarDictionary[monthKey][categoryKey] = new List<CalendarItem>();
-        ///        }
-        ///
-        ///calendarDictionary[monthKey][categoryKey].Add(item);
-        ///    }
-        ///
-        ///            foreach (var monthEntry in calendarDictionary)
-        ///{
-        ///    Console.WriteLine($"Month: {monthEntry.Key}");
-        ///
-        ///    foreach (var categoryEntry in monthEntry.Value)
-        ///    {
-        ///        Console.WriteLine($"  Category: {categoryEntry.Key}");
-        ///
-        ///        foreach (var calendarItem in categoryEntry.Value)
-        ///        {
-        ///            Console.WriteLine(
-        ///                String.Format("{0} {1,-20}  {2,8} {3,12}",
-        ///                    calendarItem.StartDateTime.ToString("yyyy/MMM/dd/HH/mm"),
-        ///                    calendarItem.ShortDescription,
-        ///                    calendarItem.DurationInMinutes, calendarItem.BusyTime)
-        ///            );
-        ///        }
-        ///    }
-        ///}
-        ///
-        /// 
-        /// ]]>
-        /// </code>
-        /// 
-        /// Sample output:
-        /// <code>
-        /// Month: 01-2020
-        /// Category: Canadian Holidays
-        /// 2020-Jan.-01-00-00 New Year's                1440         1440
-        /// </code>
-        /// 
-        /// </example> 
-
-        //#endregion GetList
+        /// </summary>
+        /// <param name="Start"></param>
+        /// <param name="End"></param>
+        /// <param name="FilterFlag"></param>
+        /// <param name="CategoryID"></param>
+        /// <returns></returns>
         public List<Dictionary<string, object>> GetCalendarDictionaryByCategoryAndMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         {
             // -----------------------------------------------------------------------

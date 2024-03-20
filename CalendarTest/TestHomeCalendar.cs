@@ -72,6 +72,23 @@ namespace CalendarCodeTests
             Assert.IsType<HomeCalendar>(calendar);
         }
 
+        [Fact]
+        public void HomeCalendar_CategoriesSetToDefault()
+        {
+            // Arrange
+            String folder = TestConstants.GetSolutionDir();
+            String newDB = $"{folder}\\newDB.db";
+            Database.newDatabase(newDB);
+            SQLiteConnection conn = Database.dbConnection;
+
+            //Act
+            HomeCalendar home = new HomeCalendar(newDB, true);
+
+            //Assert
+            Assert.Empty(home.events.List());
+            Assert.NotEmpty(home.categories.List());
+        }
+
 
     }
 }
