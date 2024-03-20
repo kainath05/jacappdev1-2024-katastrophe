@@ -17,11 +17,11 @@ namespace Calendar
     // ====================================================================
     // CLASS: Events
     //        - A collection of Event items,
-    //        - Read / write to file
+    //        - Read / write to database
     //        - etc
     // ====================================================================
     /// <summary>
-    /// Represents a collection of Event items with functionality for reading and writing to a file
+    /// Represents a collection of Event items with functionality
     /// </summary>
     public class Events
     {
@@ -31,6 +31,20 @@ namespace Calendar
         /// </summary>
         private SQLiteConnection connection;
 
+        /// <summary>
+        /// Initializes a new instance of the Events class with the provided database connection.
+        /// </summary>
+        /// <param name="conn">The SQLite connection to be used.</param>
+        /// <param name="newDB">A bool indicating whether to clear existing data in the database.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the database connection is null.</exception>
+        /// <example>
+        /// <code>
+        /// string newDB = “events.db”
+        /// Database.newDatabase(newDB);
+        /// SQLiteConnection conn = Database.dbConnection;
+        /// Events eventsManager = new Events(conn, true);
+        /// </code>
+        /// </example>
         public Events(SQLiteConnection conn, bool newDB)
         {
             if (conn == null)
@@ -56,12 +70,18 @@ namespace Calendar
         // ====================================================================
 
         /// <summary>
-        /// Adds an event to the collection with specified parameters
+        /// Adds an event to the collection with specified parameters.
         /// </summary>
-        /// <param name="date">The date of the event</param>
-        /// <param name="category">The category of the event</param>
-        /// <param name="duration">The duration of the event</param>
-        /// <param name="details">The details of the event</param>
+        /// <param name="date">The date of the event.</param>
+        /// <param name="category">The category of the event.</param>
+        /// <param name="duration">The duration of the event.</param>
+        /// <param name="details">The details of the event.</param>
+        /// <example>
+        /// <code>
+        /// Events events = new Events(connection, false);
+        /// events.Add(DateTime.Now, 1, 60, "Example event details");
+        /// </code>
+        /// </example>
         public void Add(DateTime date, int category, Double duration, String details)
         {
             using (var cmd = new SQLiteCommand(connection))
@@ -79,9 +99,17 @@ namespace Calendar
         // Delete Event
         // ====================================================================
 
-        /// <summary>Deletes an event at a specific index
+        /// <summary>
+        /// Deletes an event at a specific index.
         /// </summary>
-        /// <param name="Id">the specific index to be deleted</param>
+        /// <param name="Id">The specific index to be deleted.</param>
+        /// <exception cref="Exception">Thrown when the event with the specified ID is not found.</exception>
+        /// <example>
+        /// <code>
+        /// var events = new Events(connection, false);
+        /// events.Delete(1);
+        /// </code>
+        /// </example>
         public void Delete(int Id)
         {
             bool eventDeleted = false;
@@ -110,10 +138,22 @@ namespace Calendar
         //        this instance
         // ====================================================================
 
+
+
         /// <summary>
-        /// Returns a new copy of the list of events, preventing modification of the original list
+        /// Returns a new copy of the list of events, preventing modification of the original list.
         /// </summary>
-        /// <returns>A new list containing copies of the events</returns>
+        /// <returns>A new list containing copies of the events.</returns>
+        /// <example>
+        /// <code>
+        /// var events = new Events(connection, false);
+        /// var eventList = events.List();
+        /// foreach (var ev in eventList)
+        /// {
+        ///     Console.WriteLine($"Event ID: {ev.Id}, StartDateTime: {ev.StartDateTime}, Category: {ev.CategoryId}, Duration: {ev.DurationInMinutes} minutes, Details: {ev.Details}");
+        /// }
+        /// </code>
+        /// </example>
         public List<Event> List()
         {
             List<Event> events = new List<Event>();
@@ -139,6 +179,22 @@ namespace Calendar
             return events;
         }
 
+
+        /// <summary>
+        /// Updates properties of an event with the specified ID.
+        /// </summary>
+        /// <param name="id">The ID of the event to be updated.</param>
+        /// <param name="StartDateTime">The updated start date and time of the event.</param>
+        /// <param name="DurationInMinutes">The updated duration of the event in minutes.</param>
+        /// <param name="Details">The updated details of the event.</param>
+        /// <param name="Category">The updated category of the event.</param>
+        /// <example>
+        /// <code>
+        /// var events = new Events(connection, false);
+        /// var firstEvent = events.List()[0];
+        /// events.UpdateProperties(firstEvent.Id, DateTime.Now, 90, "Updated details", 2);
+        /// </code>
+        /// </example>
         public void UpdateProperties(int id, DateTime StartDateTime, Double DurationInMinutes, String Details, int Category) // What is Date property?
         {
             using (var cmd = new SQLiteCommand(connection))
