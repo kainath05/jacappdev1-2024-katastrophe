@@ -255,7 +255,6 @@ namespace Calendar
         /// <param name="FilterFlag">Boolean that returns true if we have a specific category and false if there isn't a specific category</param>
         /// <param name="CategoryID">The specific category id that we use if FilterFlag == true</param>
         /// <returns>A list of calendar items</returns>
-        public List<CalendarItem> GetCalendarItems(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
         /// Retrieves a list of calendar items, optionally filtered by category, and groups them by month.
         /// </summary>
         /// <param name="Start">The start date from which to begin retrieving calendar items. If null, defaults to January 1, 1900.</param>
@@ -293,79 +292,7 @@ namespace Calendar
         /// 2020-Jan-20-11-00 On call security           180         6055
         /// </code>
         /// </example>
-        public List<CalendarItemsByMonth> GetCalendarItemsByMonth(DateTime? Start, DateTime? End, bool FilterFlag, int CategoryID)
-        {
-            // ------------------------------------------------------------------------
-            // return joined list within time frame
-            // ------------------------------------------------------------------------
-            Start = Start ?? new DateTime(1900, 1, 1);
-            End = End ?? new DateTime(2500, 1, 1);
-
-            string query = @"
-        SELECT e.Id AS EventId, e.CategoryId, e.StartDateTime, e.DurationInMinutes, e.Details,
-            c.Description AS CategoryDescription
-        FROM events e
-        JOIN categories c ON e.CategoryId = c.Id
-        WHERE e.StartDateTime >= @Start AND e.StartDateTime <= @End";
-
-            if (FilterFlag)
-            {
-                query += " AND e.CategoryId = @CategoryId";
-            }
-
-            query += " ORDER BY e.StartDateTime";
-
-            // ------------------------------------------------------------------------
-            // create a CalendarItem list with totals,
-            // ------------------------------------------------------------------------
-
-            List<CalendarItem> items = new List<CalendarItem>();
-            Double totalBusyTime = 0;
-
-            using (var cmd = new SQLiteCommand(query, Database.dbConnection))
-            {
-                // Add parameters to the command to avoid SQL injection
-                cmd.Parameters.AddWithValue("@Start", Start.Value.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@End", End.Value.ToString("yyyy-MM-dd"));
-                if (FilterFlag)
-                {
-                    cmd.Parameters.AddWithValue("@CategoryId", CategoryID);
-                }
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        // Read the data using the column names, ensuring type safety
-                        var eventId = reader.GetInt32(reader.GetOrdinal("EventId"));
-                        var categoryId = reader.GetInt32(reader.GetOrdinal("CategoryId"));
-                        var startDateTimeString = reader.GetString(reader.GetOrdinal("StartDateTime"));
-                        var startDateTime = DateTime.ParseExact(startDateTimeString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-                        var duration = reader.GetDouble(reader.GetOrdinal("DurationInMinutes"));
-                        var details = reader.GetString(reader.GetOrdinal("Details"));
-                        var categoryDescription = reader.GetString(reader.GetOrdinal("CategoryDescription"));
-
-                        // Accumulate the total busy time
-                        totalBusyTime += duration;
-
-                        // Add a new CalendarItem object to the list
-                        items.Add(new CalendarItem
-                        {
-                            EventID = eventId,
-                            CategoryID = categoryId,
-                            StartDateTime = startDateTime,
-                            DurationInMinutes = duration,
-                            ShortDescription = details,
-                            Category = categoryDescription,
-                            BusyTime = totalBusyTime
-                        });
-                    }
-                }
-            }
-
-            return items;
-        }
-
+        
 
         ///// <example>
         ////
