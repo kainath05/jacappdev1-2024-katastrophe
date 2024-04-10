@@ -8,5 +8,10 @@ namespace Calendar
 {
     interface View
     {
+        void CloseApplication(); //saved changes pop up ?
+
+
+
+
     }
 }
