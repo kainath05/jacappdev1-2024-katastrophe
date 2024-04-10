@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
+using Calendar;
 
 
 namespace Calendar
 {
-    class Presenter : View
+    class Presenter //add view
     {
         private readonly View _view;
         private readonly HomeCalendar _model;
@@ -17,13 +18,6 @@ namespace Calendar
         {
             _view = view;
             _model = new HomeCalendar("newdb.db", true);
-
-
-        }
-
-        public void CloseApplication()
-        {
-            throw new NotImplementedException();
         }
     }
 }

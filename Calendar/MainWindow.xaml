@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="450">
     <Grid>
-
+        <Button BorderBrush="Black" Width="40" Height="20" Click="Exit_Button" Margin="400,10,10,400">
+            <!--Exit Button-->
+            Exit
+        </Button>
+        <StackPanel>
+            <TextBlock>Which Calendar Do You Want To Use?</TextBlock>
+        </StackPanel>
     </Grid>
 </Window>

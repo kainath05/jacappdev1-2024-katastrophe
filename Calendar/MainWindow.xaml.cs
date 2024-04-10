@@ -14,11 +14,17 @@ namespace Calendar
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, View
+    public partial class MainWindow : Window //Add view
     {
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Exit_Button(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            Close();
         }
     }
 }
