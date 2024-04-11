@@ -5,8 +5,61 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="Events_Categories" Height="450" Width="800">
-    <Grid>
-        
+        Title="Events_Categories" Height="450" Width="550">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header for Add Event with enhanced visual hierarchy -->
+        <TextBlock Text="Add Event" FontWeight="SemiBold" FontSize="20" Margin="0,5"/>
+
+        <!-- Split Columns for Input Fields with improved spacing -->
+        <Grid Grid.Row="1" Margin="5,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Column: Details and Custom Date/Time Picker with logical grouping and spacing -->
+            <StackPanel Grid.Column="0" Margin="5">
+                <Label Content="Event Details"/>
+                <TextBox AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter event details here..."/>
+                <Label Content="Date/Time"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <!-- Custom Date/Time Picker Components -->
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Month"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Day"/>
+                    <TextBox Width="60" Margin="2" Foreground="Gray" Text="Year"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Hour"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Minute"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="AM/PM"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Right Column: Duration and Category with consistent design elements -->
+            <StackPanel Grid.Column="1" Margin="5">
+                <Label Content="Duration (Minutes)"/>
+                <TextBox Foreground="Gray" Text="Duration in minutes"/>
+                <Label Content="Category"/>
+                <ComboBox ToolTip="Event category">
+                    <!-- Bind ItemsSource to your categories collection -->
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+
+        <!-- Add/Cancel Buttons with consistent and visually appealing design -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add" Margin="10,0" Width="100"/>
+            <Button Content="Cancel" Width="100"/>
+        </StackPanel>
+
+        <!-- Category Management Button with enhanced visibility and accessibility -->
+        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management"/>
     </Grid>
+
+
 </Window>

@@ -17,11 +17,26 @@ namespace Calendar
     /// <summary>
     /// Interaction logic for Events_Categories.xaml
     /// </summary>
-    public partial class Events_Categories : Window
+    public partial class Events_Categories : Window, View
     {
         public Events_Categories()
         {
             InitializeComponent();
+        }
+
+        public bool ConfirmCloseApplication()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ShowFilePicker(string initialDirectory)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowMessage(string message)
+        {
+            throw new NotImplementedException();
         }
     }
 }
