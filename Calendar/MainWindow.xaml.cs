@@ -46,6 +46,7 @@ namespace Calendar
             {
                 ShowMessage($"Selected Calendar File: {selectedFile}");
                 _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
+                _presenter.newDB = false;
             }
         }
 
@@ -75,7 +76,7 @@ namespace Calendar
             openFileDialog.Filter = "All Files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
 
-            openFileDialog.InitialDirectory = _lastUsedDirectory;
+            //openFileDialog.InitialDirectory = _lastUsedDirectory;
 
             if (openFileDialog.ShowDialog() == true)
             {
@@ -103,22 +104,39 @@ namespace Calendar
                 return;
             }
 
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string parentFolderPath = Directory.GetParent(folderPath)?.FullName;
-            string fullPath = System.IO.Path.Combine(parentFolderPath, selectedFolder, $"{fileName}.db");
-
-            try
+            string folderPath = selectedFolder switch
             {
-                File.Create(fullPath).Close();
+                "Desktop" => Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "Downloads" => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                _ => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), selectedFolder)
+            };
 
-                var newWindow = new Events_Categories();
-                newWindow.Show();
-                Close();
-            }
-            catch (Exception ex)
+            string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
+
+            _presenter.fileName = fullPath;
+            _presenter.newDB = !File.Exists(fullPath);
+
+            if (_presenter.newDB)
             {
-                ShowMessage($"Error creating file: {ex.Message}");
+                try
+                {
+                    File.Create(fullPath).Close();
+                    ShowMessage("New database created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage($"Error creating file: {ex.Message}");
+                    return;
+                }
             }
+
+            _presenter.InitializeCalendar();
+
+            // Assuming Events_Categories is correctly prepared to use the initialized calendar
+            var newWindow = new Events_Categories();
+            newWindow.Show();
+            this.Close();
         }
+
     }
 }
