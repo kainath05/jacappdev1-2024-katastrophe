@@ -1,0 +1,20 @@
+﻿<Window x:Class="Calendar.Categories"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Calendar"
+        mc:Ignorable="d"
+        Title="Categories" Height="200" Width="350">
+    <Grid>
+        <StackPanel>
+            <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>
+            <Label Content="Category Description"/>
+            <TextBox AcceptsReturn="True" Height="30" Margin="5,0,5,5" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter category description here..."/>
+            <Label Content="Category Type"/>
+            <ComboBox Margin="5,0,5,5"></ComboBox>
+            <Button HorizontalAlignment="Left" Margin="90,10,10,10" Width="70" Height="30">Events</Button>
+            <Button HorizontalAlignment="Right" Width="70" Height="30" Margin="-20,-60,90,-10">Add</Button>
+        </StackPanel>
+    </Grid>
+</Window>
