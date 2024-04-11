@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="Choose Calendar" Height="300" Width="325">
     <Grid>
-        <!-- Main content area -->
         <StackPanel Margin="20">
             <TextBlock FontSize="15" FontWeight="Bold" Margin="67, 2, 2, 4">CALENDAR SET UP</TextBlock>
             <TextBlock Text="Calendar File Name:"/>
