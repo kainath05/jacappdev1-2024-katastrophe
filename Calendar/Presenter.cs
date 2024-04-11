@@ -14,28 +14,16 @@ namespace Calendar
     {
         private readonly View _view;
         private readonly HomeCalendar _calendar;
-        private string _lastUsedDirectory;
 
         public Presenter(View view)
         {
             _view = view;
             _calendar = new HomeCalendar("newdb.db", true); //NEED A DATABASE VARIABLE!
-            _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
         public bool ConfirmApplicationClosure()
         {
             return _view.ConfirmCloseApplication();
-        }
-
-        public void ChooseCalendarFileAndUpdateDirectory()
-        {
-            string selectedFile = _view.ShowFilePicker(_lastUsedDirectory);
-            if (!string.IsNullOrEmpty(selectedFile))
-            {
-                _view.ShowMessage($"Selected Calendar File: {selectedFile}");
-                _lastUsedDirectory = Path.GetDirectoryName(selectedFile);
-            }
         }
 
 
