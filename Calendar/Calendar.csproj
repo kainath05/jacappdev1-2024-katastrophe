@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="HomeCalendar">
       <HintPath>dlls\HomeCalendar.dll</HintPath>
     </Reference>

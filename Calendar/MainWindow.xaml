@@ -5,14 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="450">
+        Title="Choose Calendar" Height="350" Width="525">
     <Grid>
-        <Button BorderBrush="Black" Width="40" Height="20" Click="Exit_Button" Margin="400,10,10,400">
-            <!--Exit Button-->
-            Exit
-        </Button>
-        <StackPanel>
-            <TextBlock>Which Calendar Do You Want To Use?</TextBlock>
+        <!-- Main content area -->
+        <StackPanel Margin="20">
+            <!-- File Name Input -->
+            <TextBlock Text="Calendar File Name:"/>
+            <TextBox x:Name="FileNameTextBox" Margin="0,5"/>
+
+            <!-- Folder Location Selection -->
+            <TextBlock Text="Folder Location:"/>
+            <ComboBox x:Name="FolderComboBox" Margin="0,5"/>
+
+            <!-- Button to Open File Explorer -->
+            <Button Content="Open File Explorer" Click="OpenFileExplorer_Click" Margin="0,10"/>
+            <Button>Done</Button>
         </StackPanel>
+
+        <!-- Exit button positioned in top right corner -->
+        <Button Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
     </Grid>
 </Window>
