@@ -13,14 +13,29 @@ namespace Calendar
     class Presenter
     {
         private readonly View _view;
-        private readonly HomeCalendar _calendar;
+        private HomeCalendar _calendar;
+        public string fileName = "newdb.db";
+        public bool newDB;
 
         public Presenter(View view)
         {
             _view = view;
-            _calendar = new HomeCalendar("newdb.db", true); //NEED A DATABASE VARIABLE!
-        }
+            if (_calendar != null) return; 
 
+            if (newDB)
+            {
+                _calendar = new HomeCalendar(fileName, true);
+            }
+            else
+            {
+                _calendar = new HomeCalendar(fileName);
+            }
+        }
+        public void InitializeCalendar()
+        {
+            // Check for _calendar reinitialization logic if necessary
+            _calendar = newDB ? new HomeCalendar(fileName, true) : new HomeCalendar(fileName);
+        }
         public bool ConfirmApplicationClosure()
         {
             return _view.ConfirmCloseApplication();
