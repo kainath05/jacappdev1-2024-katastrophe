@@ -119,7 +119,7 @@ namespace Calendar
 
             string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string parentFolderPath = Directory.GetParent(folderPath)?.FullName;
-            string fullPath = System.IO.Path.Combine(parentFolderPath, selectedFolder, $"{fileName}.txt");
+            string fullPath = System.IO.Path.Combine(parentFolderPath, selectedFolder, $"{fileName}.db");
 
             try
             {

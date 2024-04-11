@@ -19,7 +19,7 @@ namespace Calendar
         public Presenter(View view)
         {
             _view = view;
-            _calendar = new HomeCalendar("newdb.db", true);
+            _calendar = new HomeCalendar("newdb.db", true); //NEED A DATABASE VARIABLE
             _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
 
