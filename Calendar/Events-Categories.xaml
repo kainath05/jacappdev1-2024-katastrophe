@@ -45,7 +45,12 @@
             </StackPanel>
         </Grid>
 
-        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add" Margin="10,0" Width="100"/>
+            <Button Content="Cancel" Width="100"/>
+        </StackPanel>
+
+        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management"/>
     </Grid>
 
 
