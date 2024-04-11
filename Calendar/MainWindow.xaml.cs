@@ -27,12 +27,11 @@ namespace Calendar
             _presenter = new Presenter(this);
 
             LoadDefaultFolderLocations();
-            _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         }
 
         private void LoadDefaultFolderLocations()
         {
-            // Populate the ComboBox with default folder locations
             FolderComboBox.Items.Add("Documents/Calendars");
             FolderComboBox.Items.Add("Desktop");
             FolderComboBox.Items.Add("Downloads");
@@ -42,18 +41,16 @@ namespace Calendar
 
         private void OpenFileExplorer_Click(object sender, RoutedEventArgs e)
         {
-            //string selectedFile = ShowFilePicker(_lastUsedDirectory);
-            //if (!string.IsNullOrEmpty(selectedFile))
-            //{
-            //    ShowMessage($"Selected Calendar File: {selectedFile}");
-            //    _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
-            //}
-            _presenter.ChooseCalendarFileAndUpdateDirectory();
+            string selectedFile = ShowFilePicker(_lastUsedDirectory);
+            if (!string.IsNullOrEmpty(selectedFile))
+            {
+                ShowMessage($"Selected Calendar File: {selectedFile}");
+                _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
+            }
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
-            // Call presenter method to confirm application closure
             if (_presenter.ConfirmApplicationClosure())
             {
                 Application.Current.Shutdown();
@@ -73,23 +70,12 @@ namespace Calendar
 
         public string ShowFilePicker(string initialDirectory)
         {
-            //OpenFileDialog openFileDialog = new OpenFileDialog();
-            //openFileDialog.InitialDirectory = initialDirectory;
-            //openFileDialog.Filter = "All Files (*.*)|*.*";
-            //openFileDialog.RestoreDirectory = true;
-
-            //openFileDialog.InitialDirectory = _lastUsedDirectory;
-
-            //if (openFileDialog.ShowDialog() == true)
-            //{
-            //    return openFileDialog.FileName;
-            //}
-
-            //return null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = initialDirectory;
             openFileDialog.Filter = "All Files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
+
+            openFileDialog.InitialDirectory = _lastUsedDirectory;
 
             if (openFileDialog.ShowDialog() == true)
             {
