@@ -36,7 +36,13 @@
                 </StackPanel>
             </StackPanel>
 
-            
+            <StackPanel Grid.Column="1" Margin="5">
+                <Label Content="Duration (Minutes)"/>
+                <TextBox Foreground="Gray" Text="Duration in minutes"/>
+                <Label Content="Category"/>
+                <ComboBox ToolTip="Event category">
+                </ComboBox>
+            </StackPanel>
         </Grid>
 
         
