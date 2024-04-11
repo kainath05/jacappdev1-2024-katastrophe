@@ -5,8 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="Events_Categories" Height="450" Width="800">
-    <Grid>
-        
+        Title="Events_Categories" Height="450" Width="550">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Add Event" FontWeight="SemiBold" FontSize="20" Margin="0,5"/>
+
+        <Grid Grid.Row="1" Margin="5,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="5">
+                <Label Content="Event Details"/>
+                <TextBox AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter event details here..."/>
+                <Label Content="Date/Time"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Month"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Day"/>
+                    <TextBox Width="60" Margin="2" Foreground="Gray" Text="Year"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Hour"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="Minute"/>
+                    <ComboBox Width="Auto" Margin="2" ToolTip="AM/PM"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="5">
+                <Label Content="Duration (Minutes)"/>
+                <TextBox Foreground="Gray" Text="Duration in minutes"/>
+                <Label Content="Category"/>
+                <ComboBox ToolTip="Event category">
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Add" Margin="10,0" Width="100"/>
+            <Button Content="Cancel" Width="100"/>
+        </StackPanel>
+
+        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management"/>
     </Grid>
+
+
 </Window>
