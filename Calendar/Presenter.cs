@@ -20,7 +20,7 @@ namespace Calendar
         public Presenter(View view)
         {
             _view = view;
-            if (_calendar != null) return; 
+            if (_calendar != null) return;
 
             if (newDB)
             {

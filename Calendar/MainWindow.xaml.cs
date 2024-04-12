@@ -47,10 +47,7 @@ namespace Calendar
                 ShowMessage($"Selected Calendar File: {selectedFile}");
                 _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
 
-                // Clear the selected item in the FolderComboBox
-                FolderComboBox.SelectedItem = null;
-
-                // Set the file name text box to the selected file name without extension
+                FolderComboBox.Items.Add(_lastUsedDirectory); 
                 FileNameTextBox.Text = System.IO.Path.GetFileNameWithoutExtension(selectedFile);
             }
         }
@@ -92,66 +89,8 @@ namespace Calendar
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //string fileName = FileNameTextBox.Text.Trim();
-            //string selectedFolder = FolderComboBox.SelectedItem?.ToString();
-
-            ////if (string.IsNullOrEmpty(fileName))
-            ////{
-            ////    ShowMessage("Please enter a calendar file name.");
-            ////    return;
-            ////}
-
-            ////if (string.IsNullOrEmpty(selectedFolder))
-            ////{
-            ////    ShowMessage("Please select a folder location.");
-            ////    return;
-            ////}
-
-            //string folderPath = selectedFolder switch
-            //{
-            //    "Desktop" => Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            //    "Downloads" => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            //    _ => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), selectedFolder)
-            //};
-
-            //string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
-
-            //_presenter.fileName = fullPath;
-            //_presenter.newDB = !File.Exists(fullPath);
-
-            //if (_presenter.newDB)
-            //{
-            //    try
-            //    {
-            //        // Create a new database file
-            //        using (File.Create(fullPath)) { }
-            //        ShowMessage("New database created successfully.");
-            //        _presenter.InitializeCalendar();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ShowMessage($"Error creating file: {ex.Message}");
-            //        return;
-            //    }
-            //}
-            //else
-            //{
-            //    // Database file already exists
-            //    _presenter.InitializeCalendar();
-            //}
-
-            //// Assuming Events_Categories is correctly prepared to use the initialized calendar
-            //var newWindow = new Events_Categories();
-            //newWindow.Show();
-            //this.Close();
             string fileName = FileNameTextBox.Text.Trim();
             string selectedFolder = FolderComboBox.SelectedItem?.ToString();
-
-            //if (string.IsNullOrEmpty(selectedFolder))
-            //{
-            //    ShowMessage("Please select a folder location.");
-            //    return;
-            //}
 
             string folderPath = GetFolderPath(selectedFolder);
 
@@ -163,12 +102,10 @@ namespace Calendar
 
             string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
 
-            // Check if the database file already exists
             bool databaseExists = File.Exists(fullPath);
 
             if (!databaseExists)
             {
-                // Create a new database file
                 try
                 {
                     using (File.Create(fullPath)) { }
@@ -181,17 +118,15 @@ namespace Calendar
                 }
             }
 
-            // Set presenter properties based on whether new database was created or existing one is used
+            // Set presenter properties based on whether a new database was created or an existing one is used
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
 
-            // Initialize the calendar
             _presenter.InitializeCalendar();
 
-            // Assuming Events_Categories is correctly prepared to use the initialized calendar
             var newWindow = new Events_Categories();
             newWindow.Show();
-            this.Close();
+            Close();
         }
 
         private string GetFolderPath(string selectedFolder)
