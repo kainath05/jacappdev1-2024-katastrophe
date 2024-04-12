@@ -46,6 +46,12 @@ namespace Calendar
             {
                 ShowMessage($"Selected Calendar File: {selectedFile}");
                 _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
+
+                // Clear the selected item in the FolderComboBox
+                FolderComboBox.SelectedItem = null;
+
+                // Set the file name text box to the selected file name without extension
+                FileNameTextBox.Text = System.IO.Path.GetFileNameWithoutExtension(selectedFile);
             }
         }
 
@@ -75,8 +81,6 @@ namespace Calendar
             openFileDialog.Filter = "All Files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
 
-            openFileDialog.InitialDirectory = _lastUsedDirectory;
-
             if (openFileDialog.ShowDialog() == true)
             {
                 return openFileDialog.FileName;
@@ -88,8 +92,68 @@ namespace Calendar
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            //string fileName = FileNameTextBox.Text.Trim();
+            //string selectedFolder = FolderComboBox.SelectedItem?.ToString();
+
+            ////if (string.IsNullOrEmpty(fileName))
+            ////{
+            ////    ShowMessage("Please enter a calendar file name.");
+            ////    return;
+            ////}
+
+            ////if (string.IsNullOrEmpty(selectedFolder))
+            ////{
+            ////    ShowMessage("Please select a folder location.");
+            ////    return;
+            ////}
+
+            //string folderPath = selectedFolder switch
+            //{
+            //    "Desktop" => Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            //    "Downloads" => Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            //    _ => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), selectedFolder)
+            //};
+
+            //string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
+
+            //_presenter.fileName = fullPath;
+            //_presenter.newDB = !File.Exists(fullPath);
+
+            //if (_presenter.newDB)
+            //{
+            //    try
+            //    {
+            //        // Create a new database file
+            //        using (File.Create(fullPath)) { }
+            //        ShowMessage("New database created successfully.");
+            //        _presenter.InitializeCalendar();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        ShowMessage($"Error creating file: {ex.Message}");
+            //        return;
+            //    }
+            //}
+            //else
+            //{
+            //    // Database file already exists
+            //    _presenter.InitializeCalendar();
+            //}
+
+            //// Assuming Events_Categories is correctly prepared to use the initialized calendar
+            //var newWindow = new Events_Categories();
+            //newWindow.Show();
+            //this.Close();
             string fileName = FileNameTextBox.Text.Trim();
             string selectedFolder = FolderComboBox.SelectedItem?.ToString();
+
+            //if (string.IsNullOrEmpty(selectedFolder))
+            //{
+            //    ShowMessage("Please select a folder location.");
+            //    return;
+            //}
+
+            string folderPath = GetFolderPath(selectedFolder);
 
             if (string.IsNullOrEmpty(fileName))
             {
@@ -97,28 +161,52 @@ namespace Calendar
                 return;
             }
 
-            if (string.IsNullOrEmpty(selectedFolder))
+            string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
+
+            // Check if the database file already exists
+            bool databaseExists = File.Exists(fullPath);
+
+            if (!databaseExists)
             {
-                ShowMessage("Please select a folder location.");
-                return;
+                // Create a new database file
+                try
+                {
+                    using (File.Create(fullPath)) { }
+                    ShowMessage("New database created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage($"Error creating file: {ex.Message}");
+                    return;
+                }
             }
 
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string parentFolderPath = Directory.GetParent(folderPath)?.FullName;
-            string fullPath = System.IO.Path.Combine(parentFolderPath, selectedFolder, $"{fileName}.db");
+            // Set presenter properties based on whether new database was created or existing one is used
+            _presenter.fileName = fullPath;
+            _presenter.newDB = !databaseExists;
 
-            try
-            {
-                File.Create(fullPath).Close();
+            // Initialize the calendar
+            _presenter.InitializeCalendar();
 
-                var newWindow = new Events_Categories();
-                newWindow.Show();
-                Close();
-            }
-            catch (Exception ex)
+            // Assuming Events_Categories is correctly prepared to use the initialized calendar
+            var newWindow = new Events_Categories();
+            newWindow.Show();
+            this.Close();
+        }
+
+        private string GetFolderPath(string selectedFolder)
+        {
+            switch (selectedFolder)
             {
-                ShowMessage($"Error creating file: {ex.Message}");
+                case "Desktop":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                case "Downloads":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                default:
+                    string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    return System.IO.Path.Combine(myDocuments, selectedFolder);
             }
         }
+
     }
 }
