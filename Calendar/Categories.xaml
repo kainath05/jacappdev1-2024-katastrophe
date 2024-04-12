@@ -10,11 +10,11 @@
         <StackPanel>
             <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>
             <Label Content="Category Description"/>
-            <TextBox AcceptsReturn="True" Height="30" Margin="5,0,5,5" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter category description here..."/>
+            <TextBox x:Name="Description" AcceptsReturn="True" Height="30" Margin="5,0,5,5" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter category description here..."/>
             <Label Content="Category Type"/>
-            <ComboBox Margin="5,0,5,5"></ComboBox>
+            <ComboBox x:Name="Type" Margin="5,0,5,5"></ComboBox>
             <Button HorizontalAlignment="Left" Margin="90,10,10,10" Width="70" Height="30">Events</Button>
-            <Button HorizontalAlignment="Right" Width="70" Height="30" Margin="-20,-60,90,-10">Add</Button>
+            <Button HorizontalAlignment="Right" Width="70" Height="30" Margin="-20,-60,90,-10" Click="Add_Category">Add</Button>
         </StackPanel>
     </Grid>
 </Window>
