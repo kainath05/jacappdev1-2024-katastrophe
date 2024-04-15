@@ -31,6 +31,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                     <ComboBox x:Name="HourComboBox" Width="Auto" Margin="2" ToolTip="Hour"/>
                     <ComboBox x:Name="MinuteComboBox" Width="Auto" Margin="2" ToolTip="Minute"/>
+                    <ComboBox x:Name="SecondComboBox" Width="Auto" Margin="2" ToolTip="Second"/>
                     <ComboBox x:Name="AmPmComboBox" Width="Auto" Margin="2" ToolTip="AM/PM"/>
                 </StackPanel>
             </StackPanel>

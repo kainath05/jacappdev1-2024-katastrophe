@@ -52,9 +52,75 @@ namespace Calendar
             MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             ClearForm();
         }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
+        }
         #endregion
 
-        
+        private void ClearForm()
+        {
+            // Reset Event Details TextBox
+            EventDetailsTextBox.Text = "Enter event details here...";
+            EventDetailsTextBox.Foreground = System.Windows.Media.Brushes.Gray;
+
+            // Reset DatePicker
+            EventDatePicker.SelectedDate = null;
+
+            // Reset Time ComboBoxes
+            HourComboBox.SelectedIndex = -1;
+            MinuteComboBox.SelectedIndex = -1;
+            AmPmComboBox.SelectedIndex = -1;
+
+            // Reset Duration TextBox
+            DurationTextBox.Text = "Duration in minutes";
+            DurationTextBox.Foreground = System.Windows.Media.Brushes.Gray;
+
+            // Reset Category ComboBox
+            CategoryComboBox.SelectedIndex = -1;
+        }
+
+        private bool ValidateInput()
+        {
+            // Validate Event Details
+            if (string.IsNullOrWhiteSpace(EventDetailsTextBox.Text) || EventDetailsTextBox.Text == "Enter event details here...")
+            {
+                MessageBox.Show("Please enter event details.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Validate Date
+            if (!EventDatePicker.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Please select a date.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Validate Time - assuming these ComboBoxes have their items set correctly
+            if (HourComboBox.SelectedItem == null || MinuteComboBox.SelectedItem == null || AmPmComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please complete the time selection.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Validate Duration
+            if (!int.TryParse(DurationTextBox.Text, out int duration) || duration <= 0)
+            {
+                MessageBox.Show("Please enter a valid duration in minutes.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Validate Category
+            if (CategoryComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a category.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
 
     }
 }
