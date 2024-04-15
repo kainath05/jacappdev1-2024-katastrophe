@@ -38,5 +38,23 @@ namespace Calendar
         {
             throw new NotImplementedException();
         }
+
+        #region Button
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateInput()) // <- TODO
+            {
+                MessageBox.Show("Please correct the input fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Proceed with adding the event
+            MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            ClearForm();
+        }
+        #endregion
+
+        
+
     }
 }
