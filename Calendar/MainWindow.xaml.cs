@@ -137,9 +137,13 @@ namespace Calendar
                     return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 case "Downloads":
                     return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                default:
+                case "Documents/Calendars":
                     string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     return System.IO.Path.Combine(myDocuments, selectedFolder);
+                default:
+                    string selectedFile = ShowFilePicker(_lastUsedDirectory);
+                    return selectedFile;
+
             }
         }
 
