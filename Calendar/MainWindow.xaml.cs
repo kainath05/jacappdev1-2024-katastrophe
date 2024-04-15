@@ -111,7 +111,7 @@ namespace Calendar
             {
                 File.Create(fullPath).Close();
 
-                var newWindow = new Events_Categories();
+                var newWindow = new Events_Categories(fullPath);
                 newWindow.Show();
                 Close();
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,14 @@ namespace Calendar
     /// </summary>
     public partial class Events_Categories : Window, View
     {
-        public Events_Categories()
+        private readonly Presenter _presenter;
+
+        public Events_Categories(string databasePath)
         {
             InitializeComponent();
+            _databasePath = databasePath;
+            _presenter = new Presenter(this);
+
         }
 
         public bool ConfirmCloseApplication()
@@ -121,6 +127,31 @@ namespace Calendar
             return true;
         }
 
+        private void InitializeForm()
+        {
+            Database database = new Database();
+            Categories categories = new Categories();
+            // Populate hours
+            HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
+            HourComboBox.SelectedIndex = 0; // Select the first hour by default
+
+            // Populate minutes
+            MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
+            MinuteComboBox.SelectedIndex = 0; // Select the first minute by default
+
+            // If you have a seconds ComboBox and want to populate it similarly:
+            SecondComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
+            SecondComboBox.SelectedIndex = 0; // Select the first second by default
+
+            // Populate AM/PM
+            AmPmComboBox.ItemsSource = new[] { "AM", "PM" };
+            AmPmComboBox.SelectedIndex = 0; // Select AM by default
+
+            // Populate categories
+            CategoryComboBox.ItemsSource = categories.List();
+            CategoryComboBox.DisplayMemberPath = "Name"; // Assuming "Name" is the property you want to show in the ComboBox
+            CategoryComboBox.SelectedValuePath = "Id"; // Assuming "Id" is the value property
+        }
 
     }
 }
