@@ -10,7 +10,7 @@
         <StackPanel>
             <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>
             <Label Content="Category Description"/>
-            <TextBox x:Name="Description" AcceptsReturn="True" Height="30" Margin="5,0,5,5" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter category description here..."/>
+            <TextBox x:Name="Description" AcceptsReturn="True" Height="30" Margin="5,0,5,5" VerticalScrollBarVisibility="Auto" Foreground="Gray"/>
             <Label Content="Category Type"/>
             <ComboBox x:Name="Type" Margin="5,0,5,5"></ComboBox>
             <Button HorizontalAlignment="Left" Margin="90,10,10,10" Width="70" Height="30">Events</Button>

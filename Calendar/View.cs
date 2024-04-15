@@ -9,7 +9,6 @@ namespace Calendar
 {
     interface View
     {
-        string ShowFilePicker(string initialDirectory);
 
         void ShowMessage(string message);
 

@@ -22,20 +22,14 @@ namespace Calendar
             _view = view;
             if (_calendar != null) return;
 
-            if (newDB)
-            {
-                _calendar = new HomeCalendar(fileName, true);
-            }
-            else
-            {
-                _calendar = new HomeCalendar(fileName);
-            }
+            InitializeCalendar();
         }
         public void InitializeCalendar()
         {
             // Check for _calendar reinitialization logic if necessary
             _calendar = newDB ? new HomeCalendar(fileName, true) : new HomeCalendar(fileName);
         }
+
         public bool ConfirmApplicationClosure()
         {
             return _view.ConfirmCloseApplication();

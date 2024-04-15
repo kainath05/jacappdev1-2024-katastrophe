@@ -29,14 +29,16 @@ namespace Calendar
             throw new NotImplementedException();
         }
 
-        public string ShowFilePicker(string initialDirectory)
+        public void ShowMessage(string message)
         {
             throw new NotImplementedException();
         }
 
-        public void ShowMessage(string message)
+        private void Categories_Button(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var window = new Categories();
+            window.Show();
+            Close();
         }
     }
 }

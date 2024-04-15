@@ -24,6 +24,8 @@ namespace Calendar
         {
             InitializeComponent();
             _presenter = new Presenter(this);
+
+            PopulateCategories();
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -34,11 +36,23 @@ namespace Calendar
             }
         }
 
+        private void PopulateCategories()
+        {
+            foreach (Category.CategoryType item in Enum.GetValues(typeof(Category.CategoryType)))
+            {
+                Type.Items.Add(item);
+            }
+        }
+
         private void Add_Category(object sender, RoutedEventArgs e)
         {
             string descr = Description.Text;
             Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
             _presenter._calendar.categories.Add(descr, type);
+            ShowMessage("Category added.");
+            Category cat = _presenter._calendar.categories.GetCategoryFromId(13);
+            ShowMessage(cat.Description);
+
         }
 
 
@@ -54,7 +68,8 @@ namespace Calendar
 
         public void ShowMessage(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Message");
         }
+
     }
 }
