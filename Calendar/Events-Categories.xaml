@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="Events_Categories" Height="450" Width="550">
+        Title="Events_Categories" Height="475" Width="550">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

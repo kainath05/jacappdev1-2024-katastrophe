@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +22,17 @@ namespace Calendar
     public partial class Events_Categories : Window, View
     {
         private readonly Presenter _presenter;
+        private string _databasePath;
+        private SQLiteConnection _connection;
 
         public Events_Categories(string databasePath)
         {
             InitializeComponent();
-            _databasePath = databasePath;
+            _databasePath = "C:/users/timot/Downloads/db.db";
             _presenter = new Presenter(this);
+            _connection = new SQLiteConnection($"Data Source={_databasePath};");
 
+            InitializeForm();
         }
 
         public bool ConfirmCloseApplication()
@@ -129,29 +134,49 @@ namespace Calendar
 
         private void InitializeForm()
         {
-            Database database = new Database();
-            Categories categories = new Categories();
-            // Populate hours
-            HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
-            HourComboBox.SelectedIndex = 0; // Select the first hour by default
+            try
+            {
+                // Attempt to open the connection
+                _connection.Open();
 
-            // Populate minutes
-            MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
-            MinuteComboBox.SelectedIndex = 0; // Select the first minute by default
+                // Fetch categories from the database on the background thread
+                var categories = new Categories(_connection, true).List();
 
-            // If you have a seconds ComboBox and want to populate it similarly:
-            SecondComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
-            SecondComboBox.SelectedIndex = 0; // Select the first second by default
-
-            // Populate AM/PM
-            AmPmComboBox.ItemsSource = new[] { "AM", "PM" };
-            AmPmComboBox.SelectedIndex = 0; // Select AM by default
-
-            // Populate categories
-            CategoryComboBox.ItemsSource = categories.List();
-            CategoryComboBox.DisplayMemberPath = "Name"; // Assuming "Name" is the property you want to show in the ComboBox
-            CategoryComboBox.SelectedValuePath = "Id"; // Assuming "Id" is the value property
+                // After fetching, handle UI updates on the main thread
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateComboBoxes(categories);
+                });
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions related to DB connection and data fetching
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
         }
 
+        private void UpdateComboBoxes(List<Category> categories)
+        {
+            // Populate hours, minutes, seconds, and AM/PM
+            HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
+            MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
+            SecondComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
+            AmPmComboBox.ItemsSource = new[] { "AM", "PM" };
+
+            // Set default selections
+            HourComboBox.SelectedIndex = 0;
+            MinuteComboBox.SelectedIndex = 0;
+            SecondComboBox.SelectedIndex = 0;
+            AmPmComboBox.SelectedIndex = 0;
+
+            // Populate categories and update DisplayMemberPath
+            CategoryComboBox.ItemsSource = categories;
+            CategoryComboBox.DisplayMemberPath = "Description";  
+            CategoryComboBox.SelectedValuePath = "Id";
+            CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
+        }
     }
 }
