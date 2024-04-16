@@ -123,8 +123,8 @@ namespace Calendar
             _presenter.newDB = !databaseExists;
 
             _presenter.InitializeCalendar();
-
-            var newWindow = new Events_Categories();
+            
+            var newWindow = new Events_Categories(fullPath);
             newWindow.Show();
             Close();
         }
