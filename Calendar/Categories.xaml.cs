@@ -50,9 +50,6 @@ namespace Calendar
             Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
             _presenter._calendar.categories.Add(descr, type);
             ShowMessage("Category added.");
-            Category cat = _presenter._calendar.categories.GetCategoryFromId(13);
-            ShowMessage(cat.Description);
-
         }
 
 

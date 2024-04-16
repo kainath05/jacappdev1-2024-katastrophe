@@ -9,7 +9,6 @@ namespace Calendar
 {
     interface View
     {
-
         void ShowMessage(string message);
 
         bool ConfirmCloseApplication();

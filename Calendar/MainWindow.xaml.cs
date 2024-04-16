@@ -122,8 +122,6 @@ namespace Calendar
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
 
-            _presenter.InitializeCalendar();
-
             var newWindow = new Events_Categories();
             newWindow.Show();
             Close();
