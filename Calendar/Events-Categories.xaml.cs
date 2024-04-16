@@ -204,5 +204,7 @@ namespace Calendar
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
+    
     }
+
 }
