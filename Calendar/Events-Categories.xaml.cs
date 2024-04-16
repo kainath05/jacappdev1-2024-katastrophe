@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SQLite;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,16 +22,17 @@ namespace Calendar
     /// </summary>
     public partial class Events_Categories : Window, View
     {
+        private HomeCalendar _homeCalendar;
         private readonly Presenter _presenter;
         private string _databasePath;
-        private SQLiteConnection _connection;
 
         public Events_Categories(string databasePath)
         {
             InitializeComponent();
-            _databasePath = "C:/users/timot/Downloads/db.db";
+            // TEMPORARY: THIS WILL EVENTUALLY USE A DYNAMIC DATABASE.
+            _databasePath = "c:/users/timot/Downloads/db.db"; 
             _presenter = new Presenter(this);
-            _connection = new SQLiteConnection($"Data Source={_databasePath};");
+            _homeCalendar = new HomeCalendar(_databasePath, false); 
 
             InitializeForm();
         }
@@ -53,16 +55,55 @@ namespace Calendar
         #region Button
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateInput()) // <- TODO
+            if (!ValidateInput()) 
             {
                 MessageBox.Show("Please correct the input fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            // Proceed with adding the event
-            MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            ClearForm();
+            try
+            {
+                // Extracting date components
+                int year = EventDatePicker.SelectedDate.Value.Year;
+                int month = EventDatePicker.SelectedDate.Value.Month;
+                int day = EventDatePicker.SelectedDate.Value.Day;
+
+                // Extracting time components
+                int hour = int.Parse(HourComboBox.SelectedItem.ToString());
+                int minute = int.Parse(MinuteComboBox.SelectedItem.ToString());
+                int second = int.Parse(SecondComboBox.SelectedItem.ToString());
+
+                // Handling 12-hour clock and PM designation
+                if (AmPmComboBox.SelectedItem.ToString() == "PM" && hour < 12)
+                {
+                    hour += 12;
+                }
+                else if (AmPmComboBox.SelectedItem.ToString() == "AM" && hour == 12)
+                {
+                    hour = 0; // Midnight case
+                }
+
+                // Constructing the DateTime
+                DateTime selectedDateTime = new DateTime(year, month, day, hour, minute, second);
+
+                // Proceed with using the constructed DateTime
+                int categoryId = (int)CategoryComboBox.SelectedValue;
+                double duration = double.Parse(DurationTextBox.Text);
+                string details = EventDetailsTextBox.Text;
+
+                // Use HomeCalendar to add the event to the database
+                _homeCalendar.events.Add(selectedDateTime, categoryId, duration, details);
+
+                MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
+
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -82,6 +123,7 @@ namespace Calendar
             // Reset Time ComboBoxes
             HourComboBox.SelectedIndex = -1;
             MinuteComboBox.SelectedIndex = -1;
+            SecondComboBox.SelectedIndex = -1;
             AmPmComboBox.SelectedIndex = -1;
 
             // Reset Duration TextBox
@@ -108,7 +150,7 @@ namespace Calendar
                 return false;
             }
 
-            // Validate Time - assuming these ComboBoxes have their items set correctly
+            // Validate Time
             if (HourComboBox.SelectedItem == null || MinuteComboBox.SelectedItem == null || AmPmComboBox.SelectedItem == null)
             {
                 MessageBox.Show("Please complete the time selection.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -136,43 +178,27 @@ namespace Calendar
         {
             try
             {
-                // Attempt to open the connection
-                _connection.Open();
-
-                // Fetch categories from the database on the background thread
-                var categories = new Categories(_connection, true).List();
-
-                // After fetching, handle UI updates on the main thread
-                Dispatcher.Invoke(() =>
-                {
-                    UpdateComboBoxes(categories);
-                });
+                var categories = _homeCalendar.categories.List();
+                Dispatcher.Invoke(() => UpdateComboBoxes(categories));
             }
             catch (Exception ex)
             {
-                // Handle exceptions related to DB connection and data fetching
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                });
+                MessageBox.Show("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void UpdateComboBoxes(List<Category> categories)
         {
-            // Populate hours, minutes, seconds, and AM/PM
             HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
             MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
             SecondComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
             AmPmComboBox.ItemsSource = new[] { "AM", "PM" };
 
-            // Set default selections
             HourComboBox.SelectedIndex = 0;
             MinuteComboBox.SelectedIndex = 0;
             SecondComboBox.SelectedIndex = 0;
             AmPmComboBox.SelectedIndex = 0;
 
-            // Populate categories and update DisplayMemberPath
             CategoryComboBox.ItemsSource = categories;
             CategoryComboBox.DisplayMemberPath = "Description";  
             CategoryComboBox.SelectedValuePath = "Id";
