@@ -46,6 +46,9 @@ namespace Calendar
             {
                 ShowMessage($"Selected Calendar File: {selectedFile}");
                 _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
+
+                FolderComboBox.Items.Add(_lastUsedDirectory); 
+                FileNameTextBox.Text = System.IO.Path.GetFileNameWithoutExtension(selectedFile);
             }
         }
 
@@ -75,8 +78,6 @@ namespace Calendar
             openFileDialog.Filter = "All Files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
 
-            openFileDialog.InitialDirectory = _lastUsedDirectory;
-
             if (openFileDialog.ShowDialog() == true)
             {
                 return openFileDialog.FileName;
@@ -91,34 +92,60 @@ namespace Calendar
             string fileName = FileNameTextBox.Text.Trim();
             string selectedFolder = FolderComboBox.SelectedItem?.ToString();
 
+            string folderPath = GetFolderPath(selectedFolder);
+
             if (string.IsNullOrEmpty(fileName))
             {
                 ShowMessage("Please enter a calendar file name.");
                 return;
             }
 
-            if (string.IsNullOrEmpty(selectedFolder))
+            string fullPath = System.IO.Path.Combine(folderPath, $"{fileName}.db");
+
+            bool databaseExists = File.Exists(fullPath);
+
+            if (!databaseExists)
             {
-                ShowMessage("Please select a folder location.");
-                return;
+                try
+                {
+                    using (File.Create(fullPath)) { }
+                    ShowMessage("New database created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage($"Error creating file: {ex.Message}");
+                    return;
+                }
             }
 
-            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string parentFolderPath = Directory.GetParent(folderPath)?.FullName;
-            string fullPath = System.IO.Path.Combine(parentFolderPath, selectedFolder, $"{fileName}.db");
+            // Set presenter properties based on whether a new database was created or an existing one is used
+            _presenter.fileName = fullPath;
+            _presenter.newDB = !databaseExists;
 
-            try
-            {
-                File.Create(fullPath).Close();
+            _presenter.InitializeCalendar();
+            
+            var newWindow = new Events_Categories(fullPath);
+            newWindow.Show();
+            Close();
+        }
 
-                var newWindow = new Events_Categories(fullPath);
-                newWindow.Show();
-                Close();
-            }
-            catch (Exception ex)
+        private string GetFolderPath(string selectedFolder)
+        {
+            switch (selectedFolder)
             {
-                ShowMessage($"Error creating file: {ex.Message}");
+                case "Desktop":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                case "Downloads":
+                    return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                case "Documents/Calendars":
+                    string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    return System.IO.Path.Combine(myDocuments, selectedFolder);
+                default:
+                    string selectedFile = ShowFilePicker(_lastUsedDirectory);
+                    return selectedFile;
+
             }
         }
+
     }
 }
