@@ -16,5 +16,6 @@
             <Button HorizontalAlignment="Left" Margin="90,10,10,10" Width="70" Height="30">Events</Button>
             <Button HorizontalAlignment="Right" Width="70" Height="30" Margin="-20,-60,90,-10" Click="Add_Category">Add</Button>
         </StackPanel>
+        <Button Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
     </Grid>
 </Window>
