@@ -141,7 +141,6 @@ namespace Calendar
                 default:
                     string selectedFile = ShowFilePicker(_lastUsedDirectory);
                     return selectedFile;
-
             }
         }
 

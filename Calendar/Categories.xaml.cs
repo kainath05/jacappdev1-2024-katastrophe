@@ -52,15 +52,18 @@ namespace Calendar
             ShowMessage("Category added.");
         }
 
+        private void Go_To_Events(object sender, RoutedEventArgs e)
+        {
+            var window = new Events_Categories();
+            window.Show();
+            Close();
+        }
+
 
         public bool ConfirmCloseApplication()
         {
-            throw new NotImplementedException();
-        }
-
-        public string ShowFilePicker(string initialDirectory)
-        {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes and exit?", "Confirm Exit", MessageBoxButton.YesNoCancel);
+            return result == MessageBoxResult.Yes;
         }
 
         public void ShowMessage(string message)
