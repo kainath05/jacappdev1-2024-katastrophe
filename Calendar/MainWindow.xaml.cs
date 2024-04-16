@@ -121,8 +121,8 @@ namespace Calendar
             // Set presenter properties based on whether a new database was created or an existing one is used
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
-
-            var newWindow = new Events_Categories();
+            
+            var newWindow = new Events_Categories(fullPath);
             newWindow.Show();
             Close();
         }
