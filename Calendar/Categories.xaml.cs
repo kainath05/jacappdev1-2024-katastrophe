@@ -24,6 +24,8 @@ namespace Calendar
         {
             InitializeComponent();
             _presenter = new Presenter(this);
+
+            PopulateCategories();
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -34,27 +36,40 @@ namespace Calendar
             }
         }
 
+        private void PopulateCategories()
+        {
+            foreach (Category.CategoryType item in Enum.GetValues(typeof(Category.CategoryType)))
+            {
+                Type.Items.Add(item);
+            }
+        }
+
         private void Add_Category(object sender, RoutedEventArgs e)
         {
             string descr = Description.Text;
             Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
             _presenter._calendar.categories.Add(descr, type);
+            ShowMessage("Category added.");
+        }
+
+        private void Go_To_Events(object sender, RoutedEventArgs e)
+        {
+            var window = new Events_Categories();
+            window.Show();
+            Close();
         }
 
 
         public bool ConfirmCloseApplication()
         {
-            throw new NotImplementedException();
-        }
-
-        public string ShowFilePicker(string initialDirectory)
-        {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes and exit?", "Confirm Exit", MessageBoxButton.YesNoCancel);
+            return result == MessageBoxResult.Yes;
         }
 
         public void ShowMessage(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Message");
         }
+
     }
 }

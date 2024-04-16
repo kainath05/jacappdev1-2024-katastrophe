@@ -121,8 +121,6 @@ namespace Calendar
             // Set presenter properties based on whether a new database was created or an existing one is used
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
-
-            _presenter.InitializeCalendar();
             
             var newWindow = new Events_Categories(fullPath);
             newWindow.Show();
@@ -143,7 +141,6 @@ namespace Calendar
                 default:
                     string selectedFile = ShowFilePicker(_lastUsedDirectory);
                     return selectedFile;
-
             }
         }
 

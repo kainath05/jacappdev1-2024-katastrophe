@@ -50,7 +50,7 @@
             <Button Content="Cancel" Width="100" Click="CancelButton_Click"/>
         </StackPanel>
 
-        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management"/>
+        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management" Click="Categories_Button"/>
     </Grid>
 
 
