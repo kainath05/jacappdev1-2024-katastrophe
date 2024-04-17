@@ -38,7 +38,8 @@ namespace Calendar
 
         private void PopulateCategories()
         {
-            foreach (Category.CategoryType item in Enum.GetValues(typeof(Category.CategoryType)))
+            List<Category.CategoryType> types = _presenter.DisplayTypes();
+            foreach (Category.CategoryType item in types)
             {
                 Type.Items.Add(item);
             }
@@ -48,7 +49,7 @@ namespace Calendar
         {
             string descr = Description.Text;
             Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
-            _presenter._calendar.categories.Add(descr, type);
+            _presenter.AddCategory(descr, type);
             ShowMessage("Category added.");
         }
 
