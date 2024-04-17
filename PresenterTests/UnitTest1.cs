@@ -34,9 +34,9 @@ namespace PresenterTests
         {
             var view = new TestView();
             var presenter = new Presenter(view);
-            presenter.newDB = true; // Assuming we are testing with a new database
+            presenter.newDB = true; 
             presenter.InitializeCalendar();
-            Assert.NotNull(presenter._calendar); // Assuming there's a public getter for _calendar or it's internally checkable
+            Assert.NotNull(presenter._calendar);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace PresenterTests
             var result = presenter.ConfirmApplicationClosure();
 
             Assert.True(view.confirmCloseApplicationCalled);
-            Assert.True(result); // Check if the return value matches the expected behavior
+            Assert.True(result); 
         }
         [Fact]
         public void DisplayTypes_ReturnsAllCategoryTypes()
@@ -64,10 +64,42 @@ namespace PresenterTests
         {
             var view = new TestView();
             var presenter = new Presenter(view);
-            presenter.InitializeCalendar(); // Ensure calendar is initialized
-            presenter.AddCategory("Meeting", Category.CategoryType.Event);
+            presenter.newDB = true;
+            presenter.InitializeCalendar(); 
+            presenter.AddCategory("Amaan's Homework", Category.CategoryType.Event);
 
             Assert.Contains("Category added.", view.messages); // Assuming this is the message on successful addition
+            Assert.True(view.showMessageCalled);
+        }
+
+        [Fact]
+        public void AddCategory_DuplicateCategory_ShowErrorMessage()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.newDB = true;
+            presenter.InitializeCalendar();
+            presenter.AddCategory("Meeting", Category.CategoryType.Event);
+
+            // Try adding the same category again
+            presenter.AddCategory("Meeting", Category.CategoryType.Event);
+
+            Assert.Contains("Category already exists.", view.messages); // Assuming this is the error message on duplicate addition
+            Assert.True(view.showMessageCalled);
+        }
+
+        [Fact]
+        public void AddCategory_InvalidType_ShowErrorMessage()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.newDB = true;
+            presenter.InitializeCalendar();
+
+            // Try adding with an invalid category type
+            presenter.AddCategory("Shopping", (Category.CategoryType)100);
+
+            Assert.Contains("Invalid category type.", view.messages); // Assuming this is the error message for an invalid type
             Assert.True(view.showMessageCalled);
         }
 

@@ -47,10 +47,28 @@ namespace Calendar
 
         private void Add_Category(object sender, RoutedEventArgs e)
         {
-            string descr = Description.Text;
-            Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
-            _presenter.AddCategory(descr, type);
-            ShowMessage("Category added.");
+            try
+            {
+                string descr = Description?.Text;
+                if (string.IsNullOrEmpty(descr))
+                {
+                    ShowMessage("Please enter a description to add a new category.");
+                    return;
+                }
+
+                if (Type.SelectedItem == null)
+                {
+                    ShowMessage("Please select a valid category type.");
+                    return;
+                }
+
+                Category.CategoryType type = (Category.CategoryType)Type.SelectedItem;
+                _presenter.AddCategory(descr, type);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"Error adding category: {ex.Message}");
+            }
         }
 
         private void Go_To_Events(object sender, RoutedEventArgs e)
