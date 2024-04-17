@@ -20,10 +20,10 @@ namespace Calendar
     public partial class Categories : Window, View
     {
         private readonly Presenter _presenter;
-        public Categories()
+        public Categories(Presenter presenter)
         {
             InitializeComponent();
-            _presenter = new Presenter(this);
+            _presenter = presenter;
 
             PopulateCategories();
         }
@@ -54,7 +54,7 @@ namespace Calendar
 
         private void Go_To_Events(object sender, RoutedEventArgs e)
         {
-            var window = new Events_Categories();
+            var window = new Events_Categories(_presenter);
             window.Show();
             Close();
         }

@@ -24,11 +24,11 @@ namespace Calendar
     {
         private readonly Presenter _presenter;
 
-        public Events_Categories()
+        public Events_Categories(Presenter presenter)
         {
             InitializeComponent();
 
-            _presenter = new Presenter(this);
+            _presenter = presenter;
 
             InitializeForm();
         }
@@ -45,7 +45,7 @@ namespace Calendar
 
         private void Categories_Button(object sender, RoutedEventArgs e)
         {
-            var window = new Categories();
+            var window = new Categories(_presenter);
             window.Show();
             Close();
         }

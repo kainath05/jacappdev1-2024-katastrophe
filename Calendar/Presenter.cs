@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Calendar
 {
-    class Presenter
+    public class Presenter
     {
         private readonly View _view;
         public HomeCalendar _calendar;
@@ -20,9 +20,8 @@ namespace Calendar
         public Presenter(View view)
         {
             _view = view;
-            if (_calendar != null) return;
-
-            InitializeCalendar();
+            //if (_calendar != null) return;
+            //InitializeCalendar();
         }
         public void InitializeCalendar()
         {
