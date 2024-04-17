@@ -24,7 +24,7 @@ namespace Calendar
     {
         private readonly Presenter _presenter;
 
-        public Events_Categories(string databasePath)
+        public Events_Categories()
         {
             InitializeComponent();
 
