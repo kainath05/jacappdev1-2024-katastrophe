@@ -7,7 +7,7 @@ using Calendar;
 
 namespace Calendar
 {
-    interface View
+    public interface View
     {
         void ShowMessage(string message);
 

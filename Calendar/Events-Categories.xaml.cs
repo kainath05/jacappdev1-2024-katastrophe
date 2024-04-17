@@ -22,17 +22,13 @@ namespace Calendar
     /// </summary>
     public partial class Events_Categories : Window, View
     {
-        private HomeCalendar _homeCalendar;
         private readonly Presenter _presenter;
-        private string _databasePath;
 
-        public Events_Categories(string databasePath)
+        public Events_Categories(Presenter presenter)
         {
             InitializeComponent();
-            // TEMPORARY: THIS WILL EVENTUALLY USE A DYNAMIC DATABASE.
-            _databasePath = "c:/users/timot/Downloads/db.db"; 
-            _presenter = new Presenter(this);
-            _homeCalendar = new HomeCalendar(_databasePath, false); 
+
+            _presenter = presenter;
 
             InitializeForm();
         }
@@ -49,7 +45,7 @@ namespace Calendar
 
         private void Categories_Button(object sender, RoutedEventArgs e)
         {
-            var window = new Categories();
+            var window = new Categories(_presenter);
             window.Show();
             Close();
         }
@@ -94,7 +90,7 @@ namespace Calendar
                 string details = EventDetailsTextBox.Text;
 
                 // Use HomeCalendar to add the event to the database
-                _homeCalendar.events.Add(selectedDateTime, categoryId, duration, details);
+                _presenter._calendar.events.Add(selectedDateTime, categoryId, duration, details);
 
                 MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 ClearForm();
@@ -180,7 +176,7 @@ namespace Calendar
         {
             try
             {
-                var categories = _homeCalendar.categories.List();
+                var categories = _presenter._calendar.categories.List();
                 Dispatcher.Invoke(() => UpdateComboBoxes(categories));
             }
             catch (Exception ex)
