@@ -20,7 +20,7 @@ namespace Calendar
     /// <summary>
     /// Interaction logic for Events_Categories.xaml
     /// </summary>
-    public partial class Events_Categories : Window, View
+    public partial class Events_Categories : Window, View, IAddEvent
     {
         private readonly Presenter _presenter;
 
@@ -184,7 +184,7 @@ namespace Calendar
             }
         }
 
-        private void UpdateComboBoxes(List<Category> categories)
+        public void UpdateComboBoxes(List<Category> categories)
         {
             HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
             MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
