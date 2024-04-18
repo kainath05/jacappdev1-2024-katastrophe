@@ -13,6 +13,7 @@ namespace Calendar
     public class Presenter
     {
         private readonly View _view;
+        private IAddEvent _addEventView;
         public HomeCalendar _calendar;
         public string fileName = "newdb.db";
         public bool newDB;
@@ -23,6 +24,13 @@ namespace Calendar
             //if (_calendar != null) return;
             //InitializeCalendar();
         }
+
+        public void SetAddEventView(IAddEvent addEventView)
+        {
+            _addEventView = addEventView;
+        }
+
+
         public void InitializeCalendar()
         {
             // Check for _calendar reinitialization logic if necessary
@@ -39,11 +47,11 @@ namespace Calendar
             try
             {
                 var categories = _calendar.categories.List();
-                _view.UpdateCategoryList(categories);
+                _addEventView.UpdateComboBoxes(categories);
             }
             catch (Exception ex)
             {
-                _view.ShowMessage("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _addEventView.ShowMessage("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -56,7 +64,7 @@ namespace Calendar
             }
             catch (Exception ex)
             {
-                _view.ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _addEventView.ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

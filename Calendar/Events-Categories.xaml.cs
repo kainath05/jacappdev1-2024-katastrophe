@@ -30,7 +30,9 @@ namespace Calendar
 
             _presenter = presenter;
 
-            InitializeForm();
+            _presenter.SetAddEventView(this);
+
+            _presenter.InitializeForm();
         }
 
         public bool ConfirmCloseApplication()
@@ -64,38 +66,28 @@ namespace Calendar
                 return;
             }
 
-            try
-            {
-                // Extracting date and time components
-                var selectedDate = EventDatePicker.SelectedDate.Value;
-                int hour = int.Parse(HourComboBox.SelectedItem.ToString());
-                int minute = int.Parse(MinuteComboBox.SelectedItem.ToString());
-                int second = int.Parse(SecondComboBox.SelectedItem.ToString());
+            // Extracting date and time components
+            var selectedDate = EventDatePicker.SelectedDate.Value;
+            int hour = int.Parse(HourComboBox.SelectedItem.ToString());
+            int minute = int.Parse(MinuteComboBox.SelectedItem.ToString());
+            int second = int.Parse(SecondComboBox.SelectedItem.ToString());
 
-                // Adjusting hour for 12-hour clock format
-                if (AmPmComboBox.SelectedItem.ToString() == "PM" && hour < 12)
-                    hour += 12;
-                else if (AmPmComboBox.SelectedItem.ToString() == "AM" && hour == 12)
-                    hour = 0;
+            // Adjusting hour for 12-hour clock format
+            if (AmPmComboBox.SelectedItem.ToString() == "PM" && hour < 12)
+                hour += 12;
+            else if (AmPmComboBox.SelectedItem.ToString() == "AM" && hour == 12)
+                hour = 0;
 
-                // Creating DateTime object
-                DateTime selectedDateTime = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, second);
+            // Creating DateTime object
+            DateTime selectedDateTime = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, second);
 
-                // Data from form
-                int categoryId = (int)CategoryComboBox.SelectedValue;
-                double duration = double.Parse(DurationTextBox.Text);
-                string details = EventDetailsTextBox.Text;
+            // Data from form
+            int categoryId = (int)CategoryComboBox.SelectedValue;
+            double duration = double.Parse(DurationTextBox.Text);
+            string details = EventDetailsTextBox.Text;
 
-                // Add event via the presenter
-                _presenter._calendar.events.Add(selectedDateTime, categoryId, duration, details);
-
-                ShowMessage("Event successfully added!");
-                ClearForm();
-            }
-            catch (Exception ex)
-            {
-                ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // Request the presenter to add the event
+            _presenter.AddEvent(selectedDateTime, categoryId, duration, details);
         }
 
 
@@ -169,19 +161,6 @@ namespace Calendar
             }
 
             return isValid;
-        }
-
-        private void InitializeForm()
-        {
-            try
-            {
-                var categories = _presenter._calendar.categories.List();
-                Dispatcher.Invoke(() => UpdateComboBoxes(categories));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         public void UpdateComboBoxes(List<Category> categories)
