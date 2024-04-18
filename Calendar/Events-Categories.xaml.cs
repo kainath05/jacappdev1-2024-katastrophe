@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Calendar
 {
@@ -35,6 +36,7 @@ namespace Calendar
 
             _presenter.InitializeForm();
 
+            DisplayDatabaseFile();
         }
 
         public bool ConfirmCloseApplication()
@@ -191,7 +193,11 @@ namespace Calendar
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
-    
+
+        public void DisplayDatabaseFile()
+        {
+            DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
+        }
     }
 
 }

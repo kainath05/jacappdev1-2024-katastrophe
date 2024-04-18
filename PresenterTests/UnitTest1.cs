@@ -7,11 +7,17 @@ namespace PresenterTests
         public bool confirmCloseApplicationCalled = false;
         public bool showMessageCalled = false;
         public List<string> messages = new List<string>();
+        public bool display = false;
 
         public bool ConfirmCloseApplication()
         {
             confirmCloseApplicationCalled = true;
             return true;
+        }
+
+        public void DisplayDatabaseFile()
+        {
+            display = true;
         }
 
         public void ShowMessage(string message)
@@ -71,7 +77,7 @@ namespace PresenterTests
             var result = presenter.ConfirmApplicationClosure();
 
             Assert.True(view.confirmCloseApplicationCalled);
-            Assert.True(result); 
+            Assert.True(result);
         }
         [Fact]
         public void DisplayTypes_ReturnsAllCategoryTypes()
@@ -171,6 +177,7 @@ namespace PresenterTests
                 Assert.Contains(MessageBoxButton.OK, testEventView.messageBoxes);
                 Assert.Contains(MessageBoxImage.Error, testEventView.images);
                 Assert.True(testEventView.eventMessage);
+                Assert.True(view.display);
             }
         }
 
@@ -221,8 +228,10 @@ namespace PresenterTests
                 Assert.Contains(MessageBoxButton.OK, testEventView.messageBoxes);
                 Assert.Contains(MessageBoxImage.Error, testEventView.images);
                 Assert.True(testEventView.eventMessage);
+                Assert.True(view.display);
             }
         }
+
 
 
     }
