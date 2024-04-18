@@ -112,10 +112,6 @@ namespace Calendar
 
         private void ClearForm()
         {
-            // Reset Event Details TextBox
-            EventDetailsTextBox.Text = "Enter event details here...";
-            EventDetailsTextBox.Foreground = System.Windows.Media.Brushes.Gray;
-
             // Reset DatePicker
             EventDatePicker.SelectedDate = null;
 
@@ -124,10 +120,6 @@ namespace Calendar
             MinuteComboBox.SelectedIndex = -1;
             SecondComboBox.SelectedIndex = -1;
             AmPmComboBox.SelectedIndex = -1;
-
-            // Reset Duration TextBox
-            DurationTextBox.Text = "Duration in minutes";
-            DurationTextBox.Foreground = System.Windows.Media.Brushes.Gray;
 
             // Reset Category ComboBox
             CategoryComboBox.SelectedIndex = -1;
