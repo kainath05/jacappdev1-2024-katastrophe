@@ -12,8 +12,7 @@ namespace Calendar
     {
         void ShowMessage(string message);
         bool ConfirmCloseApplication();
-        void DisplayDatabaseFile();
-
+        void DisplayDatabaseFile(); //display file for event and categories
         void ShowTypes(List<Category.CategoryType> types);
     }
 }

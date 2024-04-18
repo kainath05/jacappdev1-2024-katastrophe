@@ -51,7 +51,7 @@ namespace Calendar
 
                 if (Type.SelectedItem == null)
                 {
-                    ShowMessage("Please select a valid category type.");
+                    ShowMessage("Please select a valid category type."); //validates input
                     return;
                 }
 
@@ -92,7 +92,7 @@ namespace Calendar
         {
             foreach (Category.CategoryType item in types)
             {
-                Type.Items.Add(item);
+                Type.Items.Add(item); //fill in drop list for types
             }
         }
     }

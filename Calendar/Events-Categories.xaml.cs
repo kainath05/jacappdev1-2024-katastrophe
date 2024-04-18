@@ -32,11 +32,24 @@ namespace Calendar
 
             _presenter = presenter;
 
-            _presenter.SetAddEventView(this);
+            _presenter.SetAddEventView(this); //adds new view
 
             _presenter.InitializeForm();
 
+            SetTimeAfter30Mins();
+
             DisplayDatabaseFile();
+        }
+
+        private void SetTimeAfter30Mins()
+        {
+
+            DateTime time = DateTime.Now.AddMinutes(30);
+
+            HourComboBox.SelectedItem = time.Hour;
+            MinuteComboBox.SelectedItem = time.ToString("mm");
+            SecondComboBox.SelectedItem = time.ToString("ss");
+            AmPmComboBox.SelectedIndex = -1;
         }
 
         public bool ConfirmCloseApplication()
@@ -116,9 +129,9 @@ namespace Calendar
             EventDatePicker.SelectedDate = null;
 
             // Reset Time ComboBoxes
-            HourComboBox.SelectedIndex = -1;
-            MinuteComboBox.SelectedIndex = -1;
-            SecondComboBox.SelectedIndex = -1;
+            HourComboBox.SelectedItem = -1;
+            MinuteComboBox.SelectedItem = -1;
+            SecondComboBox.SelectedItem = -1;
             AmPmComboBox.SelectedIndex = -1;
 
             // Reset Category ComboBox
@@ -162,7 +175,7 @@ namespace Calendar
 
             if (!isValid)
             {
-                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning); //shows error message if no valid input
             }
 
             return isValid;

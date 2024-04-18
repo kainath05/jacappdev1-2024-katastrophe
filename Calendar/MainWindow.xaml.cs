@@ -26,8 +26,8 @@ namespace Calendar
             InitializeComponent();
             _presenter = new Presenter(this);
 
-            LoadDefaultFolderLocations();
-            _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            LoadDefaultFolderLocations(); //add onto the drop list for folder places
+            _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); 
         }
 
         private void LoadDefaultFolderLocations()
@@ -41,10 +41,10 @@ namespace Calendar
 
         private void OpenFileExplorer_Click(object sender, RoutedEventArgs e)
         {
-            string selectedFile = ShowFilePicker(_lastUsedDirectory);
+            string selectedFile = ShowFilePicker(_lastUsedDirectory); 
             if (!string.IsNullOrEmpty(selectedFile))
             {
-                ShowMessage($"Selected Calendar File: {selectedFile}");
+                ShowMessage($"Selected Calendar File: {selectedFile}"); //selects file and folder from file explorer
                 _lastUsedDirectory = System.IO.Path.GetDirectoryName(selectedFile);
 
                 FolderComboBox.Items.Add(_lastUsedDirectory); 
@@ -56,7 +56,7 @@ namespace Calendar
         {
             if (_presenter.ConfirmApplicationClosure())
             {
-                Application.Current.Shutdown();
+                Application.Current.Shutdown(); //shutdown the program
             }
         }
 
@@ -73,14 +73,14 @@ namespace Calendar
 
         public string ShowFilePicker(string initialDirectory)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            OpenFileDialog openFileDialog = new OpenFileDialog(); //opens file explorer
             openFileDialog.InitialDirectory = initialDirectory;
-            openFileDialog.Filter = "All Files (*.*)|*.*";
+            openFileDialog.Filter = "All Files (*.*)|*.*"; //all files
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() == true)
             {
-                return openFileDialog.FileName;
+                return openFileDialog.FileName; //returns the name we pick
             }
 
             return null;
@@ -108,7 +108,7 @@ namespace Calendar
             {
                 try
                 {
-                    using (File.Create(fullPath)) { }
+                    using (File.Create(fullPath)) { } //creates a new database file
                     ShowMessage("New database created successfully.");
                 }
                 catch (Exception ex)
@@ -122,9 +122,9 @@ namespace Calendar
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
 
-            _presenter.InitializeCalendar();
+            _presenter.InitializeCalendar(); //makes a home calendar
 
-            var newWindow = new Events_Categories(_presenter);
+            var newWindow = new Events_Categories(_presenter); //opens new window to add events
             newWindow.Show();
             Close();
         }
