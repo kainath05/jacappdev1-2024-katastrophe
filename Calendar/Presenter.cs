@@ -66,6 +66,20 @@ namespace Calendar
             {
                 _addEventView.ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+       
+        public List<Category.CategoryType> DisplayTypes()
+        {
+            List<Category.CategoryType> types = new List<Category.CategoryType>();
+            foreach (Category.CategoryType item in Enum.GetValues(typeof(Category.CategoryType)))
+            {
+                types.Add(item);
+            }
+            return types;
+        }
+
+        public void AddCategory(string descr, Category.CategoryType type)
+        {
+            _calendar.categories.Add(descr, type);  
         }
     }
 }
