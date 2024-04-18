@@ -20,17 +20,21 @@ namespace Calendar
     /// <summary>
     /// Interaction logic for Events_Categories.xaml
     /// </summary>
-    public partial class Events_Categories : Window, View
+    public partial class Events_Categories : Window, View, IAddEvent
     {
         private readonly Presenter _presenter;
 
         public Events_Categories(Presenter presenter)
         {
+
             InitializeComponent();
 
             _presenter = presenter;
 
-            InitializeForm();
+            _presenter.SetAddEventView(this);
+
+            _presenter.InitializeForm();
+
         }
 
         public bool ConfirmCloseApplication()
@@ -40,7 +44,12 @@ namespace Calendar
 
         public void ShowMessage(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message);
+        }
+
+        public void ShowMessage(string message, string title = "Information", MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.Information)
+        {
+            MessageBox.Show(message, title, button, icon);
         }
 
         private void Categories_Button(object sender, RoutedEventArgs e)
@@ -53,53 +62,34 @@ namespace Calendar
         #region Button
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateInput()) 
+            if (!ValidateInput())
             {
-                MessageBox.Show("Please correct the input fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowMessage("Please correct the input fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            try
-            {
-                // Extracting date components
-                int year = EventDatePicker.SelectedDate.Value.Year;
-                int month = EventDatePicker.SelectedDate.Value.Month;
-                int day = EventDatePicker.SelectedDate.Value.Day;
+            // Extracting date and time components
+            var selectedDate = EventDatePicker.SelectedDate.Value;
+            int hour = int.Parse(HourComboBox.SelectedItem.ToString());
+            int minute = int.Parse(MinuteComboBox.SelectedItem.ToString());
+            int second = int.Parse(SecondComboBox.SelectedItem.ToString());
 
-                // Extracting time components
-                int hour = int.Parse(HourComboBox.SelectedItem.ToString());
-                int minute = int.Parse(MinuteComboBox.SelectedItem.ToString());
-                int second = int.Parse(SecondComboBox.SelectedItem.ToString());
+            // Adjusting hour for 12-hour clock format
+            if (AmPmComboBox.SelectedItem.ToString() == "PM" && hour < 12)
+                hour += 12;
+            else if (AmPmComboBox.SelectedItem.ToString() == "AM" && hour == 12)
+                hour = 0;
 
-                // Handling 12-hour clock and PM designation
-                if (AmPmComboBox.SelectedItem.ToString() == "PM" && hour < 12)
-                {
-                    hour += 12;
-                }
-                else if (AmPmComboBox.SelectedItem.ToString() == "AM" && hour == 12)
-                {
-                    hour = 0; // Midnight case
-                }
+            // Creating DateTime object
+            DateTime selectedDateTime = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, hour, minute, second);
 
-                // Constructing the DateTime
-                DateTime selectedDateTime = new DateTime(year, month, day, hour, minute, second);
+            // Data from form
+            int categoryId = (int)CategoryComboBox.SelectedValue;
+            double duration = double.Parse(DurationTextBox.Text);
+            string details = EventDetailsTextBox.Text;
 
-                // Proceed with using the constructed DateTime
-                int categoryId = (int)CategoryComboBox.SelectedValue;
-                double duration = double.Parse(DurationTextBox.Text);
-                string details = EventDetailsTextBox.Text;
-
-                // Use HomeCalendar to add the event to the database
-                _presenter._calendar.events.Add(selectedDateTime, categoryId, duration, details);
-
-                MessageBox.Show("Event successfully added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                ClearForm();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
+            // Request the presenter to add the event
+            _presenter.AddEvent(selectedDateTime, categoryId, duration, details);
         }
 
 
@@ -134,58 +124,48 @@ namespace Calendar
 
         private bool ValidateInput()
         {
-            // Validate Event Details
+            bool isValid = true;
+            string errorMessage = "";
+
             if (string.IsNullOrWhiteSpace(EventDetailsTextBox.Text) || EventDetailsTextBox.Text == "Enter event details here...")
             {
-                MessageBox.Show("Please enter event details.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                errorMessage += "Please enter event details.\n";
+                isValid = false;
             }
 
-            // Validate Date
             if (!EventDatePicker.SelectedDate.HasValue)
             {
-                MessageBox.Show("Please select a date.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                errorMessage += "Please select a date.\n";
+                isValid = false;
             }
 
-            // Validate Time
             if (HourComboBox.SelectedItem == null || MinuteComboBox.SelectedItem == null || AmPmComboBox.SelectedItem == null)
             {
-                MessageBox.Show("Please complete the time selection.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                errorMessage += "Please complete the time selection.\n";
+                isValid = false;
             }
 
-            // Validate Duration
             if (!int.TryParse(DurationTextBox.Text, out int duration) || duration <= 0)
             {
-                MessageBox.Show("Please enter a valid duration in minutes.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                errorMessage += "Please enter a valid duration in minutes.\n";
+                isValid = false;
             }
 
-            // Validate Category
             if (CategoryComboBox.SelectedItem == null)
             {
-                MessageBox.Show("Please select a category.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
+                errorMessage += "Please select a category.\n";
+                isValid = false;
             }
 
-            return true;
+            if (!isValid)
+            {
+                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            return isValid;
         }
 
-        private void InitializeForm()
-        {
-            try
-            {
-                var categories = _presenter._calendar.categories.List();
-                Dispatcher.Invoke(() => UpdateComboBoxes(categories));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to initialize form data due to database connection issues: " + ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void UpdateComboBoxes(List<Category> categories)
+        public void UpdateComboBoxes(List<Category> categories)
         {
             HourComboBox.ItemsSource = Enumerable.Range(1, 12).ToList();
             MinuteComboBox.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("00")).ToList();
