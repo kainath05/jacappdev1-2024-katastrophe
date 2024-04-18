@@ -26,6 +26,7 @@ namespace Calendar
 
         public Events_Categories(Presenter presenter)
         {
+
             InitializeComponent();
 
             _presenter = presenter;
@@ -33,6 +34,7 @@ namespace Calendar
             _presenter.SetAddEventView(this);
 
             _presenter.InitializeForm();
+
         }
 
         public bool ConfirmCloseApplication()
