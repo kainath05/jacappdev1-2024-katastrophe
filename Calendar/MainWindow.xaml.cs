@@ -150,5 +150,10 @@ namespace Calendar
         {
             throw new NotImplementedException(); //only for events and categories window to show db file
         }
+
+        public void ShowTypes(List<Category.CategoryType> types)
+        {
+            //does not need this method
+        }
     }
 }

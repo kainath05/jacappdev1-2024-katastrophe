@@ -190,6 +190,11 @@ namespace Calendar
         {
             DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
         }
+
+        public void ShowTypes(List<Category.CategoryType> types)
+        {
+            //does not need this method
+        }
     }
 
 }

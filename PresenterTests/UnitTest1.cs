@@ -8,6 +8,7 @@ namespace PresenterTests
         public bool showMessageCalled = false;
         public List<string> messages = new List<string>();
         public bool display = false;
+        public bool showTypes = false;
 
         public bool ConfirmCloseApplication()
         {
@@ -24,6 +25,11 @@ namespace PresenterTests
         {
             showMessageCalled = true;
             messages.Add(message);
+        }
+
+        public void ShowTypes(List<Category.CategoryType> types)
+        {
+            showTypes = true;
         }
     }
 
@@ -85,8 +91,10 @@ namespace PresenterTests
             var view = new TestView();
             var presenter = new Presenter(view);
             var types = presenter.DisplayTypes();
+            view.ShowTypes(types);
 
             Assert.NotNull(types);
+            Assert.True(view.showTypes);
             Assert.Equal(Enum.GetValues(typeof(Category.CategoryType)).Length, types.Count); // Checks if all types are included
         }
         [Fact]
