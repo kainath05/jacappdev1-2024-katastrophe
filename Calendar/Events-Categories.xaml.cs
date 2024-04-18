@@ -39,7 +39,16 @@ namespace Calendar
 
         public bool ConfirmCloseApplication()
         {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes and exit?", "Confirm Exit", MessageBoxButton.YesNoCancel);
+            return result == MessageBoxResult.Yes;
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_presenter.ConfirmApplicationClosure())
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         public void ShowMessage(string message)
