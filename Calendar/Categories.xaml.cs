@@ -26,6 +26,7 @@ namespace Calendar
             _presenter = presenter;
 
             PopulateCategories();
+            DisplayDatabaseFile();
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -90,5 +91,9 @@ namespace Calendar
             MessageBox.Show(message, "Message");
         }
 
+        public void DisplayDatabaseFile()
+        {
+            DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
+        }
     }
 }

@@ -146,5 +146,9 @@ namespace Calendar
             }
         }
 
+        public void DisplayDatabaseFile()
+        {
+            throw new NotImplementedException(); //only for events and categories window to show db file
+        }
     }
 }

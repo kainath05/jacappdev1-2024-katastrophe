@@ -11,7 +11,7 @@ namespace Calendar
     public interface View
     {
         void ShowMessage(string message);
-
         bool ConfirmCloseApplication();
+        void DisplayDatabaseFile();
     }
 }
