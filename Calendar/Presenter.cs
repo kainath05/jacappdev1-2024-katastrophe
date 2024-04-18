@@ -66,6 +66,7 @@ namespace Calendar
             {
                 _addEventView.ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
        
         public List<Category.CategoryType> DisplayTypes()
         {

@@ -11,6 +11,5 @@ namespace Calendar
     {
         void ShowMessage(string message, string title, MessageBoxButton button, MessageBoxImage image);
         void UpdateComboBoxes(List<Category> categories);
-
     }
 }
