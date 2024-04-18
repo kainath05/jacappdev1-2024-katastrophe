@@ -80,7 +80,23 @@ namespace Calendar
 
         public void AddCategory(string descr, Category.CategoryType type)
         {
-            _calendar.categories.Add(descr, type);  
+            var list = _calendar.categories.List();
+            foreach (Category category in list)
+            {
+                if (descr == category.Description)
+                {
+
+                    _view.ShowMessage("Category already exists.");
+                    return; 
+                }
+            }
+            if (!Enum.IsDefined(typeof(Category.CategoryType), type))
+            {
+                _view.ShowMessage("Invalid category type.");
+                return; 
+            }
+            _calendar.categories.Add(descr, type);
+            _view.ShowMessage("Category added.");
         }
     }
 }

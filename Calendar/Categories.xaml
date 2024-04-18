@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="Categories" Height="200" Width="350">
+        Title="Categories" Height="230" Width="350">
     <Grid>
         <StackPanel>
             <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>

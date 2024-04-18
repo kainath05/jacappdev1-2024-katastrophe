@@ -13,11 +13,5 @@ namespace Calendar
         void ShowMessage(string message);
 
         bool ConfirmCloseApplication();
-
-        //void DisplayCategories(List<string> categories);
-
-        //CalendarItem EnterEventData(List<string> categories);
-
-        //void ShowEventAddedMessage();
     }
 }
