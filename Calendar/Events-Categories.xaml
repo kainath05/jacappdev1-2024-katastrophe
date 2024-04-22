@@ -1,4 +1,4 @@
-﻿<Window x:Class="Calendar.Events_Categories"
+<Window x:Class="Calendar.Events_Categories"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,9 +28,9 @@
                 <StackPanel Grid.Column="0" Margin="5">
                     <Label Content="Event Details"/>
                     <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter event details here..."/>
-                    <Label Content="Date"/>
+                    <Label Content="Start Date"/>
                     <DatePicker x:Name="EventDatePicker" Margin="0,2"/>
-                    <Label Content="Time"/>
+                    <Label Content="Start Time"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <ComboBox x:Name="HourComboBox" Width="Auto" Margin="2" ToolTip="Hour"/>
                         <ComboBox x:Name="MinuteComboBox" Width="Auto" Margin="2" ToolTip="Minute"/>
@@ -58,7 +58,8 @@
                 <Button Content="Manage Categories" Width="120" Click="Categories_Button"/>
             </StackPanel>
         </StackPanel>
+
+        <Button Grid.Row="3" Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
+        <TextBlock x:Name="DisplayDatabase" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-10,10,10,-5">hi</TextBlock>
     </Grid>
-
-
 </Window>

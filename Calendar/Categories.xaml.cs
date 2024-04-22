@@ -25,11 +25,17 @@ namespace Calendar
             InitializeComponent();
             _presenter = presenter;
 
+
             PopulateCategories();
 
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
             ToggleTheme(ThemeManager.IsDarkTheme);
+           
+            ShowTypes(_presenter.DisplayTypes());
+
+            DisplayDatabaseFile();
+
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -37,15 +43,6 @@ namespace Calendar
             if (_presenter.ConfirmApplicationClosure())
             {
                 Application.Current.Shutdown();
-            }
-        }
-
-        private void PopulateCategories()
-        {
-            List<Category.CategoryType> types = _presenter.DisplayTypes();
-            foreach (Category.CategoryType item in types)
-            {
-                Type.Items.Add(item);
             }
         }
 
@@ -62,7 +59,7 @@ namespace Calendar
 
                 if (Type.SelectedItem == null)
                 {
-                    ShowMessage("Please select a valid category type.");
+                    ShowMessage("Please select a valid category type."); //validates input
                     return;
                 }
 
@@ -122,6 +119,19 @@ namespace Calendar
             };
             // Add the new theme dictionary to the window's resources, applying the new theme to the window.
             Resources.MergedDictionaries.Add(themeDict);
+        }
+
+        public void DisplayDatabaseFile()
+        {
+            DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
+        }
+
+        public void ShowTypes(List<Category.CategoryType> types)
+        {
+            foreach (Category.CategoryType item in types)
+            {
+                Type.Items.Add(item); //fill in drop list for types
+            }
         }
 
     }

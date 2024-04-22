@@ -13,7 +13,7 @@ namespace Calendar
     public class Presenter
     {
         private readonly View _view;
-        private IAddEvent _addEventView;
+        public IAddEvent _addEventView; //changed the private for test
         public HomeCalendar _calendar;
         public string fileName = "newdb.db";
         public bool newDB;
@@ -21,8 +21,6 @@ namespace Calendar
         public Presenter(View view)
         {
             _view = view;
-            //if (_calendar != null) return;
-            //InitializeCalendar();
         }
 
         public void SetAddEventView(IAddEvent addEventView)

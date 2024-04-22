@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Calendar
 {
@@ -31,9 +32,10 @@ namespace Calendar
 
             _presenter = presenter;
 
-            _presenter.SetAddEventView(this);
+            _presenter.SetAddEventView(this); //adds new view
 
             _presenter.InitializeForm();
+
 
             // Subscribe to the ThemeChanged event from the ThemeManager.
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
@@ -55,10 +57,31 @@ namespace Calendar
             Resources.MergedDictionaries.Add(themeDict);
         }
 
+        private void SetTimeAfter30Mins()
+        {
+
+            DateTime time = DateTime.Now.AddMinutes(30);
+
+            HourComboBox.SelectedItem = time.Hour;
+            MinuteComboBox.SelectedItem = time.ToString("mm");
+            SecondComboBox.SelectedItem = time.ToString("ss");
+            AmPmComboBox.SelectedIndex = -1;
+
+        }
+
 
         public bool ConfirmCloseApplication()
         {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes and exit?", "Confirm Exit", MessageBoxButton.YesNoCancel);
+            return result == MessageBoxResult.Yes;
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_presenter.ConfirmApplicationClosure())
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         public void ShowMessage(string message)
@@ -120,21 +143,14 @@ namespace Calendar
 
         private void ClearForm()
         {
-            // Reset Event Details TextBox
-            EventDetailsTextBox.Text = "Enter event details here...";
-            EventDetailsTextBox.Foreground = System.Windows.Media.Brushes.Gray;
-
             // Reset DatePicker
             EventDatePicker.SelectedDate = null;
 
             // Reset Time ComboBoxes
-            HourComboBox.SelectedIndex = -1;
-            MinuteComboBox.SelectedIndex = -1;
-            SecondComboBox.SelectedIndex = -1;
+            HourComboBox.SelectedItem = -1;
+            MinuteComboBox.SelectedItem = -1;
+            SecondComboBox.SelectedItem = -1;
             AmPmComboBox.SelectedIndex = -1;
-
-            // Reset Duration TextBox
-            DurationTextBox.Text = "Duration in minutes";
 
             // Reset Category ComboBox
             CategoryComboBox.SelectedIndex = -1;
@@ -177,7 +193,7 @@ namespace Calendar
 
             if (!isValid)
             {
-                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning); //shows error message if no valid input
             }
 
             return isValid;
@@ -200,6 +216,7 @@ namespace Calendar
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
+
         // Method to toggle the theme based on the current theme setting.
         private void ToggleTheme(bool useDarkTheme)
         {
@@ -226,6 +243,18 @@ namespace Calendar
 
             ToggleTheme(newThemeIsDark);
         }
+
+        public void DisplayDatabaseFile()
+        {
+            DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
+        }
+
+        public void ShowTypes(List<Category.CategoryType> types)
+        {
+            //does not need this method
+        }
+    }
+
 
     }
 }

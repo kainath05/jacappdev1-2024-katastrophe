@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="Categories" Height="230" Width="350">
-    <Grid x:Name="grid">
+        Title="Categories" Height="250" Width="350">
+     
+   <Grid x:Name="grid">
         <StackPanel>
             <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>
             <Label Content="Category Description"/>
@@ -17,5 +18,6 @@
             <Button HorizontalAlignment="Right" Width="70" Height="30" Margin="-20,-60,90,-10" Click="Add_Category">Add</Button>
         </StackPanel>
         <Button Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
+        <TextBlock x:Name="DisplayDatabase" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5"></TextBlock>
     </Grid>
 </Window>

@@ -11,7 +11,8 @@ namespace Calendar
     public interface View
     {
         void ShowMessage(string message);
-
         bool ConfirmCloseApplication();
+        void DisplayDatabaseFile(); //display file for event and categories
+        void ShowTypes(List<Category.CategoryType> types);
     }
 }
