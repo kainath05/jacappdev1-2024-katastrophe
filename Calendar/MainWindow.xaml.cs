@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Diagnostics;
 
 namespace Calendar
 {
@@ -28,6 +29,17 @@ namespace Calendar
 
             LoadDefaultFolderLocations();
             _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+        }
+        private void ThemeManager_ThemeChanged(object sender, EventArgs e)
+        {
+            Resources.MergedDictionaries.Clear();
+            var themeDict = new ResourceDictionary
+            {
+                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml" , UriKind.Relative)
+            };
+            Resources.MergedDictionaries.Add(themeDict);
         }
 
         private void LoadDefaultFolderLocations()
@@ -36,7 +48,7 @@ namespace Calendar
             FolderComboBox.Items.Add("Desktop");
             FolderComboBox.Items.Add("Downloads");
 
-            FolderComboBox.SelectedIndex = 0; // Set the first item as default
+            FolderComboBox.SelectedIndex = 0; 
         }
 
         private void OpenFileExplorer_Click(object sender, RoutedEventArgs e)
@@ -118,7 +130,6 @@ namespace Calendar
                 }
             }
 
-            // Set presenter properties based on whether a new database was created or an existing one is used
             _presenter.fileName = fullPath;
             _presenter.newDB = !databaseExists;
 
@@ -144,6 +155,32 @@ namespace Calendar
                     string selectedFile = ShowFilePicker(_lastUsedDirectory);
                     return selectedFile;
             }
+        }
+
+        private void ToggleTheme(bool useDarkTheme)
+        {
+            Application.Current.Resources.MergedDictionaries.Clear();
+            string themeUri;
+            if (useDarkTheme) {
+                themeUri = "DarkMode.xaml";
+                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                grid.Background = darkGrayColor;
+            }
+            else {
+                themeUri = "LightMode.xaml";
+                grid.Background = Brushes.LightGray;
+            }
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleTheme(true); // Apply dark theme
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleTheme(false); // Apply light theme
         }
 
     }

@@ -35,6 +35,20 @@ namespace Calendar
 
             _presenter.InitializeForm();
 
+            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+
+            ToggleTheme(ThemeManager.IsDarkTheme);
+
+        }
+        private void ThemeManager_ThemeChanged(object sender, EventArgs e)
+        {
+            // This will update the current window's resources
+            Resources.MergedDictionaries.Clear();
+            var themeDict = new ResourceDictionary
+            {
+                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml", UriKind.Relative)
+            };
+            Resources.MergedDictionaries.Add(themeDict);
         }
 
         public bool ConfirmCloseApplication()
@@ -182,7 +196,32 @@ namespace Calendar
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
-    
-    }
+        private void ToggleTheme(bool useDarkTheme)
+        {
+            Application.Current.Resources.MergedDictionaries.Clear();
+            string themeUri;
+            if (useDarkTheme)
+            {
+                themeUri = "DarkMode.xaml";
+                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                grid.Background = darkGrayColor;
+            }
+            else
+            {
+                themeUri = "LightMode.xaml";
+                grid.Background = Brushes.LightGray;
+            }
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+        }
+        private void ToggleThemeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle the theme based on the current theme state
+            bool newThemeIsDark = !ThemeManager.IsDarkTheme;
+            ThemeManager.IsDarkTheme = newThemeIsDark;  // This sets the new theme and triggers the event
 
+            // Optionally, directly call the ToggleTheme method if additional logic needs to be handled
+            ToggleTheme(newThemeIsDark);
+        }
+
+    }
 }
