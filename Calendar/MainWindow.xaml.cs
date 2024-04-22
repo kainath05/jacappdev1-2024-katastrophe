@@ -157,16 +157,19 @@ namespace Calendar
             }
         }
 
+        // Method to toggle the theme based on the current theme setting.
         private void ToggleTheme(bool useDarkTheme)
         {
             Application.Current.Resources.MergedDictionaries.Clear();
             string themeUri;
-            if (useDarkTheme) {
+            if (useDarkTheme)
+            {
                 themeUri = "DarkMode.xaml";
                 var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
                 grid.Background = darkGrayColor;
             }
-            else {
+            else
+            {
                 themeUri = "LightMode.xaml";
                 grid.Background = Brushes.LightGray;
             }
@@ -175,12 +178,12 @@ namespace Calendar
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            ToggleTheme(true); // Apply dark theme
+            ToggleTheme(true);
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            ToggleTheme(false); // Apply light theme
+            ToggleTheme(false); 
         }
 
     }
