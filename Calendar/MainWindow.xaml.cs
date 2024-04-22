@@ -31,15 +31,20 @@ namespace Calendar
             _lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+            ApplyTheme();
         }
+       
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
+            ApplyTheme();
+        }
+
+        private void ApplyTheme()
+        {
             Resources.MergedDictionaries.Clear();
-            var themeDict = new ResourceDictionary
-            {
-                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml" , UriKind.Relative)
-            };
-            Resources.MergedDictionaries.Add(themeDict);
+            string themeUri = ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml";
+            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+            grid.Background = ThemeManager.IsDarkTheme ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) : Brushes.LightGray;
         }
 
         private void LoadDefaultFolderLocations()
@@ -158,32 +163,25 @@ namespace Calendar
         }
 
         // Method to toggle the theme based on the current theme setting.
-        private void ToggleTheme(bool useDarkTheme)
+        private void ToggleTheme()
         {
+            ThemeManager.IsDarkTheme = !ThemeManager.IsDarkTheme;
+
             Application.Current.Resources.MergedDictionaries.Clear();
-            string themeUri;
-            if (useDarkTheme)
-            {
-                themeUri = "DarkMode.xaml";
-                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-                grid.Background = darkGrayColor;
-            }
-            else
-            {
-                themeUri = "LightMode.xaml";
-                grid.Background = Brushes.LightGray;
-            }
+            string themeUri = ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml";
+            var backgroundColor = ThemeManager.IsDarkTheme ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) : Brushes.LightGray;
+            grid.Background = backgroundColor;
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            ToggleTheme(true);
+            ToggleTheme();
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            ToggleTheme(false); 
+            ToggleTheme();
         }
 
 

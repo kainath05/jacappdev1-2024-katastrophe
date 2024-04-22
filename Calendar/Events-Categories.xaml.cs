@@ -36,26 +36,28 @@ namespace Calendar
 
             _presenter.InitializeForm();
 
-
             // Subscribe to the ThemeChanged event from the ThemeManager.
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-            ToggleTheme(!ThemeManager.IsDarkTheme);
+            ApplyTheme();
 
+            SetTimeAfter30Mins();
+
+            DisplayDatabaseFile();
         }
         // Event handler for when the theme is changed.
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
-            // Clear existing resource dictionaries to refresh themes.
-            Resources.MergedDictionaries.Clear();
-            // Load the appropriate theme based on the current setting in ThemeManager.
-            var themeDict = new ResourceDictionary
-            {
-                Source = new Uri(ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml", UriKind.Relative)
-            };
-            // Add the loaded dictionary to the window's resources.
-            Resources.MergedDictionaries.Add(themeDict);
+            ApplyTheme();
         }
+        private void ApplyTheme()
+        {
+            Resources.MergedDictionaries.Clear();
+            string themeUri = ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml";
+            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+            grid.Background = ThemeManager.IsDarkTheme ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) : Brushes.LightGray;
+        }
+
 
         private void SetTimeAfter30Mins()
         {
@@ -212,36 +214,25 @@ namespace Calendar
             AmPmComboBox.SelectedIndex = 0;
 
             CategoryComboBox.ItemsSource = categories;
-            CategoryComboBox.DisplayMemberPath = "Description";  
+            CategoryComboBox.DisplayMemberPath = "Description";
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
 
         // Method to toggle the theme based on the current theme setting.
-        private void ToggleTheme(bool useDarkTheme)
+        private void ToggleTheme()
         {
+            ThemeManager.IsDarkTheme = !ThemeManager.IsDarkTheme;
+
             Application.Current.Resources.MergedDictionaries.Clear();
-            string themeUri;
-            if (useDarkTheme)
-            {
-                themeUri = "DarkMode.xaml";
-                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-                grid.Background = darkGrayColor;
-            }
-            else
-            {
-                themeUri = "LightMode.xaml";
-                grid.Background = Brushes.LightGray;
-            }
+            string themeUri = ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml";
+            var backgroundColor = ThemeManager.IsDarkTheme ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) : Brushes.LightGray;
+            grid.Background = backgroundColor;
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
         }
         private void ToggleThemeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle the theme and update the UI accordingly.
-            bool newThemeIsDark = !ThemeManager.IsDarkTheme;
-            ThemeManager.IsDarkTheme = newThemeIsDark;  
-
-            ToggleTheme(newThemeIsDark);
+            ToggleTheme();
         }
 
         public void DisplayDatabaseFile()
@@ -255,6 +246,5 @@ namespace Calendar
         }
     }
 
-
-    }
 }
+

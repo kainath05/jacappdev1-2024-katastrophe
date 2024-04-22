@@ -23,19 +23,16 @@ namespace Calendar
         public Categories(Presenter presenter)
         {
             InitializeComponent();
+            
             _presenter = presenter;
-
-
-            PopulateCategories();
-
+            
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-
-            ToggleTheme(ThemeManager.IsDarkTheme);
-           
+            
+            ApplyTheme();
+            
             ShowTypes(_presenter.DisplayTypes());
-
+            
             DisplayDatabaseFile();
-
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -91,34 +88,18 @@ namespace Calendar
             MessageBox.Show(message, "Message");
         }
 
-        private void ToggleTheme(bool useDarkTheme)
-        {
-            Application.Current.Resources.MergedDictionaries.Clear();
-            string themeUri;
-            if (useDarkTheme)
-            {
-                themeUri = "DarkMode.xaml";
-                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-                grid.Background = darkGrayColor;
-            }
-            else
-            {
-                themeUri = "LightMode.xaml";
-                grid.Background = Brushes.LightGray;
-            }
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
-        }
 
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
-            // Clear any existing resource dictionaries to prepare for the theme switch.
+            ApplyTheme();
+        }
+
+        private void ApplyTheme()
+        {
             Resources.MergedDictionaries.Clear();
-            var themeDict = new ResourceDictionary
-            {
-                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml", UriKind.Relative)
-            };
-            // Add the new theme dictionary to the window's resources, applying the new theme to the window.
-            Resources.MergedDictionaries.Add(themeDict);
+            string themeUri = ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml";
+            Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+            grid.Background = ThemeManager.IsDarkTheme ? new SolidColorBrush(Color.FromRgb(30, 30, 30)) : Brushes.LightGray;
         }
 
         public void DisplayDatabaseFile()

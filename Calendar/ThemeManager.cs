@@ -11,7 +11,7 @@ namespace Calendar
     {
         public static event EventHandler ThemeChanged;
 
-        private static bool _isDarkTheme = true;
+        private static bool _isDarkTheme;
         public static bool IsDarkTheme
         {
             get => _isDarkTheme;
@@ -20,15 +20,9 @@ namespace Calendar
                 if (_isDarkTheme != value)
                 {
                     _isDarkTheme = value;
-                    OnThemeChanged();
+                    ThemeChanged?.Invoke(null, EventArgs.Empty); // This triggers the change on all subscribed windows
                 }
             }
         }
-
-        private static void OnThemeChanged()
-        {
-            ThemeChanged?.Invoke(null, EventArgs.Empty);
-        }
     }
-
 }
