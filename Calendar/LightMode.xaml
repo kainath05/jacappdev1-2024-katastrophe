@@ -1,14 +1,81 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Define light theme colors -->
-    <SolidColorBrush x:Key="BackgroundColor" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="ForegroundColor" Color="#000000"/>
-    <SolidColorBrush x:Key="ButtonBackground" Color="#DDDDDD"/>
-    <SolidColorBrush x:Key="ButtonForeground" Color="#000000"/>
+    <!-- Define colors for the light mode -->
+    <SolidColorBrush x:Key="PrimaryBackground" Color="#F0F0F0"/>
+    <!-- Light grey for primary background -->
+    <SolidColorBrush x:Key="PrimaryForeground" Color="#000000"/>
+    <!-- Black for primary text -->
+    <SolidColorBrush x:Key="SecondaryBackground" Color="#E5E5E5"/>
+    <!-- Slightly darker grey for secondary elements like buttons -->
+    <SolidColorBrush x:Key="SecondaryForeground" Color="#000000"/>
+    <!-- Black for text on secondary elements -->
+    <SolidColorBrush x:Key="ControlBackground" Color="#FFFFFF"/>
+    <!-- White for input controls background -->
+    <SolidColorBrush x:Key="ControlForeground" Color="#000000"/>
+    <!-- Black for input controls text -->
+    <SolidColorBrush x:Key="ControlBorder" Color="#B0B0B0"/>
+    <!-- Soft grey for borders -->
 
-    <!-- Define styles that use these colors -->
+    <!-- Window style -->
+    <Style TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource PrimaryBackground}"/>
+    </Style>
+
+    <!-- TextBlock style -->
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource PrimaryForeground}"/>
+    </Style>
+
+    <!-- Button style -->
     <Style TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
-        <Setter Property="Foreground" Value="{StaticResource ButtonForeground}"/>
+        <Setter Property="Background" Value="{StaticResource SecondaryBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- ComboBox style -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Background" Value="{StaticResource ControlBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ControlForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- ComboBoxItem style -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Background" Value="{StaticResource ControlBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ControlForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <TextBlock Text="{Binding}" Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TextBox style -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource ControlBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ControlForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Label style -->
+    <Style TargetType="Label">
+        <Setter Property="Foreground" Value="{StaticResource PrimaryForeground}"/>
+    </Style>
+
+    <!-- DatePicker style -->
+    <Style TargetType="DatePicker">
+        <Setter Property="Background" Value="{StaticResource ControlBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ControlForeground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
     </Style>
 </ResourceDictionary>

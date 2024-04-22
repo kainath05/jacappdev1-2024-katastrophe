@@ -37,16 +37,15 @@ namespace Calendar
 
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-            ToggleTheme(ThemeManager.IsDarkTheme);
+            ToggleTheme(!ThemeManager.IsDarkTheme);
 
         }
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
-            // This will update the current window's resources
             Resources.MergedDictionaries.Clear();
             var themeDict = new ResourceDictionary
             {
-                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml", UriKind.Relative)
+                Source = new Uri(ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml", UriKind.Relative)
             };
             Resources.MergedDictionaries.Add(themeDict);
         }
@@ -215,11 +214,9 @@ namespace Calendar
         }
         private void ToggleThemeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Toggle the theme based on the current theme state
             bool newThemeIsDark = !ThemeManager.IsDarkTheme;
-            ThemeManager.IsDarkTheme = newThemeIsDark;  // This sets the new theme and triggers the event
+            ThemeManager.IsDarkTheme = newThemeIsDark;  
 
-            // Optionally, directly call the ToggleTheme method if additional logic needs to be handled
             ToggleTheme(newThemeIsDark);
         }
 

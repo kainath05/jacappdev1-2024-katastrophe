@@ -26,6 +26,10 @@ namespace Calendar
             _presenter = presenter;
 
             PopulateCategories();
+
+            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+
+            ToggleTheme(ThemeManager.IsDarkTheme);
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -88,6 +92,34 @@ namespace Calendar
         public void ShowMessage(string message)
         {
             MessageBox.Show(message, "Message");
+        }
+
+        private void ToggleTheme(bool useDarkTheme)
+        {
+            Application.Current.Resources.MergedDictionaries.Clear();
+            string themeUri;
+            if (useDarkTheme)
+            {
+                themeUri = "DarkMode.xaml";
+                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                grid.Background = darkGrayColor;
+            }
+            else
+            {
+                themeUri = "LightMode.xaml";
+                grid.Background = Brushes.LightGray;
+            }
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+        }
+
+        private void ThemeManager_ThemeChanged(object sender, EventArgs e)
+        {
+            Resources.MergedDictionaries.Clear();
+            var themeDict = new ResourceDictionary
+            {
+                Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml", UriKind.Relative)
+            };
+            Resources.MergedDictionaries.Add(themeDict);
         }
 
     }

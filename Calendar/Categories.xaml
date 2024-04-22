@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
         Title="Categories" Height="230" Width="350">
-    <Grid>
+    <Grid x:Name="grid">
         <StackPanel>
             <TextBlock Margin="120,2,0,0" FontSize="15" FontWeight="Bold">ADD CATEGORY</TextBlock>
             <Label Content="Category Description"/>
