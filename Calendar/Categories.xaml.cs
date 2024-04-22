@@ -114,11 +114,13 @@ namespace Calendar
 
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
+            // Clear any existing resource dictionaries to prepare for the theme switch.
             Resources.MergedDictionaries.Clear();
             var themeDict = new ResourceDictionary
             {
                 Source = new Uri(ThemeManager.IsDarkTheme ? "LightMode.xaml" : "DarkMode.xaml", UriKind.Relative)
             };
+            // Add the new theme dictionary to the window's resources, applying the new theme to the window.
             Resources.MergedDictionaries.Add(themeDict);
         }
 
