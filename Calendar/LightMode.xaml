@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Define light theme colors -->
+    <SolidColorBrush x:Key="BackgroundColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ForegroundColor" Color="#000000"/>
+    <SolidColorBrush x:Key="ButtonBackground" Color="#DDDDDD"/>
+    <SolidColorBrush x:Key="ButtonForeground" Color="#000000"/>
+
+    <!-- Define styles that use these colors -->
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource ButtonForeground}"/>
+    </Style>
+</ResourceDictionary>
