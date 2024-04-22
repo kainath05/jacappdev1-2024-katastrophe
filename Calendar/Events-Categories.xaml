@@ -25,7 +25,8 @@
 
                 <StackPanel Grid.Column="0" Margin="5">
                     <Label Content="Event Details"/>
-                    <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter event details here..."/>
+                    <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto"
+                             Text="Enter event details here..." GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
                     <Label Content="Start Date"/>
                     <DatePicker x:Name="EventDatePicker" Margin="0,2"/>
                     <Label Content="Start Time"/>
@@ -39,7 +40,7 @@
 
                 <StackPanel Grid.Column="1" Margin="5">
                     <Label Content="Duration (Minutes)"/>
-                    <TextBox x:Name="DurationTextBox" Foreground="Gray" Text="Duration in minutes"/>
+                    <TextBox x:Name="DurationTextBox" Text="Duration in minutes" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
                     <Label Content="Category"/>
                     <ComboBox x:Name="CategoryComboBox" ToolTip="Event category"/>
                 </StackPanel>

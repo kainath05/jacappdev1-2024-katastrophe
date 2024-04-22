@@ -61,14 +61,20 @@ namespace Calendar
 
         private void SetTimeAfter30Mins()
         {
-
             DateTime time = DateTime.Now.AddMinutes(30);
 
             HourComboBox.SelectedItem = time.Hour;
             MinuteComboBox.SelectedItem = time.ToString("mm");
             SecondComboBox.SelectedItem = time.ToString("ss");
-            AmPmComboBox.SelectedIndex = -1;
 
+            if (time.Hour / 12 == 0)
+            {
+                AmPmComboBox.SelectedIndex = 0;
+            }
+            else
+            {
+                AmPmComboBox.SelectedIndex = 1;
+            }
         }
 
 
@@ -244,6 +250,27 @@ namespace Calendar
         {
             //does not need this method
         }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox.Text == "Enter event details here..." || textBox.Text == "Duration in minutes")
+            {
+                textBox.Text = string.Empty;
+                textBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Foreground = Brushes.Gray; 
+                textBox.Text = textBox.Name == "EventDetailsTextBox" ? "Enter event details here..." : "Duration in minutes";
+            }
+        }
+
     }
 
 }
