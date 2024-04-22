@@ -35,20 +35,26 @@ namespace Calendar
 
             _presenter.InitializeForm();
 
+            // Subscribe to the ThemeChanged event from the ThemeManager.
             ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
             ToggleTheme(!ThemeManager.IsDarkTheme);
 
         }
+        // Event handler for when the theme is changed.
         private void ThemeManager_ThemeChanged(object sender, EventArgs e)
         {
+            // Clear existing resource dictionaries to refresh themes.
             Resources.MergedDictionaries.Clear();
+            // Load the appropriate theme based on the current setting in ThemeManager.
             var themeDict = new ResourceDictionary
             {
                 Source = new Uri(ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml", UriKind.Relative)
             };
+            // Add the loaded dictionary to the window's resources.
             Resources.MergedDictionaries.Add(themeDict);
         }
+
 
         public bool ConfirmCloseApplication()
         {
@@ -129,7 +135,6 @@ namespace Calendar
 
             // Reset Duration TextBox
             DurationTextBox.Text = "Duration in minutes";
-            DurationTextBox.Foreground = System.Windows.Media.Brushes.Gray;
 
             // Reset Category ComboBox
             CategoryComboBox.SelectedIndex = -1;
@@ -195,6 +200,7 @@ namespace Calendar
             CategoryComboBox.SelectedValuePath = "Id";
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
+        // Method to toggle the theme based on the current theme setting.
         private void ToggleTheme(bool useDarkTheme)
         {
             Application.Current.Resources.MergedDictionaries.Clear();
@@ -214,6 +220,7 @@ namespace Calendar
         }
         private void ToggleThemeButton_Click(object sender, RoutedEventArgs e)
         {
+            // Toggle the theme and update the UI accordingly.
             bool newThemeIsDark = !ThemeManager.IsDarkTheme;
             ThemeManager.IsDarkTheme = newThemeIsDark;  
 
