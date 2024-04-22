@@ -36,9 +36,25 @@ namespace Calendar
 
             _presenter.InitializeForm();
 
-            SetTimeAfter30Mins();
 
-            DisplayDatabaseFile();
+            // Subscribe to the ThemeChanged event from the ThemeManager.
+            ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
+
+            ToggleTheme(!ThemeManager.IsDarkTheme);
+
+        }
+        // Event handler for when the theme is changed.
+        private void ThemeManager_ThemeChanged(object sender, EventArgs e)
+        {
+            // Clear existing resource dictionaries to refresh themes.
+            Resources.MergedDictionaries.Clear();
+            // Load the appropriate theme based on the current setting in ThemeManager.
+            var themeDict = new ResourceDictionary
+            {
+                Source = new Uri(ThemeManager.IsDarkTheme ? "DarkMode.xaml" : "LightMode.xaml", UriKind.Relative)
+            };
+            // Add the loaded dictionary to the window's resources.
+            Resources.MergedDictionaries.Add(themeDict);
         }
 
         private void SetTimeAfter30Mins()
@@ -50,7 +66,9 @@ namespace Calendar
             MinuteComboBox.SelectedItem = time.ToString("mm");
             SecondComboBox.SelectedItem = time.ToString("ss");
             AmPmComboBox.SelectedIndex = -1;
+
         }
+
 
         public bool ConfirmCloseApplication()
         {
@@ -199,6 +217,33 @@ namespace Calendar
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
 
+        // Method to toggle the theme based on the current theme setting.
+        private void ToggleTheme(bool useDarkTheme)
+        {
+            Application.Current.Resources.MergedDictionaries.Clear();
+            string themeUri;
+            if (useDarkTheme)
+            {
+                themeUri = "DarkMode.xaml";
+                var darkGrayColor = new SolidColorBrush(Color.FromRgb(30, 30, 30));
+                grid.Background = darkGrayColor;
+            }
+            else
+            {
+                themeUri = "LightMode.xaml";
+                grid.Background = Brushes.LightGray;
+            }
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri(themeUri, UriKind.Relative) });
+        }
+        private void ToggleThemeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle the theme and update the UI accordingly.
+            bool newThemeIsDark = !ThemeManager.IsDarkTheme;
+            ThemeManager.IsDarkTheme = newThemeIsDark;  
+
+            ToggleTheme(newThemeIsDark);
+        }
+
         public void DisplayDatabaseFile()
         {
             DisplayDatabase.Text = "Database: " + System.IO.Path.GetFileName(_presenter.fileName);
@@ -210,4 +255,6 @@ namespace Calendar
         }
     }
 
+
+    }
 }

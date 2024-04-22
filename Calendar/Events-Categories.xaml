@@ -1,4 +1,4 @@
-﻿<Window x:Class="Calendar.Events_Categories"
+<Window x:Class="Calendar.Events_Categories"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
         Title="Events_Categories" Height="475" Width="550">
-    <Grid Margin="20">
+    <Grid x:Name="grid">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -14,46 +15,51 @@
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Add Event" FontWeight="SemiBold" FontSize="20" Margin="0,5"/>
+        <StackPanel Margin="20">
 
-        <Grid Grid.Row="1" Margin="5,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <TextBlock Text="Add Event" FontWeight="SemiBold" FontSize="20" Margin="0,5"/>
 
-            <StackPanel Grid.Column="0" Margin="5">
-                <Label Content="Event Details"/>
-                <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray"/>
-                <Label Content="Start Date"/>
-                <DatePicker x:Name="EventDatePicker" Margin="0,2"/>
-                <Label Content="Start Time"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                    <ComboBox x:Name="HourComboBox" Width="Auto" Margin="2" ToolTip="Hour"/>
-                    <ComboBox x:Name="MinuteComboBox" Width="Auto" Margin="2" ToolTip="Minute"/>
-                    <ComboBox x:Name="SecondComboBox" Width="Auto" Margin="2" ToolTip="Second"/>
-                    <ComboBox x:Name="AmPmComboBox" Width="Auto" Margin="2" ToolTip="AM/PM"/>
+            <Grid Grid.Row="1" Margin="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="5">
+                    <Label Content="Event Details"/>
+                    <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" Foreground="Gray" Text="Enter event details here..."/>
+                    <Label Content="Start Date"/>
+                    <DatePicker x:Name="EventDatePicker" Margin="0,2"/>
+                    <Label Content="Start Time"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <ComboBox x:Name="HourComboBox" Width="Auto" Margin="2" ToolTip="Hour"/>
+                        <ComboBox x:Name="MinuteComboBox" Width="Auto" Margin="2" ToolTip="Minute"/>
+                        <ComboBox x:Name="SecondComboBox" Width="Auto" Margin="2" ToolTip="Second"/>
+                        <ComboBox x:Name="AmPmComboBox" Width="Auto" Margin="2" ToolTip="AM/PM"/>
+                    </StackPanel>
                 </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="5">
+                    <Label Content="Duration (Minutes)"/>
+                    <TextBox x:Name="DurationTextBox" Foreground="Gray" Text="Duration in minutes"/>
+                    <Label Content="Category"/>
+                    <ComboBox x:Name="CategoryComboBox" ToolTip="Event category">
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Button Content="Add" Margin="10,0" Width="100" Click="AddButton_Click"/>
+                <Button Content="Cancel" Width="100" Click="CancelButton_Click"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="5">
-                <Label Content="Duration (Minutes)"/>
-                <TextBox x:Name="DurationTextBox" Foreground="Gray"/>
-                <Label Content="Category"/>
-                <ComboBox x:Name="CategoryComboBox" ToolTip="Event category">
-                </ComboBox>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <Button Content="Toggle Theme" Margin="10,0" Width="120" Click="ToggleThemeButton_Click" />
+                <Button Content="Manage Categories" Width="120" Click="Categories_Button"/>
             </StackPanel>
-        </Grid>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Add" Margin="10,0" Width="100" Click="AddButton_Click"/>
-            <Button Content="Cancel" Width="100" Click="CancelButton_Click"/>
         </StackPanel>
 
-        <Button Grid.Row="3" Content="Manage Categories" HorizontalAlignment="Center" Margin="10,5" ToolTip="Open category management" Click="Categories_Button"/>
-        <Button Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
+        <Button Grid.Row="3" Content="X" Click="ExitButton_Click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10"/>
         <TextBlock x:Name="DisplayDatabase" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-10,10,10,-5">hi</TextBlock>
     </Grid>
-
-
 </Window>
