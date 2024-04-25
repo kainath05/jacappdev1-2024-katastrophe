@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Calendar.views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Calendar
     /// <summary>
     /// Interaction logic for EventReport.xaml
     /// </summary>
-    public partial class EventReport : Window, View
+    public partial class EventReport : Window, View, ViewForReport
     {
         private readonly Presenter _presenter;
 
@@ -25,8 +26,56 @@ namespace Calendar
         {
             InitializeComponent();
             _presenter = presenter;
+            _presenter.SetReportView(this); //adds new view
 
             DisplayDatabaseFile();
+
+            Closing += EventReport_Closing; // for exit button
+        }
+
+        private void Delete_Event(object sender, RoutedEventArgs e)
+        {
+            var selected = myDataGrid.SelectedItem as Event;
+            if (selected != null)
+            {
+                _presenter.DeleteEvent(selected.Id);
+                ShowMessage("Deleted event");
+            }
+        }
+
+        private void Update_Event(object sender, RoutedEventArgs e)
+        {
+            var selected = myDataGrid.SelectedItem as Event;
+            if (selected != null)
+            {
+                //update method
+                ShowMessage("Updated event");
+            }
+        }
+
+        private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var selected = myDataGrid.SelectedItem as Event;
+            if (selected != null)
+            {
+                myDataGrid.ContextMenu.DataContext = selected;
+            }
+        }
+
+        private void EventReport_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool shouldClose = ConfirmCloseApplication();
+
+            if (shouldClose)
+            {
+                // Perform any necessary actions (e.g., save data)
+                // Continue with closing the window
+                e.Cancel = false;
+            }
+            else
+            {
+                e.Cancel = true;
+            }
         }
 
         private void Add_Events(object sender, RoutedEventArgs e)
@@ -37,7 +86,8 @@ namespace Calendar
 
         public bool ConfirmCloseApplication()
         {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes and exit?", "Confirm Exit", MessageBoxButton.YesNoCancel);
+            return result == MessageBoxResult.Yes;
         }
 
         public void DisplayDatabaseFile()
@@ -47,12 +97,20 @@ namespace Calendar
 
         public void ShowMessage(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message);
         }
 
         public void ShowTypes(List<Category.CategoryType> types)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //dont need for this
+        }
+
+        public void DisplayCategories(List<Category> categories)
+        {
+            foreach (Category category in categories)
+            {
+                CategoryComboBox.Items.Add(category);
+            }
         }
     }
 }
