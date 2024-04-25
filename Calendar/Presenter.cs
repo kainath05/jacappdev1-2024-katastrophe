@@ -8,6 +8,7 @@ using Calendar;
 using System.IO;
 using System.Windows;
 using Calendar.views;
+using System.Collections.ObjectModel;
 
 namespace Calendar
 {
@@ -126,9 +127,9 @@ namespace Calendar
 
         //Need update event too
 
-        public void DisplayCalendarItems(DateTime start, DateTime end, bool filter, int categoryId)
+        public List<CalendarItem> DisplayCalendarItems(DateTime start, DateTime end, bool filter, int categoryId)
         {
-            _calendar.GetCalendarItems(start, end, filter, categoryId);
+            return _calendar.GetCalendarItems(start, end, filter, categoryId);
         }
 
         public void DisplayItemsByMonth(DateTime start, DateTime end, bool filter, int categoryId)
@@ -145,5 +146,8 @@ namespace Calendar
         {
             _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
         }
+
+        
     }
 }
+
