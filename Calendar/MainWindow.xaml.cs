@@ -140,7 +140,7 @@ namespace Calendar
 
             _presenter.InitializeCalendar(); //makes a home calendar
 
-            var newWindow = new Events_Categories(_presenter); //opens new window to add events
+            var newWindow = new EventReport(_presenter); //opens new window to add events
             newWindow.Show();
             Close();
         }
