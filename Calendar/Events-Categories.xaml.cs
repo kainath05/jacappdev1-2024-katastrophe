@@ -50,6 +50,7 @@ namespace Calendar
         {
             ApplyTheme();
         }
+
         private void ApplyTheme()
         {
             Resources.MergedDictionaries.Clear();
