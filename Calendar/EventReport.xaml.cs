@@ -210,6 +210,7 @@ namespace Calendar
             Events.Clear();
             int categoryId = FilterByCategory ? SelectedCategory.Id : 1; // TODO FIX 1
             List<CalendarItem> events = _presenter.DisplayCalendarItems(StartDate, EndDate, FilterByCategory, categoryId);
+
             foreach (var ev in events)
             {
                 Events.Add(ev);
