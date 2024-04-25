@@ -122,22 +122,13 @@ namespace Calendar
             {
                 CategoryComboBox.Items.Add(category);
             }
+            if (CategoryComboBox.Items.Count > 0)
+            {
+                SelectedCategory = (Category)CategoryComboBox.Items[0];
+            }
         }
 
-        private void AddEventsToDataGrid(object sender, RoutedEventArgs e)
-        {
-            DateTime startDate = StartDatePicker.SelectedDate ?? DateTime.Today;
-            DateTime endDate = EndDatePicker.SelectedDate ?? DateTime.Today;
-            bool filterByCategory = CategoryFilterCheckBox.IsChecked == true;
-            int categoryId = filterByCategory ? (CategoryComboBox.SelectedItem as Category).Id : 1; //TODO: Fix the "1"
-
-            _presenter.DisplayCalendarItems(startDate, endDate, filterByCategory, categoryId);
-        }
-
-        public void DisplayEvents(ObservableCollection<Event> events)
-        {
-            myDataGrid.ItemsSource = events; // Set the ItemsSource for the DataGrid
-        }
+        #region DataGridControls
 
         private DateTime _startDate = DateTime.Today;
         public DateTime StartDate
@@ -224,5 +215,7 @@ namespace Calendar
                 Events.Add(ev);
             }
         }
+
+        #endregion
     }
 }
