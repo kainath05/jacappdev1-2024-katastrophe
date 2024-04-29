@@ -316,6 +316,7 @@ namespace Calendar
             }
             else if (SummaryByCategory && SummaryByMonth)
             {
+                SummaryByCategoryAndMonth = true;
                 LoadEventsByCategoryAndMonth();
             }
             else
