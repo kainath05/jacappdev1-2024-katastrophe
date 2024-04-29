@@ -255,8 +255,6 @@ namespace Calendar
                 if (_summaryByMonth != value)
                 {
                     _summaryByMonth = value;
-                    if (_summaryByMonth)
-                        SummaryByCategory = false;
                     NotifyPropertyChanged(nameof(SummaryByMonth));
                     LoadEvents();
                 }
@@ -272,8 +270,6 @@ namespace Calendar
                 if (_summaryByCategory != value)
                 {
                     _summaryByCategory = value;
-                    if (_summaryByCategory)
-                        SummaryByMonth = false;
                     NotifyPropertyChanged(nameof(SummaryByCategory));
                     LoadEvents();
                 }
