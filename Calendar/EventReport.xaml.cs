@@ -303,6 +303,7 @@ namespace Calendar
         private void LoadStandardEvents()
         {
             Events.Clear();
+            LoadCalendarItemColumns();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItem> events = _presenter.DisplayCalendarItems(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -314,6 +315,7 @@ namespace Calendar
         private void LoadEventsByMonth()
         {
             EventsByMonth.Clear();
+            LoadCalendarItemsByMonth();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItemsByMonth> events = _presenter.DisplayItemsByMonth(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -325,6 +327,7 @@ namespace Calendar
         private void LoadEventsByCategory()
         {
             EventsByCategory.Clear();
+            LoadCalendarItemsByCategory();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItemsByCategory> events = _presenter.DisplayItemsByCategory(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -335,71 +338,70 @@ namespace Calendar
 
         #endregion
 
-                private void LoadCalendarItemColumns()
+        private void LoadCalendarItemColumns()
         {
-            myDataGrid.Columns.Clear();
-            myDataGrid.AutoGenerateColumns = false;
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
             var columnDate = new DataGridTextColumn();
-            columnDate.Header = "StartDate";
+            columnDate.Header = "Start Date";
             columnDate.Binding = new Binding("StartDateTime");
-            myDataGrid.Columns.Add(columnDate);
+            regularDataGrid.Columns.Add(columnDate);
 
-            //Need to add StartTime
-            //
-            //
-            //
-            //
+            //var columnTime = new DataGridTextColumn();
+            //columnDate.Header = "Start Time";
+            //columnDate.Binding = new Binding("StartDateTime");
+            //regularDataGrid.Columns.Add(columnDate);
 
-            var columnCategory = new DataGridTextColumn();
-            columnCategory.Header = "Category";
-            columnCategory.Binding = new Binding("Category");
-            myDataGrid.Columns.Add(columnCategory);
+            var category = new DataGridTextColumn();
+            category.Header = "Category";
+            category.Binding = new Binding("Category");
+            regularDataGrid.Columns.Add(category);
 
             var columnDescription = new DataGridTextColumn();
             columnDescription.Header = "Description";
             columnDescription.Binding = new Binding("ShortDescription");
-            myDataGrid.Columns.Add(columnDescription);
+            regularDataGrid.Columns.Add(columnDescription);
 
             var columnDuration = new DataGridTextColumn();
             columnDuration.Header = "Duration";
             columnDuration.Binding = new Binding("DurationInMinutes");
-            myDataGrid.Columns.Add(columnDuration);
+            regularDataGrid.Columns.Add(columnDuration);
 
 
             var columnBusyTime = new DataGridTextColumn();
             columnBusyTime.Header = "BusyTime";
             columnBusyTime.Binding = new Binding("BusyTime");
-            myDataGrid.Columns.Add(columnBusyTime);
+            regularDataGrid.Columns.Add(columnBusyTime);
         }
 
         private void LoadCalendarItemsByMonth()
         {
-            myDataGrid.Columns.Clear();
-            myDataGrid.AutoGenerateColumns = false;
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
             var columnMonth = new DataGridTextColumn();
             columnMonth.Header = "Month";
             columnMonth.Binding = new Binding("Month");
-            myDataGrid.Columns.Add(columnMonth);
+            regularDataGrid.Columns.Add(columnMonth);
 
             var columnTotal = new DataGridTextColumn();
-            columnTotal.Header = "Totals";
+            columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
-            myDataGrid.Columns.Add(columnTotal);
+            regularDataGrid.Columns.Add(columnTotal);
         }
 
         private void LoadCalendarItemsByCategory()
         {
-            myDataGrid.Columns.Clear();
-            myDataGrid.AutoGenerateColumns = false;
-            var columnCategory = new DataGridTextColumn();
-            columnCategory.Header = "Category";
-            columnCategory.Binding = new Binding("Category");
-            myDataGrid.Columns.Add(columnCategory);
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
+            var category = new DataGridTextColumn();
+            category.Header = "Category";
+            category.Binding = new Binding("Category");
+            regularDataGrid.Columns.Add(category);
 
             var columnTotal = new DataGridTextColumn();
-            columnTotal.Header = "Totals";
+            columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
-            myDataGrid.Columns.Add(columnTotal);
+            regularDataGrid.Columns.Add(columnTotal);
         }
     }
 }
