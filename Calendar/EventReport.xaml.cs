@@ -306,18 +306,18 @@ namespace Calendar
 
         public void LoadEvents()
         {
-            if (SummaryByMonth)
+            if (SummaryByMonth && SummaryByCategory)
             {
-                LoadEventsByMonth();
+                SummaryByCategoryAndMonth = true;
+                LoadEventsByCategoryAndMonth();
             }
             else if (SummaryByCategory)
             {
                 LoadEventsByCategory();
             }
-            else if (SummaryByCategory && SummaryByMonth)
+            else if (SummaryByMonth)
             {
-                SummaryByCategoryAndMonth = true;
-                LoadEventsByCategoryAndMonth();
+                LoadEventsByMonth();
             }
             else
             {
