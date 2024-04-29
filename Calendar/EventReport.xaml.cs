@@ -303,6 +303,7 @@ namespace Calendar
         private void LoadStandardEvents()
         {
             Events.Clear();
+            LoadCalendarItemColumns();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItem> events = _presenter.DisplayCalendarItems(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -314,6 +315,7 @@ namespace Calendar
         private void LoadEventsByMonth()
         {
             EventsByMonth.Clear();
+            LoadCalendarItemsByMonth();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItemsByMonth> events = _presenter.DisplayItemsByMonth(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -325,6 +327,7 @@ namespace Calendar
         private void LoadEventsByCategory()
         {
             EventsByCategory.Clear();
+            LoadCalendarItemsByCategory();
             int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
             List<CalendarItemsByCategory> events = _presenter.DisplayItemsByCategory(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
@@ -334,5 +337,71 @@ namespace Calendar
         }
 
         #endregion
+
+        private void LoadCalendarItemColumns()
+        {
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
+            var columnDate = new DataGridTextColumn();
+            columnDate.Header = "Start Date";
+            columnDate.Binding = new Binding("StartDateTime");
+            regularDataGrid.Columns.Add(columnDate);
+
+            //var columnTime = new DataGridTextColumn();
+            //columnDate.Header = "Start Time";
+            //columnDate.Binding = new Binding("StartDateTime");
+            //regularDataGrid.Columns.Add(columnDate);
+
+            var category = new DataGridTextColumn();
+            category.Header = "Category";
+            category.Binding = new Binding("Category");
+            regularDataGrid.Columns.Add(category);
+
+            var columnDescription = new DataGridTextColumn();
+            columnDescription.Header = "Description";
+            columnDescription.Binding = new Binding("ShortDescription");
+            regularDataGrid.Columns.Add(columnDescription);
+
+            var columnDuration = new DataGridTextColumn();
+            columnDuration.Header = "Duration";
+            columnDuration.Binding = new Binding("DurationInMinutes");
+            regularDataGrid.Columns.Add(columnDuration);
+
+
+            var columnBusyTime = new DataGridTextColumn();
+            columnBusyTime.Header = "BusyTime";
+            columnBusyTime.Binding = new Binding("BusyTime");
+            regularDataGrid.Columns.Add(columnBusyTime);
+        }
+
+        private void LoadCalendarItemsByMonth()
+        {
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
+            var columnMonth = new DataGridTextColumn();
+            columnMonth.Header = "Month";
+            columnMonth.Binding = new Binding("Month");
+            regularDataGrid.Columns.Add(columnMonth);
+
+            var columnTotal = new DataGridTextColumn();
+            columnTotal.Header = "Total Busy Time";
+            columnTotal.Binding = new Binding("TotalBusyTime");
+            regularDataGrid.Columns.Add(columnTotal);
+        }
+
+        private void LoadCalendarItemsByCategory()
+        {
+            regularDataGrid.Columns.Clear();
+            regularDataGrid.AutoGenerateColumns = false;
+            var category = new DataGridTextColumn();
+            category.Header = "Category";
+            category.Binding = new Binding("Category");
+            regularDataGrid.Columns.Add(category);
+
+            var columnTotal = new DataGridTextColumn();
+            columnTotal.Header = "Total Busy Time";
+            columnTotal.Binding = new Binding("TotalBusyTime");
+            regularDataGrid.Columns.Add(columnTotal);
+        }
     }
 }
