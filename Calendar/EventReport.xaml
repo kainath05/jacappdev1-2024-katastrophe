@@ -32,6 +32,7 @@
             <Label>Summary</Label>
             <CheckBox x:Name="MonthSummaryCheckBox" Content="By Month" IsChecked="{Binding SummaryByMonth, Mode=TwoWay}"/>
             <CheckBox x:Name="CategorySummaryCheckBox" Content="By Category" IsChecked="{Binding SummaryByCategory, Mode=TwoWay}"/>
+            <CheckBox x:Name="CategoryAndMonthCheckBox" Content="By Category and Month" IsChecked="{Binding SummaryByCategoryAndEvent}"/>
             
 
             <Button Margin="0, 20, 10, 10" Click="Add_Events">Add Event</Button>
@@ -59,6 +60,13 @@
         <DataGrid Name="categoryDataGrid" Grid.Column="1" IsReadOnly="True"
           ItemsSource="{Binding Path=EventsByCategory, Mode=OneWay}"
           Visibility="{Binding SummaryByCategory, Converter={StaticResource BoolToVisibilityConverter}}"
+          ContextMenuOpening="myDataGrid_ContextMenuOpening">
+        </DataGrid>
+
+
+        <DataGrid Name="dictionaryDataGrid" Grid.Column="1" IsReadOnly="True"
+          ItemsSource="{Binding Path=EventsByCategoryAndMonth, Mode=OneWay}"
+          Visibility="{Binding SummaryByCategoryAndMonth, Converter={StaticResource BoolToVisibilityConverter}}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
         </DataGrid>
 

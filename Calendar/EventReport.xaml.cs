@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Calendar
 {
@@ -57,10 +58,10 @@ namespace Calendar
 
         private void Delete_Event(object sender, RoutedEventArgs e)
         {
-            var selected = sender as Event;
+            var selected = sender as CalendarItem;
             if (selected != null)
             {
-                _presenter.DeleteEvent(selected.Id);
+                _presenter.DeleteEvent(selected.EventID);
                 ShowMessage("Deleted event");
             }
         }
@@ -87,7 +88,6 @@ namespace Calendar
                 }
             }
         }
-
 
         private void EventReport_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -209,6 +209,7 @@ namespace Calendar
         private ObservableCollection<CalendarItem> _events = new ObservableCollection<CalendarItem>();
         private ObservableCollection<CalendarItemsByMonth> _eventsByMonth = new ObservableCollection<CalendarItemsByMonth>();
         private ObservableCollection<CalendarItemsByCategory> _eventsByCategory = new ObservableCollection<CalendarItemsByCategory>();
+        private ObservableCollection<Dictionary<string, object>> _eventsByCategoryAndMonth = new ObservableCollection<Dictionary<string, object>>(); //newww
 
         public ObservableCollection<CalendarItem> Events
         {
@@ -246,6 +247,18 @@ namespace Calendar
                 }
             }
         }
+        public ObservableCollection<Dictionary<string, object>> EventsByCategoryAndMonth
+        {
+            get { return _eventsByCategoryAndMonth; }
+            set
+            {
+                if (_eventsByCategoryAndMonth != value)
+                {
+                    _eventsByCategoryAndMonth = value;
+                    NotifyPropertyChanged(nameof(EventsByCategoryAndMonth));
+                }
+            }
+        }
         private bool _summaryByMonth;
         public bool SummaryByMonth
         {
@@ -276,7 +289,20 @@ namespace Calendar
             }
         }
 
-
+        private bool _summaryByCategoryAndMonth;
+        public bool SummaryByCategoryAndMonth
+        {
+            get => _summaryByCategoryAndMonth;
+            set
+            {
+                if (_summaryByCategoryAndMonth != value)
+                {
+                    _summaryByCategoryAndMonth = value;
+                    NotifyPropertyChanged(nameof(SummaryByCategoryAndMonth));
+                    LoadEvents();
+                }
+            }
+        }
 
         public void LoadEvents()
         {
@@ -288,13 +314,15 @@ namespace Calendar
             {
                 LoadEventsByCategory();
             }
+            else if (SummaryByCategory && SummaryByMonth)
+            {
+                LoadEventsByCategoryAndMonth();
+            }
             else
             {
                 LoadStandardEvents();
             }
         }
-
-
 
         private void LoadStandardEvents()
         {
@@ -332,31 +360,44 @@ namespace Calendar
             }
         }
 
+        private void LoadEventsByCategoryAndMonth()
+        {
+            EventsByCategoryAndMonth.Clear();
+            int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
+            List<Dictionary<string, object>> items = _presenter.DisplayItemsByCategoryAndMonth(StartDate, EndDate, FilterByCategory, categoryId);
+            foreach (var ev in items)
+            {
+                EventsByCategoryAndMonth.Add(ev);
+            }
+        }
+
         #endregion
 
         private void LoadCalendarItemColumns()
         {
             regularDataGrid.Columns.Clear();
             regularDataGrid.AutoGenerateColumns = false;
-            var columnDate = new DataGridTextColumn();
-            columnDate.Header = "Start Date";
-            columnDate.Binding = new Binding("StartDateTime");
-            regularDataGrid.Columns.Add(columnDate);
+            var date = new DataGridTextColumn();
+            date.Header = "Start Date";
+            date.Binding = new Binding("StartDateTime");
+            date.Binding.StringFormat = "dd/MM/yyyy";
+            regularDataGrid.Columns.Add(date);
 
-            //var columnTime = new DataGridTextColumn();
-            //columnDate.Header = "Start Time";
-            //columnDate.Binding = new Binding("StartDateTime");
-            //regularDataGrid.Columns.Add(columnDate);
+            var time = new DataGridTextColumn();
+            time.Header = "Start Time";
+            time.Binding = new Binding("StartDateTime");
+            time.Binding.StringFormat = "HH:mm:ss";
+            regularDataGrid.Columns.Add(time);
 
             var category = new DataGridTextColumn();
             category.Header = "Category";
             category.Binding = new Binding("Category");
             regularDataGrid.Columns.Add(category);
 
-            var columnDescription = new DataGridTextColumn();
-            columnDescription.Header = "Description";
-            columnDescription.Binding = new Binding("ShortDescription");
-            regularDataGrid.Columns.Add(columnDescription);
+            var description = new DataGridTextColumn();
+            description.Header = "Description";
+            description.Binding = new Binding("ShortDescription");
+            regularDataGrid.Columns.Add(description);
 
             var columnDuration = new DataGridTextColumn();
             columnDuration.Header = "Duration";
@@ -365,39 +406,44 @@ namespace Calendar
 
 
             var columnBusyTime = new DataGridTextColumn();
-            columnBusyTime.Header = "BusyTime";
+            columnBusyTime.Header = "Busy Time";
             columnBusyTime.Binding = new Binding("BusyTime");
             regularDataGrid.Columns.Add(columnBusyTime);
         }
 
         private void LoadCalendarItemsByMonth()
         {
-            regularDataGrid.Columns.Clear();
-            regularDataGrid.AutoGenerateColumns = false;
-            var columnMonth = new DataGridTextColumn();
-            columnMonth.Header = "Month";
-            columnMonth.Binding = new Binding("Month");
-            regularDataGrid.Columns.Add(columnMonth);
+            monthlyDataGrid.Columns.Clear();
+            monthlyDataGrid.AutoGenerateColumns = false;
+            var month = new DataGridTextColumn();
+            month.Header = "Month";
+            month.Binding = new Binding("Month");
+            monthlyDataGrid.Columns.Add(month);
 
             var columnTotal = new DataGridTextColumn();
             columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
-            regularDataGrid.Columns.Add(columnTotal);
+            monthlyDataGrid.Columns.Add(columnTotal);
         }
 
         private void LoadCalendarItemsByCategory()
         {
-            regularDataGrid.Columns.Clear();
-            regularDataGrid.AutoGenerateColumns = false;
+            categoryDataGrid.Columns.Clear();
+            categoryDataGrid.AutoGenerateColumns = false;
             var category = new DataGridTextColumn();
             category.Header = "Category";
             category.Binding = new Binding("Category");
-            regularDataGrid.Columns.Add(category);
+            categoryDataGrid.Columns.Add(category);
 
             var columnTotal = new DataGridTextColumn();
             columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
-            regularDataGrid.Columns.Add(columnTotal);
+            categoryDataGrid.Columns.Add(columnTotal);
+        }
+
+        private void LoadCalendarItemsByCategoryAndMonth()
+        {
+
         }
     }
 }
