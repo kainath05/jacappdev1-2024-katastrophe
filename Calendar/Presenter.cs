@@ -132,14 +132,14 @@ namespace Calendar
             return _calendar.GetCalendarItems(start, end, filter, categoryId);
         }
 
-        public void DisplayItemsByMonth(DateTime start, DateTime end, bool filter, int categoryId)
+        public List<CalendarItemsByMonth> DisplayItemsByMonth(DateTime start, DateTime end, bool filter, int categoryId)
         {
-            _calendar.GetCalendarItemsByMonth(start, end, filter, categoryId);
+            return _calendar.GetCalendarItemsByMonth(start, end, filter, categoryId);
         }
 
-        public void DisplayItemsByCategory(DateTime start, DateTime end, bool filter, int categoryId)
+        public List<CalendarItemsByCategory> DisplayItemsByCategory(DateTime start, DateTime end, bool filter, int categoryId)
         {
-            _calendar.GetCalendarItemsByCategory(start, end, filter, categoryId);
+            return _calendar.GetCalendarItemsByCategory(start, end, filter, categoryId);
         }
 
         public void DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)

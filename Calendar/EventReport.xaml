@@ -6,7 +6,13 @@
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
         Title="EventReport" Height="450" Width="800">
+
+    <Window.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="2*"></ColumnDefinition>
@@ -24,14 +30,18 @@
             <ComboBox x:Name="CategoryComboBox" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
 
             <Label>Summary</Label>
-            <CheckBox>By Month</CheckBox>
-            <CheckBox>By Category</CheckBox>
+            <CheckBox x:Name="MonthSummaryCheckBox" Content="By Month" IsChecked="{Binding SummaryByMonth, Mode=TwoWay}"/>
+            <CheckBox x:Name="CategorySummaryCheckBox" Content="By Category" IsChecked="{Binding SummaryByCategory, Mode=TwoWay}"/>
+            
 
             <Button Margin="0, 20, 10, 10" Click="Add_Events">Add Event</Button>
             <TextBlock x:Name="DisplayDatabase" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Database: "/>
         </StackPanel>
 
-        <DataGrid Name="myDataGrid" Grid.Column="1" IsReadOnly="True" ContextMenuOpening="myDataGrid_ContextMenuOpening" ItemsSource="{Binding Events}">
+        <DataGrid Name="regularDataGrid" Grid.Column="1" IsReadOnly="True"
+          ItemsSource="{Binding Events}"
+          Visibility="{Binding Summary, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
+          ContextMenuOpening="myDataGrid_ContextMenuOpening">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete" Click="Delete_Event" />
@@ -39,5 +49,18 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
+
+        <DataGrid Name="monthlyDataGrid" Grid.Column="1" IsReadOnly="True"
+          ItemsSource="{Binding Path=EventsByMonth, Mode=OneWay}"
+          Visibility="{Binding SummaryByMonth, Converter={StaticResource BoolToVisibilityConverter}}"
+          ContextMenuOpening="myDataGrid_ContextMenuOpening">
+        </DataGrid>
+
+        <DataGrid Name="categoryDataGrid" Grid.Column="1" IsReadOnly="True"
+          ItemsSource="{Binding Path=EventsByCategory, Mode=OneWay}"
+          Visibility="{Binding SummaryByCategory, Converter={StaticResource BoolToVisibilityConverter}}"
+          ContextMenuOpening="myDataGrid_ContextMenuOpening">
+        </DataGrid>
+
     </Grid>
 </Window>
