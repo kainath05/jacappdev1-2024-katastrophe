@@ -37,16 +37,27 @@ namespace Calendar
             _presenter = presenter;
             _presenter.SetReportView(this); //adds new view
 
+            DataContext = this;
+
             DisplayDatabaseFile();
 
-            Closing += EventReport_Closing; // for exit button
+            var categories = _presenter._calendar.categories.List();
+            DisplayCategories(categories);
 
-            DataContext = this;
+            if (categories.Count > 0)
+            {
+                SelectedCategory = categories[0]; // Set the first category as the default selected category
+            }
+
+            // Load events
+            LoadEvents();
+
+            Closing += EventReport_Closing;
         }
 
         private void Delete_Event(object sender, RoutedEventArgs e)
         {
-            var selected = myDataGrid.SelectedItem as Event;
+            var selected = sender as Event;
             if (selected != null)
             {
                 _presenter.DeleteEvent(selected.Id);
@@ -56,7 +67,7 @@ namespace Calendar
 
         private void Update_Event(object sender, RoutedEventArgs e)
         {
-            var selected = myDataGrid.SelectedItem as Event;
+            var selected = sender as Event;
             if (selected != null)
             {
                 //update method
@@ -66,12 +77,17 @@ namespace Calendar
 
         private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            var selected = myDataGrid.SelectedItem as Event;
-            if (selected != null)
+            DataGrid dataGrid = sender as DataGrid;
+            if (dataGrid != null)
             {
-                myDataGrid.ContextMenu.DataContext = selected;
+                var selected = dataGrid.SelectedItem as Event;
+                if (selected != null)
+                {
+                    dataGrid.ContextMenu.DataContext = selected;
+                }
             }
         }
+
 
         private void EventReport_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -191,6 +207,9 @@ namespace Calendar
         }
 
         private ObservableCollection<CalendarItem> _events = new ObservableCollection<CalendarItem>();
+        private ObservableCollection<CalendarItemsByMonth> _eventsByMonth = new ObservableCollection<CalendarItemsByMonth>();
+        private ObservableCollection<CalendarItemsByCategory> _eventsByCategory = new ObservableCollection<CalendarItemsByCategory>();
+
         public ObservableCollection<CalendarItem> Events
         {
             get { return _events; }
@@ -203,17 +222,114 @@ namespace Calendar
                 }
             }
         }
+        public ObservableCollection<CalendarItemsByMonth> EventsByMonth
+        {
+            get { return _eventsByMonth; }
+            set
+            {
+                if (_eventsByMonth != value)
+                {
+                    _eventsByMonth = value;
+                    NotifyPropertyChanged(nameof(EventsByMonth));
+                }
+            }
+        }
+        public ObservableCollection<CalendarItemsByCategory> EventsByCategory
+        {
+            get { return _eventsByCategory; }
+            set
+            {
+                if (_eventsByCategory != value)
+                {
+                    _eventsByCategory = value;
+                    NotifyPropertyChanged(nameof(EventsByCategory));
+                }
+            }
+        }
+        private bool _summaryByMonth;
+        public bool SummaryByMonth
+        {
+            get => _summaryByMonth;
+            set
+            {
+                if (_summaryByMonth != value)
+                {
+                    _summaryByMonth = value;
+                    if (_summaryByMonth)
+                        SummaryByCategory = false;
+                    NotifyPropertyChanged(nameof(SummaryByMonth));
+                    LoadEvents();
+                }
+            }
+        }
+
+        private bool _summaryByCategory;
+        public bool SummaryByCategory
+        {
+            get => _summaryByCategory;
+            set
+            {
+                if (_summaryByCategory != value)
+                {
+                    _summaryByCategory = value;
+                    if (_summaryByCategory)
+                        SummaryByMonth = false;
+                    NotifyPropertyChanged(nameof(SummaryByCategory));
+                    LoadEvents();
+                }
+            }
+        }
+
 
 
         public void LoadEvents()
         {
-            Events.Clear();
-            int categoryId = FilterByCategory ? SelectedCategory.Id : 1; // TODO FIX 1
-            List<CalendarItem> events = _presenter.DisplayCalendarItems(StartDate, EndDate, FilterByCategory, categoryId);
+            if (SummaryByMonth)
+            {
+                LoadEventsByMonth();
+            }
+            else if (SummaryByCategory)
+            {
+                LoadEventsByCategory();
+            }
+            else
+            {
+                LoadStandardEvents();
+            }
+        }
 
+
+
+        private void LoadStandardEvents()
+        {
+            Events.Clear();
+            int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
+            List<CalendarItem> events = _presenter.DisplayCalendarItems(StartDate, EndDate, FilterByCategory, categoryId);
             foreach (var ev in events)
             {
                 Events.Add(ev);
+            }
+        }
+
+        private void LoadEventsByMonth()
+        {
+            EventsByMonth.Clear();
+            int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
+            List<CalendarItemsByMonth> events = _presenter.DisplayItemsByMonth(StartDate, EndDate, FilterByCategory, categoryId);
+            foreach (var ev in events)
+            {
+                EventsByMonth.Add(ev);
+            }
+        }
+
+        private void LoadEventsByCategory()
+        {
+            EventsByCategory.Clear();
+            int categoryId = (FilterByCategory && SelectedCategory != null) ? SelectedCategory.Id : 1;
+            List<CalendarItemsByCategory> events = _presenter.DisplayItemsByCategory(StartDate, EndDate, FilterByCategory, categoryId);
+            foreach (var ev in events)
+            {
+                EventsByCategory.Add(ev);
             }
         }
 
