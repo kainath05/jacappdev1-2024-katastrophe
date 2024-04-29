@@ -6,7 +6,28 @@
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
         Title="UpdateEvents" Height="550" Width="400">
-    <Grid>
+    <Grid >
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
         <TextBlock Margin="20" FontSize="25">Update Event</TextBlock>
+        <StackPanel Margin="10,60,10,10">
+            <Label Content="Date"/>
+            <DatePicker x:Name="StartDatePicker" Margin="4,4" SelectedDate="{Binding Date}"/>
+            <Label Content="Category"/>
+            <ComboBox x:Name="CategoryComboBox"/>
+            <Label Content="Description"/>
+            <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto"
+         Text="Enter event details here..." GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+            <Label Content="Duration"/>
+            <TextBox x:Name="DurationTextBox" Text="Duration in minutes" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+
+        </StackPanel>
+        <Button Content="Update"  Grid.Row="1" Width="100" Height="30" Margin="16,39,284,109" Click="UpdateButton_Click"/>
+        <Button Content="Cancel" Grid.Row="1" Width="100" Height="30" Margin="145,40,155,108" Click="CancelButton_Click" RenderTransformOrigin="0.507,0.581"/>
+        <Button Content="Delete" Grid.Row="1" Width="100" Height="30" Margin="276,40,24,108" Click="DeleteButton_Click" RenderTransformOrigin="1.1,0.451"/>
     </Grid>
 </Window>
