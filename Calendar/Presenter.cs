@@ -156,9 +156,9 @@ namespace Calendar
             return _calendar.GetCalendarItemsByCategory(start, end, filter, categoryId);
         }
 
-        public void DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)
+        public List<Dictionary<string, object>> DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)
         {
-            _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
+            return _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
         }
 
 
