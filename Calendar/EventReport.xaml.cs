@@ -68,12 +68,9 @@ namespace Calendar
 
         private void Update_Event(object sender, RoutedEventArgs e)
         {
-            var selected = sender as Event;
-            if (selected != null)
-            {
-                //update method
-                ShowMessage("Updated event");
-            }
+
+                var newWindow = new UpdateEvents(_presenter); //opens new window to update events
+                newWindow.Show();
         }
 
         private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)

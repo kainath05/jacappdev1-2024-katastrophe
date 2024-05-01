@@ -74,6 +74,8 @@ namespace Calendar
                 _addEventView.ShowMessage("Failed to create event: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
        
         public List<Category.CategoryType> DisplayTypes()
         {
@@ -125,7 +127,19 @@ namespace Calendar
             }
         }
 
-        //Need update event too
+        public void UpdateEvent(int eventId, DateTime dateTime, int categoryId, double duration, string details)
+        {
+                try
+                {
+                    _calendar.events.UpdateProperties(eventId, dateTime, categoryId, duration, details);
+                    _view.ShowMessage("Event deleted.");
+                }
+                catch (Exception ex)
+                {
+                    _view.ShowMessage("Failed to delete event: " + ex.Message);
+                }
+            
+        }
 
         public List<CalendarItem> DisplayCalendarItems(DateTime start, DateTime end, bool filter, int categoryId)
         {
@@ -142,11 +156,11 @@ namespace Calendar
             return _calendar.GetCalendarItemsByCategory(start, end, filter, categoryId);
         }
 
-        public List<Dictionary<string, object>> DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)
+        public void DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)
         {
-            return _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
-
+            _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
         }
+
 
         
     }
