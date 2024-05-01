@@ -518,7 +518,7 @@ namespace Calendar
             dictionaryDataGrid.Columns.Add(onCall);
 
             var school = new DataGridTextColumn();
-            school.Header = "school";
+            school.Header = "School";
             school.Binding = new Binding("[School]");
             dictionaryDataGrid.Columns.Add(school);
 

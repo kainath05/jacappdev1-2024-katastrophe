@@ -59,11 +59,13 @@ namespace PresenterTests
 
     public class TestViewForReport : ViewForReport
     {
+        public bool types = false;
         public void DisplayCategories(List<Category> categories)
         {
-            throw new NotImplementedException();
+            types = true;  // Flag that the method was called
         }
     }
+
     public class UnitTest1
     {
         [Fact]
@@ -279,6 +281,19 @@ namespace PresenterTests
         }
 
         [Fact]
+        public void DisplayCategories()
+        {
+            var viewReport = new TestViewForReport();
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();
+            presenter.SetReportView(viewReport);
+            viewReport.DisplayCategories(presenter._calendar.categories.List());
+
+            Assert.True(viewReport.types);
+        }
+
+        [Fact]
         public void DisplayCalendarItems_ReturnsItemsWithinDateRange()
         {
             var view = new TestView();
@@ -324,5 +339,25 @@ namespace PresenterTests
         }
 
 
+        [Fact]
+        public void DisplayItemsByCategoryAndMonth_ReturnsCorrectlyGroupedItems()
+        {
+            // Arrange
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();  
+
+            DateTime start = new DateTime(2023, 1, 1);
+            DateTime end = new DateTime(2023, 12, 31);
+            bool filter = true;
+            int categoryId = 1;
+            
+            var items = presenter.DisplayItemsByCategoryAndMonth(start, end, filter, categoryId);
+
+            Assert.NotNull(items);
+            Assert.IsType<List<Dictionary<string, object>>>(items);
+        }
+
+        
     }
 }
