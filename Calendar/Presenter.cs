@@ -212,26 +212,56 @@ namespace Calendar
             }
         }
 
-
+        /// <summary>
+        /// Retrieves a list of calendar items within a specific date range and optional category filtering.
+        /// </summary>
+        /// <param name="start">The start date of the range.</param>
+        /// <param name="end">The end date of the range.</param>
+        /// <param name="filter">Indicates whether to apply category filtering.</param>
+        /// <param name="categoryId">The category identifier to filter by, if filtering is enabled.</param>
+        /// <returns>A list of calendar items that fall within the specified range and, if specified, the category.</returns>
         public List<CalendarItem> DisplayCalendarItems(DateTime start, DateTime end, bool filter, int categoryId)
         {
             return _calendar.GetCalendarItems(start, end, filter, categoryId);
         }
 
+        /// <summary>
+        /// Retrieves a list of calendar items by month within a specified date range and optional category filtering.
+        /// </summary>
+        /// <param name="start">The start date of the range.</param>
+        /// <param name="end">The end date of the range.</param>
+        /// <param name="filter">Indicates whether to apply category filtering.</param>
+        /// <param name="categoryId">The category identifier to filter by, if filtering is enabled.</param>
+        /// <returns>A list of calendar items grouped by month that meet the specified criteria.</returns>
         public List<CalendarItemsByMonth> DisplayItemsByMonth(DateTime start, DateTime end, bool filter, int categoryId)
         {
             return _calendar.GetCalendarItemsByMonth(start, end, filter, categoryId);
         }
 
+        /// <summary>
+        /// Retrieves a list of calendar items by category within a specified date range and optional category filtering.
+        /// </summary>
+        /// <param name="start">The start date of the range.</param>
+        /// <param name="end">The end date of the range.</param>
+        /// <param name="filter">Indicates whether to apply category filtering.</param>
+        /// <param name="categoryId">The category identifier to filter by, if filtering is enabled.</param>
+        /// <returns>A list of calendar items grouped by category that meet the specified criteria.</returns>
         public List<CalendarItemsByCategory> DisplayItemsByCategory(DateTime start, DateTime end, bool filter, int categoryId)
         {
             return _calendar.GetCalendarItemsByCategory(start, end, filter, categoryId);
         }
 
+        /// <summary>
+        /// Retrieves a list of calendar items by category and month within a specified date range and optional category filtering.
+        /// </summary>
+        /// <param name="start">The start date of the range.</param>
+        /// <param name="end">The end date of the range.</param>
+        /// <param name="filter">Indicates whether to apply category filtering.</param>
+        /// <param name="categoryId">The category identifier to filter by, if filtering is enabled.</param>
+        /// <returns>A dictionary representing calendar items categorized both by month and category based on the specified criteria.</returns>
         public List<Dictionary<string, object>> DisplayItemsByCategoryAndMonth(DateTime start, DateTime end, bool filter, int categoryId)
         {
             return _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
-
         }
 
         
