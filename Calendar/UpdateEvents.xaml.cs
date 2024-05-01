@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,19 +22,28 @@ namespace Calendar
     public partial class UpdateEvents : Window, View
     {
         private readonly Presenter _presenter;
-        public UpdateEvents(Presenter presenter)
+        private readonly int _eventId;
+        private readonly int _categoryId;
+        private readonly double _duration;
+        private readonly DateTime _date;
+        private readonly string _details;
+        public UpdateEvents(Presenter presenter, int eventId, DateTime date, int categoryId, double duration, string details)
         {
             InitializeComponent();
             _presenter = presenter;
-            DataContext = this;
+            _eventId = eventId;
+            _date = date;
+            _categoryId = categoryId;
+            _duration = duration;
+            _details = details;
 
-            ShowTypes(_presenter.DisplayTypes());
+            DataContext = this;
 
             DisplayDatabaseFile();
 
             var categories = _presenter._calendar.categories.List();
             DisplayCategories(categories);
-
+            ClearForm();
         }
 
         public bool ConfirmCloseApplication()
@@ -61,17 +71,12 @@ namespace Calendar
             MessageBox.Show(message);
         }
 
-        public void ShowMessage(string message, string title = "Information", MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.Information)
-        {
-            MessageBox.Show(message, title, button, icon);
-        }
-
         private bool ValidateInput()
         {
             bool isValid = true;
             string errorMessage = "";
 
-            if (string.IsNullOrWhiteSpace(EventDetailsTextBox.Text) || EventDetailsTextBox.Text == "Enter event details here...")
+            if (string.IsNullOrWhiteSpace(EventDetailsTextBox.Text))
             {
                 errorMessage += "Please enter event details.\n";
                 isValid = false;
@@ -98,7 +103,7 @@ namespace Calendar
 
             if (!isValid)
             {
-                ShowMessage(errorMessage.Trim(), "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning); //shows error message if no valid input
+                ShowMessage(errorMessage.Trim()); //shows error message if no valid input
             }
 
             return isValid;
@@ -108,14 +113,14 @@ namespace Calendar
         {
             if (!ValidateInput())
             {
-                ShowMessage("Please correct the input fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowMessage("Please correct the input fields.");
                 return;
             }
 
             string details = EventDetailsTextBox?.Text;
             if (string.IsNullOrEmpty(details))
             {
-                ShowMessage("Please enter a description to add a new category.");
+                ShowMessage("Please enter a description.");
                 return;
             }
 
@@ -124,60 +129,36 @@ namespace Calendar
                 ShowMessage("Please select a valid category type."); //validates input
                 return;
             }
-            DateTime selectedDate = StartDatePicker.SelectedDate.Value;
-            int categoryId = (int)CategoryComboBox.SelectedValue;
-            double duration = double.Parse(DurationTextBox.Text);
+            int categoryId = CategoryComboBox.SelectedIndex;
 
-            //_presenter.UpdateEvent(eventId, selectedDate, categoryId, duration, details); //TODO: How to add eventId
+            _presenter.UpdateEvent(_eventId, StartDatePicker.SelectedDate.Value, categoryId, double.Parse(DurationTextBox.Text), details); //TODO: How to add eventId
 
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             ClearForm();
-            
         }
 
         private void ClearForm()
         {
-            StartDatePicker.SelectedDate = null;
-            CategoryComboBox.SelectedIndex = -1;
-            EventDetailsTextBox.Text = null;
+            Category cat = _presenter._calendar.categories.GetCategoryFromId(_categoryId);
+            StartDatePicker.SelectedDate = _date;
+            //Category category = CategoryComboBox.SelectedItem as Category;
+            CategoryComboBox.SelectedItem = cat;
+            DurationTextBox.Text = _duration.ToString();
+            EventDetailsTextBox.Text = _details;
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-                //_presenter.DeleteEvent(selected.Id); TODO
-                ShowMessage("Deleted event");
+            _presenter.DeleteEvent(_eventId);
         }
        
 
         public void ShowTypes(List<Category.CategoryType> types)
         {
-            foreach (Category.CategoryType item in types)
-            {
-                CategoryComboBox.Items.Add(item); //fill in drop list for types
-            }
-        }
-
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (textBox.Text == "Enter event details here..." || textBox.Text == "Duration in minutes")
-            {
-                textBox.Text = string.Empty;
-                textBox.Foreground = Brushes.Black;
-            }
-        }
-
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            if (string.IsNullOrWhiteSpace(textBox.Text))
-            {
-                textBox.Foreground = Brushes.Gray;
-                textBox.Text = textBox.Name == "EventDetailsTextBox" ? "Enter event details here..." : "Duration in minutes";
-            }
+            //dont need this 
         }
     }
 }

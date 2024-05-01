@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="UpdateEvents" Height="550" Width="400">
+        Title="UpdateEvents" Height="500" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -20,10 +20,9 @@
             <Label Content="Category"/>
             <ComboBox x:Name="CategoryComboBox"/>
             <Label Content="Description"/>
-            <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto"
-                     Text="Enter event details here..." GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+            <TextBox x:Name="EventDetailsTextBox" AcceptsReturn="True" Height="100" VerticalScrollBarVisibility="Auto" />
             <Label Content="Duration"/>
-            <TextBox x:Name="DurationTextBox" Text="Duration in minutes" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+            <TextBox x:Name="DurationTextBox"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Margin="10">

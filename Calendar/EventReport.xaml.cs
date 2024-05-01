@@ -81,8 +81,25 @@ namespace Calendar
         private void Update_Event(object sender, RoutedEventArgs e)
         {
 
-                var newWindow = new UpdateEvents(_presenter); //opens new window to update events
-                newWindow.Show();
+            var selected = sender as MenuItem;
+            if (selected != null)
+            {
+                ContextMenu menu = selected.Parent as ContextMenu;
+                if (menu != null)
+                {
+                    DataGrid grid = menu.PlacementTarget as DataGrid;
+                    if (grid != null)
+                    {
+                        CalendarItem item = grid.SelectedItem as CalendarItem;
+                        if (item != null)
+                        {
+                            var newWindow = new UpdateEvents(_presenter, item.EventID, item.StartDateTime, item.CategoryID, item.DurationInMinutes, item.ShortDescription); //opens new window to update events
+                            newWindow.Show();
+                            LoadEvents();
+                        }
+                    }
+                }
+            }
         }
 
         private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -104,8 +121,6 @@ namespace Calendar
 
             if (shouldClose)
             {
-                // Perform any necessary actions (e.g., save data)
-                // Continue with closing the window
                 e.Cancel = false;
             }
             else
@@ -146,10 +161,6 @@ namespace Calendar
             foreach (Category category in categories)
             {
                 CategoryComboBox.Items.Add(category);
-            }
-            if (CategoryComboBox.Items.Count > 0)
-            {
-                SelectedCategory = (Category)CategoryComboBox.Items[0];
             }
         }
 
