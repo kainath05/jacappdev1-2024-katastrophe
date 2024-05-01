@@ -102,6 +102,20 @@ namespace Calendar
             }
         }
 
+        private void Update(object sender, RoutedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            if (dataGrid != null)
+            {
+                if (dataGrid.SelectedItem is CalendarItem selected)
+                {
+                    var newWindow = new UpdateEvents(_presenter, selected.EventID, selected.StartDateTime, selected.CategoryID, selected.DurationInMinutes, selected.ShortDescription); //opens new window to update events
+                    newWindow.Show();
+                    LoadEvents();
+                }
+            }
+        }
+
         private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             DataGrid dataGrid = sender as DataGrid;

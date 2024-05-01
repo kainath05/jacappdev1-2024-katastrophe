@@ -129,9 +129,10 @@ namespace Calendar
                 ShowMessage("Please select a valid category type."); //validates input
                 return;
             }
-            int categoryId = CategoryComboBox.SelectedIndex;
+            Category cat = CategoryComboBox.SelectedItem as Category;
+            int categoryId = cat.Id;
 
-            _presenter.UpdateEvent(_eventId, StartDatePicker.SelectedDate.Value, categoryId, double.Parse(DurationTextBox.Text), details); //TODO: How to add eventId
+            _presenter.UpdateEvent(_eventId, StartDatePicker.SelectedDate.Value, categoryId, double.Parse(DurationTextBox.Text), details);
 
         }
 
@@ -144,8 +145,7 @@ namespace Calendar
         {
             Category cat = _presenter._calendar.categories.GetCategoryFromId(_categoryId);
             StartDatePicker.SelectedDate = _date;
-            //Category category = CategoryComboBox.SelectedItem as Category;
-            CategoryComboBox.SelectedItem = cat;
+            CategoryComboBox.SelectedItem = CategoryComboBox.Items.Cast<Category>().FirstOrDefault(c => c.Id == _categoryId);
             DurationTextBox.Text = _duration.ToString();
             EventDetailsTextBox.Text = _details;
         }
