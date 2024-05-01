@@ -1,4 +1,5 @@
 using Calendar;
+using Calendar.views;
 using System.Windows;
 namespace PresenterTests
 {
@@ -53,6 +54,14 @@ namespace PresenterTests
         public void UpdateComboBoxes(List<Category> categories)
         {
             comboUpdates = true;
+        }
+    }
+
+    public class TestViewForReport : ViewForReport
+    {
+        public void DisplayCategories(List<Category> categories)
+        {
+            throw new NotImplementedException();
         }
     }
     public class UnitTest1
@@ -240,6 +249,79 @@ namespace PresenterTests
             }
         }
 
+        [Fact]
+        public void DeleteEvent_EventDeleted_ShowConfirmationMessage()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar(); 
+            presenter.DeleteEvent(1);
+
+            Assert.Contains("Event deleted.", view.messages);
+            Assert.True(view.showMessageCalled);
+        }
+
+        [Fact]
+        public void UpdateEvent_ValidEvent_ShowConfirmationMessage()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();
+            DateTime dateTime = DateTime.Now;
+            int categoryId = 1;
+            double duration = 1.5;
+            string details = "Updated event details";
+
+            presenter.UpdateEvent(1, dateTime, categoryId, duration, details);
+
+            Assert.Contains("Event updated.", view.messages);
+            Assert.True(view.showMessageCalled);
+        }
+
+        [Fact]
+        public void DisplayCalendarItems_ReturnsItemsWithinDateRange()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();
+            DateTime start = DateTime.Today;
+            DateTime end = DateTime.Today.AddDays(30);
+
+            var items = presenter.DisplayCalendarItems(start, end, false, 1);
+
+            Assert.NotNull(items);
+            Assert.IsType<List<CalendarItem>>(items);
+        }
+
+        [Fact]
+        public void DisplayItemsByMonth_ValidRange_ReturnsGroupedItems()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();
+            DateTime start = DateTime.Today;
+            DateTime end = DateTime.Today.AddDays(30);
+
+            var items = presenter.DisplayItemsByMonth(start, end, true, 1);
+
+            Assert.NotNull(items);
+            Assert.IsType<List<CalendarItemsByMonth>>(items);
+        }
+
+        [Fact]
+        public void DisplayItemsByCategory_ValidRange_ReturnsCategorizedItems()
+        {
+            var view = new TestView();
+            var presenter = new Presenter(view);
+            presenter.InitializeCalendar();
+            DateTime start = DateTime.Today;
+            DateTime end = DateTime.Today.AddDays(30);
+
+            var items = presenter.DisplayItemsByCategory(start, end, false, 1);
+
+            Assert.NotNull(items);
+            Assert.IsType<List<CalendarItemsByCategory>>(items);
+        }
 
 
     }
