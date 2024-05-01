@@ -226,11 +226,11 @@ namespace Calendar
                 try
                 {
                     _calendar.events.UpdateProperties(eventId, dateTime, categoryId, duration, details);
-                    _view.ShowMessage("Event deleted.");
+                    _view.ShowMessage("Event updated.");
                 }
                 catch (Exception ex)
                 {
-                    _view.ShowMessage("Failed to delete event: " + ex.Message);
+                    _view.ShowMessage("Failed to update: " + ex.Message);
                 }
             
         }

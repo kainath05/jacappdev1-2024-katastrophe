@@ -38,7 +38,7 @@
             <TextBlock x:Name="DisplayDatabase" HorizontalAlignment="Left" VerticalAlignment="Bottom" Text="Database: "/>
         </StackPanel>
 
-        <DataGrid Name="regularDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update_Event"
+        <DataGrid Name="regularDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update"
           ItemsSource="{Binding Events}"
           Visibility="{Binding Summary, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
@@ -50,20 +50,20 @@
             </DataGrid.ContextMenu>
         </DataGrid>
 
-        <DataGrid Name="monthlyDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update_Event"
+        <DataGrid Name="monthlyDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update"
           ItemsSource="{Binding Path=EventsByMonth, Mode=OneWay}"
           Visibility="{Binding SummaryByMonth, Converter={StaticResource BoolToVisibilityConverter}}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
         </DataGrid>
 
-        <DataGrid Name="categoryDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update_Event"
+        <DataGrid Name="categoryDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update"
           ItemsSource="{Binding Path=EventsByCategory, Mode=OneWay}"
           Visibility="{Binding SummaryByCategory, Converter={StaticResource BoolToVisibilityConverter}}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
         </DataGrid>
 
 
-        <DataGrid Name="dictionaryDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update_Event"
+        <DataGrid Name="dictionaryDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update"
           ItemsSource="{Binding Path=EventsByCategoryAndMonth, Mode=OneWay}"
         Visibility="{Binding SummaryByCategoryAndMonth, Converter={StaticResource BoolToVisibilityConverter}}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
