@@ -58,22 +58,31 @@ namespace Calendar
 
         private void Delete_Event(object sender, RoutedEventArgs e)
         {
-            var selected = sender as CalendarItem;
+            var selected = sender as MenuItem;
             if (selected != null)
             {
-                _presenter.DeleteEvent(selected.EventID);
-                ShowMessage("Deleted event");
+                ContextMenu menu = selected.Parent as ContextMenu;
+                if (menu != null)
+                {
+                    DataGrid grid = menu.PlacementTarget as DataGrid;
+                    if (grid != null)
+                    {
+                        CalendarItem item = grid.SelectedItem as CalendarItem;
+                        if (item != null)
+                        {
+                            _presenter.DeleteEvent(item.EventID);
+                            LoadEvents();
+                        }
+                    }
+                }
             }
         }
 
         private void Update_Event(object sender, RoutedEventArgs e)
         {
-            var selected = sender as Event;
-            if (selected != null)
-            {
-                //update method
-                ShowMessage("Updated event");
-            }
+
+                var newWindow = new UpdateEvents(_presenter); //opens new window to update events
+                newWindow.Show();
         }
 
         private void myDataGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)

@@ -220,6 +220,21 @@ namespace Calendar
         /// <param name="filter">Indicates whether to apply category filtering.</param>
         /// <param name="categoryId">The category identifier to filter by, if filtering is enabled.</param>
         /// <returns>A list of calendar items that fall within the specified range and, if specified, the category.</returns>
+
+        public void UpdateEvent(int eventId, DateTime dateTime, int categoryId, double duration, string details)
+        {
+                try
+                {
+                    _calendar.events.UpdateProperties(eventId, dateTime, categoryId, duration, details);
+                    _view.ShowMessage("Event deleted.");
+                }
+                catch (Exception ex)
+                {
+                    _view.ShowMessage("Failed to delete event: " + ex.Message);
+                }
+            
+        }
+
         public List<CalendarItem> DisplayCalendarItems(DateTime start, DateTime end, bool filter, int categoryId)
         {
             return _calendar.GetCalendarItems(start, end, filter, categoryId);
@@ -263,6 +278,7 @@ namespace Calendar
         {
             return _calendar.GetCalendarDictionaryByCategoryAndMonth(start, end, filter, categoryId);
         }
+
 
         
     }
