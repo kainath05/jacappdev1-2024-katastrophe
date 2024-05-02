@@ -172,10 +172,7 @@ namespace Calendar
 
         public void DisplayCategories(List<Category> categories)
         {
-            foreach (Category category in categories)
-            {
-                CategoryComboBox.Items.Add(category);
-            }
+            CategoryComboBox.ItemsSource = categories;
         }
 
         #region DataGridControls
