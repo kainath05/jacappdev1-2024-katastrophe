@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calendar"
         mc:Ignorable="d"
-        Title="UpdateEvents" Height="500" Width="400">
+        Title="UpdateEvents" Height="550" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -17,6 +17,12 @@
         <StackPanel Margin="10,60,10,10" Grid.Row="0">
             <Label Content="Date"/>
             <DatePicker x:Name="StartDatePicker" Margin="4"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <ComboBox x:Name="HourComboBox" Width="Auto" Margin="2" ToolTip="Hour"/>
+                <ComboBox x:Name="MinuteComboBox" Width="Auto" Margin="2" ToolTip="Minute"/>
+                <ComboBox x:Name="SecondComboBox" Width="Auto" Margin="2" ToolTip="Second"/>
+                <ComboBox x:Name="AmPmComboBox" Width="Auto" Margin="2" ToolTip="AM/PM"/>
+            </StackPanel>
             <Label Content="Category"/>
             <ComboBox x:Name="CategoryComboBox"/>
             <Label Content="Description"/>
