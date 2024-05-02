@@ -64,7 +64,7 @@
 
 
         <DataGrid Name="dictionaryDataGrid" Grid.Column="1" IsReadOnly="True" MouseDoubleClick="Update"
-          ItemsSource="{Binding Path=EventsByCategoryAndMonth, Mode=OneWay}"
+          ItemsSource="{Binding Path=EventsByCategoryAndMonth}"
         Visibility="{Binding SummaryByCategoryAndMonth, Converter={StaticResource BoolToVisibilityConverter}}"
           ContextMenuOpening="myDataGrid_ContextMenuOpening">
         </DataGrid>

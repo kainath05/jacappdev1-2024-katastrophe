@@ -344,14 +344,17 @@ namespace Calendar
             }
             else if (SummaryByCategory)
             {
+                SummaryByCategoryAndMonth = false;
                 LoadEventsByCategory();
             }
             else if (SummaryByMonth)
             {
+                SummaryByCategoryAndMonth = false;
                 LoadEventsByMonth();
             }
             else
             {
+                SummaryByCategoryAndMonth = false;
                 LoadStandardEvents();
             }
         }
