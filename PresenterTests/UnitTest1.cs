@@ -306,6 +306,10 @@ namespace PresenterTests
 
             Assert.NotNull(items);
             Assert.IsType<List<CalendarItem>>(items);
+            Assert.All(items, item =>
+            {
+                Assert.True(item.StartDateTime >= start && item.StartDateTime <= end);
+            });
         }
 
         [Fact]
@@ -321,6 +325,19 @@ namespace PresenterTests
 
             Assert.NotNull(items);
             Assert.IsType<List<CalendarItemsByMonth>>(items);
+            Assert.All(items, group =>
+            {
+                // Parse the month string to an integer
+                int month;
+                if (int.TryParse(group.Month, out month))
+                {
+                    Assert.True(month >= start.Month && month <= end.Month);
+                }
+                else
+                {
+                    Assert.True(false, $"Failed to parse month: {group.Month}");
+                }
+            });
         }
 
         [Fact]
@@ -336,6 +353,10 @@ namespace PresenterTests
 
             Assert.NotNull(items);
             Assert.IsType<List<CalendarItemsByCategory>>(items);
+            Assert.All(items, category =>
+            {
+                Assert.True(category.Category == "School");
+            });
         }
 
 
