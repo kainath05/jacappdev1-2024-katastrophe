@@ -44,7 +44,7 @@ namespace Calendar
             var categories = _presenter._calendar.categories.List();
             DisplayCategories(categories);
             SetDefaults();
-            UpdateComboBoxes(categories);
+            _presenter.InitializeForm();
 
             DisplayDatabaseFile();
         }
