@@ -212,6 +212,7 @@ namespace Calendar
             CategoryComboBox.SelectedIndex = categories.Any() ? 0 : -1;
         }
 
+
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             _presenter.DeleteEvent(_eventId);
