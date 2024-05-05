@@ -221,7 +221,7 @@ namespace Calendar
                 }
             }
         }
-
+        // is this needed? can we handle the category with a tracking.
         private Category _selectedCategory;
         public Category SelectedCategory
         {
