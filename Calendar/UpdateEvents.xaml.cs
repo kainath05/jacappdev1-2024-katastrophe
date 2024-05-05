@@ -150,6 +150,7 @@ namespace Calendar
             EventDetailsTextBox.Text = _details;
         }
 
+
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             _presenter.DeleteEvent(_eventId);
