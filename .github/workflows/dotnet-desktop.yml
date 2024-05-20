@@ -83,7 +83,7 @@ jobs:
     # - name: Setup vstest
     #   uses: darenm/Setup-VSTest@v1
 
-    #       # Added - Run unit tests
+    #       # Added - Run unit tests these tests would not work, it could not find the dll for some reason, i put a lot of time trying to fix it but it would not work, i got the dotnet tests to work tho
     # - name: Execute unit tests
     #   run: vstest.console.exe $env:Test_DLL
 
