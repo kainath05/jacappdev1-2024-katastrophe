@@ -438,12 +438,20 @@ namespace Calendar
             var columnDuration = new DataGridTextColumn();
             columnDuration.Header = "Duration";
             columnDuration.Binding = new Binding("DurationInMinutes");
+            Style s = new Style();
+            s.Setters.Add(new Setter(TextBlock.TextAlignmentProperty,
+                                    TextAlignment.Right));
+            columnDuration.CellStyle = s;
             regularDataGrid.Columns.Add(columnDuration);
 
 
             var columnBusyTime = new DataGridTextColumn();
             columnBusyTime.Header = "Busy Time";
             columnBusyTime.Binding = new Binding("BusyTime");
+            Style l = new Style();
+            l.Setters.Add(new Setter(TextBlock.TextAlignmentProperty,
+                                    TextAlignment.Right));
+            columnBusyTime.CellStyle = l;
             regularDataGrid.Columns.Add(columnBusyTime);
         }
 
@@ -459,6 +467,10 @@ namespace Calendar
             var columnTotal = new DataGridTextColumn();
             columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
+            Style l = new Style();
+            l.Setters.Add(new Setter(TextBlock.TextAlignmentProperty,
+                                    TextAlignment.Right));
+            columnTotal.CellStyle = l;
             monthlyDataGrid.Columns.Add(columnTotal);
         }
 
@@ -474,6 +486,10 @@ namespace Calendar
             var columnTotal = new DataGridTextColumn();
             columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("TotalBusyTime");
+            Style l = new Style();
+            l.Setters.Add(new Setter(TextBlock.TextAlignmentProperty,
+                                    TextAlignment.Right));
+            columnTotal.CellStyle = l;
             categoryDataGrid.Columns.Add(columnTotal);
         }
 
@@ -503,6 +519,10 @@ namespace Calendar
             var columnTotal = new DataGridTextColumn();
             columnTotal.Header = "Total Busy Time";
             columnTotal.Binding = new Binding("[TotalBusyTime]");
+            Style l = new Style();
+            l.Setters.Add(new Setter(TextBlock.TextAlignmentProperty,
+                                    TextAlignment.Right));
+            columnTotal.CellStyle = l;
             dictionaryDataGrid.Columns.Add(columnTotal);
         }
     }
