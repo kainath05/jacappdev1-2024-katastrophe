@@ -525,5 +525,28 @@ namespace Calendar
             columnTotal.CellStyle = l;
             dictionaryDataGrid.Columns.Add(columnTotal);
         }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            string searchText = SearchTextBox.Text.ToLower();
+            var items = regularDataGrid.Items.OfType<CalendarItem>();  
+            int startIndex = regularDataGrid.SelectedIndex + 1;
+
+            for (int i = startIndex; i < startIndex + items.Count(); i++)
+            {
+                int index = i % items.Count();
+                var item = items.ElementAt(index);
+                if (item.ShortDescription.ToLower().Contains(searchText) || item.DurationInMinutes.ToString().Contains(searchText))
+                {
+                    regularDataGrid.SelectedItem = item;
+                    regularDataGrid.ScrollIntoView(item);
+                    return;
+                }
+            }
+
+            System.Media.SystemSounds.Beep.Play(); 
+            MessageBox.Show("Nothing found");
+        }
+
     }
 }

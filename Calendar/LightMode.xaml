@@ -70,4 +70,17 @@
         <Setter Property="BorderBrush" Value="{StaticResource ControlBorder}"/>
         <Setter Property="BorderThickness" Value="1"/>
     </Style>
+    
+    <!-- DataGrid Style -->
+    <Style TargetType="DataGridRow">
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="SkyBlue"/>
+                <Setter Property="Foreground" Value="DarkBlue"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
