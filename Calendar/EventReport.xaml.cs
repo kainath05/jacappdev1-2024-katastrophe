@@ -70,13 +70,26 @@ namespace Calendar
                         CalendarItem item = grid.SelectedItem as CalendarItem;
                         if (item != null)
                         {
+                            int selectedIndex = grid.SelectedIndex;
                             _presenter.DeleteEvent(item.EventID);
                             LoadEvents();
+
+                            // Move to the next row
+                            if (grid.Items.Count > 0)
+                            {
+                                if (selectedIndex >= grid.Items.Count)
+                                {
+                                    selectedIndex = grid.Items.Count - 1;
+                                }
+                                grid.SelectedIndex = selectedIndex;
+                                grid.ScrollIntoView(grid.SelectedItem);
+                            }
                         }
                     }
                 }
             }
         }
+
 
         private void Update_Event(object sender, RoutedEventArgs e)
         {
